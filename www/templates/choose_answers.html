@@ -9,35 +9,35 @@
     
     <div class="list list-inset">
     	
-    	<div class="item item-divider" ng-click="show_q1()"> Who came up with this idea? </div>
+    	<div class="item item-divider" ng-click="show_q1()"> Are you here for... </div>
 		<div class="answerRadioButtons" ng-hide="hide1">
 		  	<ion-radio ng-repeat="answer in question_1_answers" ng-value="$index" ng-model="answers.answer1" name="q1" ng-click="hide_q1()">
 				{{answer.value}}
 		  	</ion-radio>
 		</div>
 	  	
-	  	<div class="item item-divider" ng-click="show_q2()"> Whose the walliest character you've met? </div>
+	  	<div class="item item-divider" ng-click="show_q2()"> How tall are you? </div>
 		<div class="answerRadioButtons" ng-hide="hide2">
 		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_2_answers track by $index" ng-value="$index" ng-model="answers.answer2" name="q2" ng-click="hide_q2()">
 				{{answer.value}}
 		  	</ion-radio>
 	  	</div>
 		
-		<div class="item item-divider" ng-click="show_q3()"> Turn down for... </div>
+		<div class="item item-divider" ng-click="show_q3()"> What is your body type? </div>
 		<div class="answerRadioButtons" ng-hide="hide3">
 		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_3_answers" ng-value="$index" ng-model="answers.answer3" name="q3" ng-click="hide_q3()">
 				{{answer.value}}
 		  	</ion-radio>
 		</div>
 
-	  	<div class="item item-divider" ng-click="show_q4()"> Romel's favourite person in the world is ...</div>
+	  	<div class="item item-divider" ng-click="show_q4()"> Question 4 </div>
 		<div class="answerRadioButtons" ng-hide="hide4">
 		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_4_answers" ng-value="$index" ng-model="answers.answer4" name="q4" ng-click="hide_q4()">
 				{{answer.value}}
 		  	</ion-radio>
 		</div>
 
-	  	<div class="item item-divider" ng-click="show_q5()"> Which teacher touched you the most in St Bonnies? </div>
+	  	<div class="item item-divider" ng-click="show_q5()"> Question 5 </div>
 		<div class="answerRadioButtons" ng-hide="hide5">
 		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_5_answers" ng-value="$index" ng-model="answers.answer5" name="q5" ng-click="hide_q5()">
 				{{answer.value}}

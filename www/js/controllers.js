@@ -465,11 +465,11 @@ angular.module('starter.controllers', [])
   }
 
   //possible answers to the questions
-  $scope.question_1_answers = [{value:'Terence'},{value:'TJ'},{value:'Not Jamal'},{value:'Jimmy Kimmel'}];
-  $scope.question_2_answers = [{value:'Bashir'},{value:'Bashir'},{value:'Bashir'},{value:'Bashir'},{value:'Bashir'}];
-  $scope.question_3_answers = [{value:'Tricycle'},{value:'Snorkel'},{value:'Kiru'},{value:'What?'}];
-  $scope.question_4_answers = [{value:'Ashley'},{value:'Julie'}];
-  $scope.question_5_answers = [{value:'Mr. Woods'},{value:'Mrs. Zupan'},{value:'Ms Kofax'},{value:'Mr. McCloud'}];
+  $scope.question_1_answers = [{value:'Hooking up?'},{value:'Casual dating but not necessarily hookups?'},{value:'Something more serious?'}];
+  $scope.question_2_answers = [{value:'Really Short'},{value:'Kinda Short'},{value:'Average'},{value:'Above Average'},{value:'Really Tall'}];
+  $scope.question_3_answers = [{value:'Skinny'},{value:'Athletic'},{value:"There's more important things than body type"}];
+  $scope.question_4_answers = [{value:'answer 1'},{value:'answer 2'}];
+  $scope.question_5_answers = [{value:'answer 1'},{value:'answer 2'}];
 
   //ng hide information (setting to true causes the information to hide with an animation that slides it up)
   $scope.hide1 = false;
