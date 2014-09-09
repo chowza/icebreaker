@@ -1,0 +1,36 @@
+<ion-side-menus>
+
+  <ion-pane ion-side-menu-content edge-drag-threshold="true">
+
+    <ion-nav-bar class="bar-stable nav-title-slide-ios7">
+      <ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+  </ion-pane>
+
+  <ion-side-menu side="left" >
+    
+      <ion-list>
+    
+        <ion-item nav-clear menu-close>
+        <h1 class="title"> IceBreaker </h1>
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/cards">
+          More People
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/choose_photos">
+          Choose Photos
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/choose_answers">
+          Change Answers
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/settings">
+          App Settings
+        </ion-item>
+        <ion-item nav-clear menu-close ng-click="logout()">
+          Logout
+        </ion-item>
+      </ion-list>
+    
+  </ion-side-menu>
+</ion-side-menus>

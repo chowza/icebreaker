@@ -1,0 +1,27 @@
+<ion-view>
+  <ion-nav-buttons side="left">
+    <!-- <button class="button button-clear icon ion-ios7-arrow-back" ng-click="goToPrevious()"> Back</button> -->
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    <a href= "#/app/matches" class="button button-clear"><i class="ion-chatbubbles"></i></a>
+    <h1 class="title">Settings</h1>
+  </ion-nav-buttons>
+  <ion-content class="has-header">
+      <div class="list list-inset">
+      	<div class="item">
+      	Youngest you will date:
+      	<input type="number" ng-model="params.preferred_min_age" min="18" value={{params.preferred_min_age}}>
+      	</div>
+      	<div class="item">
+      		Oldest you will date: <input type="number" ng-model="params.preferred_max_age" min="{{params.preferred_min_age}}" value={{params.preferred_max_age}}>
+      	</div>
+      	<div class="item">
+      		Distance to search (km): <input type="number" ng-model="params.preferred_distance" value={{params.preferred_distance}}>
+      	</div>
+        <div class="row">
+          <div class="col text-center">
+      	     <div class="item button" ng-click="saveSettings()">Save!</div>	
+          </div>
+        </div>
+      </div>
+  </ion-content>
+</ion-view>

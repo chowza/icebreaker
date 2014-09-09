@@ -1,0 +1,54 @@
+<ion-view hide-nav-bar="true">
+	
+  	
+  <ion-content class="has-header" scroll="false">
+  	    <ion-slide-box on-slide-changed="slideHasChanged($index)">
+		  <ion-slide>
+		    <div class="list card item">
+		    	
+		    	<div class="item item-image">
+		    		<img src="./img/stock4.jpg">
+		    	</div>
+		    	<div class="item">
+		    		<ol>
+		    			<li class="text-center">Choose people you want to meet based on 5 things about them and their picture.</li>
+		    		</ol>
+		    	</div>
+		    </div>
+		  </ion-slide>
+		  <ion-slide>
+		    <div class="list card item">
+		    	
+		    	<div class="item item-image">
+		    		<img src="./img/stock2.jpg">
+		    	</div>
+		    	<div class="item">
+					<ol>
+		    			<li class="text-center"> When you match, you get 24 hours to exchange information and take it offline.</li>
+					</ol>
+		    	</div>
+		    </div>
+		    </div>
+		  </ion-slide>
+		  <ion-slide>
+		    <div class="list card item">
+		    	
+		    	<div class="item item-image">
+		    		<img src="./img/stock3.jpg">
+		    	</div>
+		    	<div class="item text-center">
+
+		    		<ol>
+		    			<li class="text-center"> Less online chatting, more real life dating! </li>
+		    		</ol>
+		    		
+		    	</div>
+		    </div>
+		  </ion-slide>
+		</ion-slide-box>
+		<div class="row">
+		<div class="col text-center">
+		<a class="btn-auth btn-facebook large" ng-show="showLogin" ng-click='login()'>Login with <b>Facebook</b>
+		</a>
+  </ion-content>
+</ion-view>
