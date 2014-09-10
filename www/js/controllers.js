@@ -241,7 +241,7 @@ angular.module('starter.controllers', [])
         function(res){
           if (res.status === 'connected'){
             principal.isFBLoggedIn = true;
-            postLoginPromises($q,principal,res,$state,$ionicLoading,$ionicPopup,$http);  
+            postLoginPromises($q,principal,res,$state,$ionicLoading,$ionicPopup,$http,PushService);  
           } else {
             principal.isFBLoggedIn = false;
             //TODO: try logging out or sending a toast that there was an error
@@ -550,7 +550,7 @@ angular.module('starter.controllers', [])
         $ionicLoading.hide();
         principal.firstTimeUser = false;
         $state.go('app.choose_photos',{firstTime:'isFirstTime'});
-        PushService.registerForPush($q,principal);
+        PushService.registerForPush();
       })
       .error(function(data,status,headers,config){
         console.log(data);

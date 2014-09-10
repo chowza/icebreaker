@@ -144,9 +144,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 // When logged in, principal saves some useful user variables that can be used in controllers, etc without making calls to my server.
 // Also, when logged in, we check the location of the user and upload that to our server so that we are aware where the user is.
 
-.factory('principal',['$q','$timeout','$state','$ionicLoading','$ionicPlatform','$ionicPopup','$http',function($q,$timeout,$state,$ionicLoading,$ionicPlatform,$ionicPopup,$http){
+.factory('principal',['$q','$timeout','$state','$ionicLoading','$ionicPlatform','$ionicPopup','$http','PushService',function($q,$timeout,$state,$ionicLoading,$ionicPlatform,$ionicPopup,$http,PushService){
   return {
-    appVersion: 0.1,
     id:undefined,
     firstTimeUser: undefined,
     latitude: undefined,
@@ -167,8 +166,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     answer3:undefined,
     answer4:undefined,
     answer5:undefined,
-    client_identification_sequence: undefined,
-    push_type:undefined,
     initialization: function(){
 
       var principal = this;
@@ -186,7 +183,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             principal.isFBLoggedIn = true;
             
             // since already logged in, perform post login actions (i.e. save basic user details and upload the current geo location data to our surveys)
-            postLoginPromises($q,principal,login_status,$state,$ionicLoading,$ionicPopup,$http);
+            postLoginPromises($q,principal,login_status,$state,$ionicLoading,$ionicPopup,$http,PushService);
           } else {
 
             // not already logged in, go to the login page and close the loading page.
@@ -204,46 +201,49 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
 // factory needed to set up push notifications
 
-.factory('PushService',['principal','$q','$http','$ionicScrollDelegate','$timeout','$state','$ionicPopup',function(principal,$q,$http,$ionicScrollDelegate,$timeout,$state,$ionicPopup){
+.factory('PushService',['$q','$http','$ionicScrollDelegate','$timeout','$state','$ionicPopup',function($q,$http,$ionicScrollDelegate,$timeout,$state,$ionicPopup){
 
   // the views/controllers that display messages and matches both watch the messages and matches array in this factory. 
   // The controllers invoke the functions here to populate these arrays. 
   // Other functions in this factory come from the push plugin
 
   return {
+    appVersion:0.1,
     deferred:undefined,
+    push_type:undefined,
+    client_identification_sequence:undefined,
     matches: [],
     messages: [],
     timerData: {hours:"--",minutes:"--",seconds:"--",endTime:"",difference:""},
 
     // register for push notifications
-    registerForPush: function(q,principal){
-      deferred = q.defer();
+    registerForPush: function(){
+      deferred = $q.defer();
       // Whenever the appversion changes you must reregister a push notification. Therefore we check if the appVersion stored is different
-      if (window.localStorage.getItem("hasRegisteredForPush") && window.localStorage.getItem("appVersion") == principal.appVersion){
+      if (window.localStorage.getItem("hasRegisteredForPush") && window.localStorage.getItem("appVersion") == this.appVersion){
         deferred.resolve('previously registered for push');
       } else {
-        // have not yet registered for push notifications. save the type of push ('gcm','apns',etc) to the principal factory so we can use it later.
+        // have not yet registered for push notifications. save the type of push ('gcm','apns',etc) so we can use it later.
         // then run the device dependent register function for the push notification
         try{
           pushNotification = window.plugins.pushNotification;
           if (device.platform == 'android' || device.platform == 'Android' || device.platform == 'amazon-fireos') {
             if(device.platform == 'amazon-fireos'){
-              principal.push_type = 'adm';
+              this.push_type = 'adm';
             } else {
-              principal.push_type = 'gcm';  
+              this.push_type = 'gcm';  
             }
             pushNotification.register(this.successHandler, this.errorHandler, {"senderID":AppSettings.GCM_project_number,"ecb":"onNotification"});    // required!
           } else if (device.platform == "Win32NT"){
-            principal.push_type = 'mpns'
+            this.push_type = 'mpns'
             pushNotification.register(this.channelHandler,this.errorHandler,{"channelName": channelName, "ecb": "onNotification", "uccb": "channelHandler", "errcb": "jsonErrorHandler"});
           } else {
-            principal.push_type = 'apns'
+            this.push_type = 'apns'
             pushNotification.register(this.tokenHandler, this.errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"onNotification"});  // required!
           }
         } catch(err) { 
             console.log(err);
-            q.reject("Error description: " + err.message); 
+            $q.reject("Error description: " + err.message); 
         } 
       }
       return deferred.promise;
@@ -269,7 +269,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
           if ( e.regid.length > 0 ) {
             // Notification indicates that the phone has been successfully registered, 
             // send the registration details to our server and save the details locally so that we know not to register the phone next time
-            principal.client_identification_sequence = e.regid;
+            this.client_identification_sequence = e.regid;
             window.localStorage.setItem("hasRegisteredForPush",true);
             deferred.resolve("received GCM!");
             this.sendClientIdentificationToServer();
@@ -383,7 +383,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
     //token handler for iOS
     tokenHandler : function(result) {
-      principal.client_identification_sequence = result.token, //<--NOT TESTED yet, not sure what the variable name is
+      this.client_identification_sequence = result.token, //<--NOT TESTED yet, not sure what the variable name is
       window.localStorage.setItem("hasRegisteredForPush",true); 
       deferred.resolve(result);
       this.sendClientIdentificationToServer();
@@ -391,7 +391,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
     // channel handler for WP8
     channelHandler: function(result){
-      principal.client_identification_sequence = result.channel // <--NOT TESTED yet, not sure what variable name is
+      this.client_identification_sequence = result.channel // <--NOT TESTED yet, not sure what variable name is
       window.localStorage.setItem("hasRegisteredForPush",true);
       deferred.resolve(result);
     },
@@ -406,10 +406,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
     //uploading identification to server
     sendClientIdentificationToServer : function (){
-      $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{client_identification_sequence:principal.client_identification_sequence, push_type:principal.push_type}})
+      $http.put(AppSettings.baseApiUrl + 'profiles/'+this.facebook_id,{profile:{client_identification_sequence:this.client_identification_sequence, push_type:this.push_type}})
       .success(function(data,status,headers,config){
         //on successful registration and successfully sending details to server save on the phone the local app version
-        window.localStorage.setItem("appVersion",principal.appVersion);
+        window.localStorage.setItem("appVersion",PushService.appVersion);
       })
       .error(function(data,status,headers,config){})
     },
@@ -436,7 +436,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       messages = this.messages;
       timerData = this.timerData;
       timer = this.timer;
-      $http.get(AppSettings.baseApiUrl + 'messages/'+principal.facebook_id,{params:{recipient_id:user_id}})
+      $http.get(AppSettings.baseApiUrl + 'messages/'+this.facebook_id,{params:{recipient_id:user_id}})
       .success(function(data, status, headers, config){
           
           if (data['messages']){
@@ -631,13 +631,14 @@ function updateGeoCoordinates(q,principal,http){
 
 // once logged in, make call to fb to get the facebook_id, simultaneously get age and gender in case this is a first time user and we will need that info.
 // simultaneously get geo location and then update the geolocation, route the user based on if it's their first time or not
-function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopup,http){
+function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopup,http,PushService){
 
   q.all([getFacebookData(q,principal),GEOLocation(q,principal)]).then(function(response){
       console.log(response);
 
       currentYear = new Date().getFullYear()
       principal.facebook_id = response[0].id;
+      PushService.facebook_id = response[0].id;
       principal.age = currentYear - parseInt(response[0].birthday.substring(6,10));
       principal.first_name = response[0].first_name;
       principal.gender = response[0].gender;
@@ -676,10 +677,12 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         });
 
         //not a first time user, check if the app version has changed. changed app versions need to reregister for push.
-        if (window.localStorage.getItem("hasRegisteredForPush") && window.localStorage.getItem("appVersion") == principal.appVersion){
-          //all good, already registered and app versions are same
+        if (window.localStorage.getItem("hasRegisteredForPush") && window.localStorage.getItem("appVersion") == PushService.appVersion){
+          //all good, already registered and app versions are same, nothing to do
+          console.log("same app version nothing to do...")
         } else {
-          //TODO: reregister push notifications since app version has changed and this causes unpredictable behaviour for GCM / APNS notification ids
+          console.log("new app version registering for push...")
+          PushService.registerForPush();
         }
 
       } else {
