@@ -7512,3 +7512,21 @@ textarea {
 
 .row .col.text-center .item.button {
   margin-bottom: 20px; }
+
+/* for availability page */
+.unselected {
+  height: 97%;
+  background: linear-gradient(to right, #e43a15, #e65245);
+  margin: 5px; }
+
+.selected {
+  height: 97%;
+  background: linear-gradient(to right, #52c234, #3CA55C);
+  margin: 5px; }
+
+.forty-five {
+  height: 45%; }
+
+.vertical-center {
+  position: relative;
+  top: 50%; }

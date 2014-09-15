@@ -24,11 +24,20 @@ angular.module('starter', ['ionic', 'starter.controllers'])
           })
 
     .state('app.settings', {
-      url: "/settings",
+      url: "/settings?firstTime",
       views: {
         'menuContent' :{
           templateUrl: "templates/settings.html",
           controller: 'SettingsCtrl'
+        }
+      }
+    })
+    .state('app.availability', {
+      url: "/availability",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/availability.html",
+          controller: 'AvailabilityCtrl'
         }
       }
     })
@@ -126,7 +135,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         } else if (principal.isFBLoggedIn && toState.name === 'app.login'){
           //if logged in and going to login page, you need to be in the cards page since logged in users shouldn't be shown a login page
           event.preventDefault();
-          $state.go('app.cards');
+          $state.go('app.availability');
 
         } else if (!principal.isFBLoggedIn && toState.name != 'app.login') {
           // not logged in you belong in the login page
@@ -208,7 +217,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   // Other functions in this factory come from the push plugin
 
   return {
-    appVersion:0.1,
+    appVersion:0.2,
     deferred:undefined,
     push_type:undefined,
     client_identification_sequence:undefined,
@@ -667,9 +676,10 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
           // once done updating location, send to cards page or whichever page you came from
           // also hide loading page
 
+          //TODO add check for if availability has been uploaded yet, if so app.cards, otherwise app.availability
           if (state.toState.name ==='app.login'){
             ionicLoading.hide();
-            state.go('app.cards');
+            state.go('app.availability');
           } else {
             ionicLoading.hide();
             state.go(state.toState.name);

@@ -163,6 +163,10 @@ angular.module('starter.controllers', [])
         }
       })
     .success(function(data,status,headers,config){
+      
+      principal.preferred_min_age = $scope.params.preferred_min_age;
+      principal.preferred_max_age = $scope.params.preferred_max_age;
+      principal.preferred_distance = pd; 
       $state.go('app.cards');
       $ionicLoading.hide();
     })
@@ -581,6 +585,87 @@ angular.module('starter.controllers', [])
     }
   }
 })
+
+
+.controller('AvailabilityCtrl', function($scope,$state,principal,$http,$ionicNavBarDelegate,$timeout) {
+
+  if (($state.fromState.name == 'app.choose_photos' && $state.toStateParams.firstTime == 'isFirstTime') || $state.fromState.name == 'app.login'){
+    $timeout(function(){
+      $ionicNavBarDelegate.showBackButton(false);
+    });
+  }
+
+  $scope.today_before_five = false;
+  $scope.today_after_five = false;
+  $scope.tomorrow_before_five = false;
+  $scope.tomorrow_after_five = false;
+
+  $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
+  .success(function(data,status,headers,config){
+    console.log(data);
+    var updated_at = new Date(data.updated_availability);
+    var currentDate = new Date();
+    console.log(updated_at);
+
+
+    if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
+      $scope.today_before_five = data.today_before_five;
+      $scope.today_after_five = data.today_after_five;
+      $scope.tomorrow_before_five = data.tomorrow_before_five;
+      $scope.tomorrow_after_five = data.tomorrow_after_five; 
+      
+    } else { 
+      //need to check when it was last updated
+      var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
+
+      //updated yesterday, that means 'tomorrow dates are already determined'...
+      if (updated_at.toDateString() == yesterday.toDateString()){
+        $scope.today_before_five =  data.tomorrow_before_five;
+        $scope.today_after_five =   data.tomorrow_after_five;
+      }
+      //last updated before yesterday, keep availability as false;
+    }
+  })
+  .error(function(data,status,headers,config){
+  }) 
+
+  $scope.save = function(){
+    var currentDate = new Date();
+    console.log($scope.today_before_five);
+    console.log($scope.today_after_five);
+    $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
+    {
+      profile:{
+        today_before_five: $scope.today_before_five,
+        today_after_five: $scope.today_after_five,
+        tomorrow_before_five: $scope.tomorrow_before_five,
+        tomorrow_after_five: $scope.tomorrow_after_five,
+        updated_availability: currentDate
+      }
+    })
+    .success(function(data,status,headers,config){
+      //Go to somewhere else
+      $state.go('app.cards');
+    })
+    .error(function(data,status,headers,config){
+      
+    }) 
+  }
+
+  $scope.select_today_before_five = function(){
+    $scope.today_before_five = !$scope.today_before_five; 
+  }
+  $scope.select_today_after_five = function(){
+    $scope.today_after_five = !$scope.today_after_five;
+  }
+  $scope.select_tomorrow_before_five = function(){
+    $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
+  }
+  $scope.select_tomorrow_after_five = function(){
+    $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
+  }
+})
+
 
 // determine what cards are displayed by replacing the element that was swiped in scope.cards with an element from scope.remainingCards
 function manageRemainingCards(element,scope,http,liked,principal){
