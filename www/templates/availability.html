@@ -5,24 +5,25 @@
   <ion-nav-buttons side="left">
     <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     <a href= "#/app/matches" class="button button-clear"><i class="ion-chatbubbles"></i></a>
-    <h1 class="title"> Are you free...</h1>
+    <h1 class="title"> Availability </h1>
   </ion-nav-buttons>
   <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
   	<div class="row row-center forty-five">
-		<div ng-class="{true:'selected col padding text-center', false:'unselected col padding text-center'}[today_before_five]" ng-click="select_today_before_five()">
+		<div ng-class="today_before_five? 'selected col padding text-center' :'unselected col padding text-center'" ng-click="select_today_before_five()">
 		<span class="col vertical-center">Today before 5?</span>
 		</div>
-		<div ng-class="{true:'selected col padding text-center', false:'unselected col padding text-center'}[tomorrow_before_five]" ng-click="select_tomorrow_before_five()">
+		<div ng-class="tomorrow_before_five? 'selected col padding text-center' :'unselected col padding text-center'" ng-click="select_tomorrow_before_five()">
 		<span class="col vertical-center">Tomorrow before 5?</span>
 		</div>
 	</div>
 	<div class="row row-center forty-five">
-		<div ng-class="{true:'selected col padding text-center', false:'unselected col padding text-center'}[today_after_five]" ng-click="select_today_after_five()">
+		<div ng-class="today_after_five?'selected col padding text-center':'unselected col padding text-center'" ng-click="select_today_after_five()">
 		<span class="col vertical-center"> Today after 5?</span>
 		</div>
-		<div ng-class="{true:'selected col padding text-center', false:'unselected col padding text-center'}[tomorrow_after_five]" ng-click="select_tomorrow_after_five()">
+		<div ng-class="tomorrow_after_five? 'selected col padding text-center':'unselected col padding text-center'" ng-click="select_tomorrow_after_five()">
 		<span class="col vertical-center">Tomorrow after 5?	</span>
 		</div>
+
 	</div>
 
 	<div class="row">

@@ -594,6 +594,7 @@ angular.module('starter.controllers', [])
       $ionicNavBarDelegate.showBackButton(false);
     });
   }
+  
 
   $scope.today_before_five = false;
   $scope.today_after_five = false;
@@ -605,15 +606,11 @@ angular.module('starter.controllers', [])
     console.log(data);
     var updated_at = new Date(data.updated_availability);
     var currentDate = new Date();
-    console.log(updated_at);
-
-
     if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
       $scope.today_before_five = data.today_before_five;
       $scope.today_after_five = data.today_after_five;
       $scope.tomorrow_before_five = data.tomorrow_before_five;
       $scope.tomorrow_after_five = data.tomorrow_after_five; 
-      
     } else { 
       //need to check when it was last updated
       var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
@@ -622,8 +619,10 @@ angular.module('starter.controllers', [])
       if (updated_at.toDateString() == yesterday.toDateString()){
         $scope.today_before_five =  data.tomorrow_before_five;
         $scope.today_after_five =   data.tomorrow_after_five;
+        //TODO: set a 'not yet updated' for the days not yet entered
       }
       //last updated before yesterday, keep availability as false;
+      //TODO: set a 'not yet updated' for all days
     }
   })
   .error(function(data,status,headers,config){
@@ -631,8 +630,7 @@ angular.module('starter.controllers', [])
 
   $scope.save = function(){
     var currentDate = new Date();
-    console.log($scope.today_before_five);
-    console.log($scope.today_after_five);
+    
     $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
     {
       profile:{
@@ -644,6 +642,7 @@ angular.module('starter.controllers', [])
       }
     })
     .success(function(data,status,headers,config){
+      console.log(data)
       //Go to somewhere else
       $state.go('app.cards');
     })

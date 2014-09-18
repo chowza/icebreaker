@@ -7516,16 +7516,16 @@ textarea {
 /* for availability page */
 .unselected {
   height: 97%;
-  background: linear-gradient(to right, #e43a15, #e65245);
+  background-color: #e43a15;
   margin: 5px; }
 
 .selected {
   height: 97%;
-  background: linear-gradient(to right, #52c234, #3CA55C);
+  background-color: #52c234;
   margin: 5px; }
 
 .forty-five {
-  height: 45%; }
+  height: 40%; }
 
 .vertical-center {
   position: relative;
