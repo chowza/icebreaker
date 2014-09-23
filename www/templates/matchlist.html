@@ -10,18 +10,20 @@
 	<div class="list">
 
     
-	    <a ng-repeat="match in matches" ng-class="{true:'greyed item item-thumbnail-left row', false:'item item-thumbnail-left row'}[match.too_late]" href="#/app/chats/{{match.swipee_id}}">
+	    <div ng-repeat="match in matches" ng-class="{true:'greyed item item-thumbnail-left row', false:'item item-thumbnail-left row'}[match.too_late]" >
         <div class="encapsulate-thumbnail">
 	         <img ng-src={{match.picture1}}>
         </div>
           <div class="row row-center">
   	      <div class="col">{{match.first_name}}</div>
-          <div class="col button"> Chat-for-24! </div>
+          <a href="#/app/chats/{{match.swipee_id}}" class="col button"><i class="ion-chatbubble"></i></a>
+           <!-- <div class="col button"> in-App-Call </div> -->
+          <!-- <div class="col button"> Rate Your Date </div> -->
         </div>
           
           
         <div class="overlay"></div>
-	    </a>
+	    </div>
       
     
   </div>

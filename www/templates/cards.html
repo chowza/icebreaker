@@ -5,10 +5,26 @@
     <h1 class="title">IceBreaker</h1>
   </ion-nav-buttons>
   <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
-  	<ion-pane swipeable ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0)" ng-show="card.id">
+  	<ion-pane ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0);height:85%" ng-show="card.id">
   	<div class="list card item" >
     		<!-- <a href="#/app/individual_page/{{card.facebook_id}}" class="item item-image"> -->
-    			<img ng-src={{card.picture1}}>
+        <ion-slide-box>
+          <ion-slide>
+          <img ng-src={{card.picture1}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture2}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture3}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture4}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture5}}>
+          </ion-slide>
+        </ion-slide-box>
           
   			<!-- </a> -->
   			<div class="row">
@@ -40,9 +56,9 @@
           </div>
         </div>
 	  </div>
-
-		
 	</ion-pane>
+
+  <div class="row pad-row"> <div class="col text-center"> <button swipeable class="button button-large"></button></div></div>
 
   </ion-content>
 </ion-view>

@@ -11,7 +11,7 @@ angular.module('starter.controllers', [])
 // ChoosePhotosCtrl -> templates/choose_photos.html -> also opens up the photos_modal
 // ChooseAnswersCtrl -> templates/choose_answers.html
 
-  .controller('CardsCtrl', function($scope,principal,$http,$ionicNavBarDelegate,$timeout) {
+  .controller('CardsCtrl', function($scope,principal,$http,$ionicNavBarDelegate,$timeout,$ionicSlideBoxDelegate) {
     
     //disable back button on Cards Control
     $timeout(function(){
@@ -59,7 +59,7 @@ angular.module('starter.controllers', [])
               $scope.cards[i].answer3 = data[i].answer3;
               $scope.cards[i].answer4 = data[i].answer4;
               $scope.cards[i].answer5 = data[i].answer5;
-
+              $ionicSlideBoxDelegate.update();
             } else {
               // all other cards can be pushed elsewhere
               $scope.remainingCards[0].push({
@@ -99,6 +99,7 @@ angular.module('starter.controllers', [])
         var disty = 0;
 
       $ionicGesture.on('dragstart',function(e){
+        console.log(element);
         startx = parseInt(e.gesture.touches[0].clientX);
         starty = parseInt(e.gesture.touches[0].clientY);
         distx = 0;
@@ -106,30 +107,32 @@ angular.module('starter.controllers', [])
       },element);
 
       $ionicGesture.on('drag',function(e){
-        var distx = parseInt(e.gesture.touches[0].clientX) - startx
-        var disty = parseInt(e.gesture.touches[0].clientY) - starty
-        element[0].style.left = (distx) + "px"
-        element[0].style.top = (disty) + "px"
+        var distx = (parseInt(e.gesture.touches[0].clientX) - startx)*2
+        var disty = (parseInt(e.gesture.touches[0].clientY) - starty)*2
+        element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (distx) + "px"
+        element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = (disty) + "px"
         
       },element);
 
       $ionicGesture.on('dragend',function(e){
         
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
-        if (e.gesture.touches[0].clientX > 0.8*window.innerWidth && distx >0.3*window.innerWidth) {
-                //LIKED
-              
-              manageRemainingCards(element,scope,$http,true,principal)
-              
-            } else if (e.gesture.touches[0].clientX < 0.2*window.innerWidth && distx < -0.3 * window.innerWidth){
+        var disty = parseInt(e.gesture.touches[0].clientY) - starty
+        if (disty >0.4*window.innerHeight) { //e.gesture.touches[0].clientX > 0.8*window.innerWidth && distx >0.3*window.innerWidth
                 // DISLIKED
               manageRemainingCards(element,scope,$http,false,principal);
+
+              
+            } else if (disty < -0.4 * window.innerHeight){//e.gesture.touches[0].clientX < 0.2*window.innerWidth && distx < -0.3 * window.innerWidth
+              //LIKED
+              
+              manageRemainingCards(element,scope,$http,true,principal)
               
 
             } else {
               // did not swipe far enough, return back to original position
-                element[0].style.left = "0";
-                element[0].style.top = "0";
+                element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0";
+                element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
             }
 
       },element);
@@ -190,7 +193,6 @@ angular.module('starter.controllers', [])
 
 // show chat messages
 .controller('ChatCtrl',function($scope,$stateParams,$ionicScrollDelegate,$q,principal,$http,$timeout,PushService){
-
   
   $scope.messages = PushService.messages = [];
   $scope.getMoreMessages = PushService.getMoreMessages;
@@ -375,7 +377,11 @@ angular.module('starter.controllers', [])
       }})
       .success(function(data, status, headers, config){
         $ionicLoading.hide();
-        $state.go('app.cards');
+        if($state.toStateParams.firstTime == 'isFirstTime'){
+          $state.go('app.availability');
+        } else {
+          $state.go('app.cards');  
+        }
       }).error(function(data, status, headers, config){
         $ionicLoading.hide();
       });
@@ -606,11 +612,12 @@ angular.module('starter.controllers', [])
     console.log(data);
     var updated_at = new Date(data.updated_availability);
     var currentDate = new Date();
+
     if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
-      $scope.today_before_five = data.today_before_five;
-      $scope.today_after_five = data.today_after_five;
-      $scope.tomorrow_before_five = data.tomorrow_before_five;
-      $scope.tomorrow_after_five = data.tomorrow_after_five; 
+      $scope.today_before_five = data.today_before_five || false;
+      $scope.today_after_five = data.today_after_five || false;
+      $scope.tomorrow_before_five = data.tomorrow_before_five || false;
+      $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
     } else { 
       //need to check when it was last updated
       var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
@@ -630,7 +637,7 @@ angular.module('starter.controllers', [])
 
   $scope.save = function(){
     var currentDate = new Date();
-    
+    var timezone = currentDate.getTimezoneOffset();
     $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
     {
       profile:{
@@ -638,7 +645,8 @@ angular.module('starter.controllers', [])
         today_after_five: $scope.today_after_five,
         tomorrow_before_five: $scope.tomorrow_before_five,
         tomorrow_after_five: $scope.tomorrow_after_five,
-        updated_availability: currentDate
+        updated_availability: currentDate,
+        timezone: timezone
       }
     })
     .success(function(data,status,headers,config){
@@ -671,10 +679,10 @@ function manageRemainingCards(element,scope,http,liked,principal){
     
   if (liked){
     //move to the right off screen
-    element[0].style.left = (window.innerWidth) + "px" 
+    element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (window.innerWidth) + "px" 
   } else {
     // move left off screen
-    element[0].style.right = "0" 
+    element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.right = "0" 
   }
     
     
@@ -720,8 +728,8 @@ function manageRemainingCards(element,scope,http,liked,principal){
       scope.cards[scope.cardPosition[0]%5].id = "";
       
       //TODO set a timeout on this because the ng-hide is taking a few seconds and it doesn't look good.
-      element[0].style.left = "0" ;  
-      element[0].style.top = "0";
+      element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0" ;  
+      element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
     }
 
     //increment card position

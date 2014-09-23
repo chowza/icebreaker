@@ -7530,3 +7530,8 @@ textarea {
 .vertical-center {
   position: relative;
   top: 50%; }
+
+/*** cards ***/
+.pad-row {
+  position: absolute;
+  top: 85%; }
