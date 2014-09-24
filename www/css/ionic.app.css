@@ -7532,6 +7532,30 @@ textarea {
   top: 50%; }
 
 /*** cards ***/
-.pad-row {
-  position: absolute;
-  top: 85%; }
+.profile {
+  padding: 0;
+  border-bottom-width: 0;
+  border-left-width: 0; }
+
+.list.card .row.second {
+  border-top-width: 0; }
+
+/**type of date***/
+.unselected-border {
+  height: 97%;
+  margin: 5px;
+  border-color: transparent;
+  border-width: 2px;
+  border-style: solid; }
+
+.selected-border {
+  height: 97%;
+  margin: 5px;
+  border-color: #52c234;
+  border-width: 2px;
+  border-style: solid; }
+
+.background-img {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat; }

@@ -1,0 +1,36 @@
+<ion-view>
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    <a href= "#/app/matches" class="button button-clear"><i class="ion-chatbubbles"></i></a>
+    <h1 class="title"> What are you up for? </h1>
+  </ion-nav-buttons> 
+  <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
+  	<div class="row row-center forty-five">
+		<div ng-class="coffee? 'selected-border col padding text-center background-img' :'unselected-border col padding text-center background-img'" ng-click="select_coffee()"
+		style="background-image:url('./img/coffee.jpeg');">
+		
+		</div>
+		<div ng-class="lunch? 'selected-border col padding text-center background-img' :'unselected-border col padding text-center background-img'" ng-click="select_lunch()"
+		style="background-image:url('./img/lunch.jpg');">
+		
+		</div>
+	</div>
+	<div class="row row-center forty-five">
+		<div ng-class="dinner?'selected-border col padding text-center background-img':'unselected-border col padding text-center background-img'" ng-click="select_dinner()"
+		style="background-image:url('./img/dinner.png');">
+		
+		</div>
+		<div ng-class="drinks? 'selected-border col padding text-center background-img':'unselected-border col padding text-center background-img'" ng-click="select_drinks()"
+		style="background-image:url('./img/drinks.jpg');">
+		
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col text-center">
+			<button class="button button-large" ng-click="save()"> Save! </button>
+		</div>
+	</div>
+
+  </ion-content>
+</ion-view>

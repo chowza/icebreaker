@@ -50,6 +50,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
+    .state('app.type_of_date',{
+      url:"/type",
+      views: {
+        'menuContent':{
+          templateUrl: "templates/type_of_date.html",
+          controller: 'TypeCtrl'
+        }
+      }
+    })
     .state('app.chats',{
       url:"/chats/{user_id}",
       views:{
@@ -625,16 +634,27 @@ function getFacebookData(q,principal){
   return deferred.promise;
 }
 
-// send geo location data to our servers
+// send geo location data to our servers and update availability if needed
 function updateGeoCoordinates(q,principal,http){
   var deferred = q.defer();
-  http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age}})
-  .success(function(data, status, headers, config){
-    console.log(data);
-    deferred.resolve(data);
-  }).error(function(data, status, headers, config){
-    deferred.reject(data);
-  });
+  if(principal.remember_availability){
+    var now = new Date();
+    http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age,updated_availability:now}})
+    .success(function(data, status, headers, config){
+      console.log(data);
+      deferred.resolve(data);
+    }).error(function(data, status, headers, config){
+      deferred.reject(data);
+    });
+  } else {
+    http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age}})
+    .success(function(data, status, headers, config){
+      console.log(data);
+      deferred.resolve(data);
+    }).error(function(data, status, headers, config){
+      deferred.reject(data);
+    });
+  }
   return deferred.promise;
 }
 
@@ -670,19 +690,28 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         principal.preferred_max_age = data.preferred_max_age,
         principal.preferred_distance = data.preferred_distance
         principal.id = data.id;
+        principal.remember_availability = data.remember_availability;
         //not a first time user, then update the geo coordinates since we need update location details.
 
         updateGeoCoordinates(q,principal,http).then(function(){
           // once done updating location, send to cards page or whichever page you came from
           // also hide loading page
 
-          //TODO add check for if availability has been uploaded yet, if so app.cards, otherwise app.availability
-          if (state.toState.name ==='app.login'){
+          var updated_at = new Date(data.updated_availability);
+          var currentDate = new Date();
+          if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
+            //availbility was updated today, therefore go to cards or where you were planning on going
+            if (state.toState.name ==='app.login'){
+              ionicLoading.hide();
+              state.go('app.cards'); // <-- we assume that date type has already been selected if updated availability is today
+            } else {
+              ionicLoading.hide();
+              state.go(state.toState.name);
+            }
+          } else {
+            //availbility was not updated today
             ionicLoading.hide();
             state.go('app.availability');
-          } else {
-            ionicLoading.hide();
-            state.go(state.toState.name);
           }
         });
 

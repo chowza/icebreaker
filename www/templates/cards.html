@@ -5,7 +5,7 @@
     <h1 class="title">IceBreaker</h1>
   </ion-nav-buttons>
   <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
-  	<ion-pane ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0);height:85%" ng-show="card.id">
+  	<ion-pane ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0)" ng-show="card.id">
   	<div class="list card item" >
     		<!-- <a href="#/app/individual_page/{{card.facebook_id}}" class="item item-image"> -->
         <ion-slide-box>
@@ -27,6 +27,7 @@
         </ion-slide-box>
           
   			<!-- </a> -->
+        <div swipeable class="item profile">
   			<div class="row">
 	  			<div class="col col-50">
 	  				<h2> {{card.first_name}} </h2>
@@ -40,7 +41,7 @@
   		  			<i class="ion-star"></i>
   		  	</div>
 	  		</div>
-        <div class="row">
+        <div class="row second">
           <div class="col">
             {{card.answer1}},&#160;{{card.answer2}}
           </div>
@@ -55,10 +56,8 @@
             {{card.answer5}}
           </div>
         </div>
+        </div>
 	  </div>
 	</ion-pane>
-
-  <div class="row pad-row"> <div class="col text-center"> <button swipeable class="button button-large"></button></div></div>
-
   </ion-content>
 </ion-view>

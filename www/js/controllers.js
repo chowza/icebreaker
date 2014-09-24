@@ -99,7 +99,6 @@ angular.module('starter.controllers', [])
         var disty = 0;
 
       $ionicGesture.on('dragstart',function(e){
-        console.log(element);
         startx = parseInt(e.gesture.touches[0].clientX);
         starty = parseInt(e.gesture.touches[0].clientY);
         distx = 0;
@@ -107,10 +106,10 @@ angular.module('starter.controllers', [])
       },element);
 
       $ionicGesture.on('drag',function(e){
-        var distx = (parseInt(e.gesture.touches[0].clientX) - startx)*2
-        var disty = (parseInt(e.gesture.touches[0].clientY) - starty)*2
-        element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (distx) + "px"
-        element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = (disty) + "px"
+        var distx = parseInt(e.gesture.touches[0].clientX) - startx
+        var disty = parseInt(e.gesture.touches[0].clientY) - starty
+        element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (distx) + "px"
+        element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = (disty) + "px"
         
       },element);
 
@@ -118,21 +117,20 @@ angular.module('starter.controllers', [])
         
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
         var disty = parseInt(e.gesture.touches[0].clientY) - starty
-        if (disty >0.4*window.innerHeight) { //e.gesture.touches[0].clientX > 0.8*window.innerWidth && distx >0.3*window.innerWidth
-                // DISLIKED
-              manageRemainingCards(element,scope,$http,false,principal);
-
-              
-            } else if (disty < -0.4 * window.innerHeight){//e.gesture.touches[0].clientX < 0.2*window.innerWidth && distx < -0.3 * window.innerWidth
+        if (e.gesture.touches[0].clientX > 0.8*window.innerWidth && distx >0.3*window.innerWidth) { // disty >0.4*window.innerHeight
+                
               //LIKED
               
               manageRemainingCards(element,scope,$http,true,principal)
               
-
+            } else if (e.gesture.touches[0].clientX < 0.2*window.innerWidth && distx < -0.3 * window.innerWidth){// disty < -0.4 * window.innerHeight
+              // DISLIKED
+              manageRemainingCards(element,scope,$http,false,principal);
+              
             } else {
               // did not swipe far enough, return back to original position
-                element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0";
-                element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
+                element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0";
+                element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
             }
 
       },element);
@@ -144,32 +142,95 @@ angular.module('starter.controllers', [])
 .controller('SettingsCtrl', function($scope,$state,principal,$ionicLoading,$http){
 
   //prepopulate the params with what user's current preferences are
-  $scope.params ={
-    preferred_min_age: principal.preferred_min_age,
-    preferred_max_age: principal.preferred_max_age,
-    preferred_distance: principal.preferred_distance/1000
-  }
+  
+  $scope.preferred_min_age = principal.preferred_min_age;
+  $scope.preferred_max_age = principal.preferred_max_age;
+  $scope.preferred_distance = principal.preferred_distance/1000;
+  $scope.today_before_five = principal.today_before_five || false;
+  $scope.today_after_five = principal.today_after_five || false;
+  $scope.tomorrow_before_five = principal.tomorrow_before_five || false;
+  $scope.tomorrow_after_five = principal.tomorrow_after_five || false;
+  $scope.coffee = principal.coffee || false;
+  $scope.lunch = principal.lunch || false;
+  $scope.dinner = principal.dinner || false;
+  $scope.drinks = principal.drinks || false;
+
+    $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
+    .success(function(data,status,headers,config){
+
+      $scope.coffee = data.coffee || false;
+      $scope.lunch = data.lunch || false; 
+      $scope.drinks = data.drinks || false;
+      $scope.dinner = data.dinner || false;
+
+      var updated_at = new Date(data.updated_availability);
+      var currentDate = new Date();
+
+      if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
+        $scope.today_before_five = data.today_before_five || false;
+        $scope.today_after_five = data.today_after_five || false;
+        $scope.tomorrow_before_five = data.tomorrow_before_five || false;
+        $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
+      } else { 
+        //need to check when it was last updated
+        var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
+
+        //updated yesterday, that means 'tomorrow dates are already determined'...
+        if (updated_at.toDateString() == yesterday.toDateString()){
+          $scope.today_before_five =  data.tomorrow_before_five;
+          $scope.today_after_five =   data.tomorrow_after_five;
+          //TODO: set a 'not yet updated' for the days not yet entered
+        }
+        //last updated before yesterday, keep availability as false;
+        //TODO: set a 'not yet updated' for all days
+      }
+    })
+    .error(function(data,status,headers,config){
+    }) 
+
   
   //save to server
   $scope.saveSettings = function(){
     $ionicLoading.show({
       templateUrl: "templates/loading.html"
     });
-    var pd = $scope.params.preferred_distance*1000;
+    var pd = $scope.preferred_distance*1000;
+
+    var currentDate = new Date();
+    var timezone = currentDate.getTimezoneOffset();
     
     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
       {
         profile:{
-          preferred_min_age: $scope.params.preferred_min_age,
-          preferred_max_age: $scope.params.preferred_max_age,
-          preferred_distance: pd
+          preferred_min_age: $scope.preferred_min_age,
+          preferred_max_age: $scope.preferred_max_age,
+          preferred_distance: pd,
+          today_before_five: $scope.today_before_five,
+          today_after_five: $scope.today_after_five,
+          tomorrow_before_five: $scope.tomorrow_before_five,
+          tomorrow_after_five: $scope.tomorrow_after_five,
+          coffee: $scope.coffee,
+          lunch: $scope.lunch,
+          drinks: $scope.drinks,
+          dinner: $scope.dinner,
+          updated_availability: currentDate,
+          timezone: timezone
         }
       })
     .success(function(data,status,headers,config){
       
-      principal.preferred_min_age = $scope.params.preferred_min_age;
-      principal.preferred_max_age = $scope.params.preferred_max_age;
+      principal.preferred_min_age = $scope.preferred_min_age;
+      principal.preferred_max_age = $scope.preferred_max_age;
       principal.preferred_distance = pd; 
+      principal.today_before_five = $scope.today_before_five;
+      principal.today_after_five = $scope.today_after_five;
+      principal.tomorrow_before_five = $scope.tomorrow_before_five;
+      principal.tomorrow_after_five = $scope.tomorrow_after_five;
+      principal.coffee = $scope.coffee;
+      principal.lunch = $scope.lunch;
+      principal.dinner = $scope.dinner;
+      principal.drinks = $scope.drinks;
+
       $state.go('app.cards');
       $ionicLoading.hide();
     })
@@ -179,6 +240,30 @@ angular.module('starter.controllers', [])
     })
   }
 
+  $scope.select_coffee = function(){
+    $scope.coffee = !$scope.coffee;
+  }
+  $scope.select_drinks = function(){
+    $scope.drinks = !$scope.drinks;
+  }
+  $scope.select_lunch = function(){
+    $scope.lunch = !$scope.lunch;
+  }
+  $scope.select_dinner = function(){
+    $scope.dinner = !$scope.dinner;
+  }
+  $scope.select_today_before_five = function(){
+    $scope.today_before_five = !$scope.today_before_five; 
+  }
+  $scope.select_today_after_five = function(){
+    $scope.today_after_five = !$scope.today_after_five;
+  }
+  $scope.select_tomorrow_before_five = function(){
+    $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
+  }
+  $scope.select_tomorrow_after_five = function(){
+    $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
+  }
   
 })
 
@@ -367,24 +452,44 @@ angular.module('starter.controllers', [])
       templateUrl: "templates/loading.html"
     });
       console.log("save photos clicked");
-
-      $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
-        picture1_url: $scope.image_infos[0].url,
-        picture2_url: $scope.image_infos[1].url,
-        picture3_url: $scope.image_infos[2].url,
-        picture4_url: $scope.image_infos[3].url,
-        picture5_url: $scope.image_infos[4].url
-      }})
-      .success(function(data, status, headers, config){
-        $ionicLoading.hide();
-        if($state.toStateParams.firstTime == 'isFirstTime'){
-          $state.go('app.availability');
-        } else {
-          $state.go('app.cards');  
-        }
-      }).error(function(data, status, headers, config){
-        $ionicLoading.hide();
-      });
+      if($state.toStateParams.firstTime == 'isFirstTime'){
+        $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
+          picture1_url: $scope.image_infos[0].url,
+          picture2_url: $scope.image_infos[1].url,
+          picture3_url: $scope.image_infos[2].url,
+          picture4_url: $scope.image_infos[3].url,
+          picture5_url: $scope.image_infos[4].url,
+          today_before_five: false,
+          today_after_five: false,
+          tomorrow_before_five: false,
+          tomorrow_after_five: false,
+          coffee: false,
+          lunch: false,
+          dinner: false,
+          drinks: false
+        }})
+        .success(function(data, status, headers, config){
+          $ionicLoading.hide();
+            $state.go('app.availability');
+        }).error(function(data, status, headers, config){
+          $ionicLoading.hide();
+        });
+      } else {
+        $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
+          picture1_url: $scope.image_infos[0].url,
+          picture2_url: $scope.image_infos[1].url,
+          picture3_url: $scope.image_infos[2].url,
+          picture4_url: $scope.image_infos[3].url,
+          picture5_url: $scope.image_infos[4].url
+        }})
+        .success(function(data, status, headers, config){
+          $ionicLoading.hide();
+            $state.go('app.cards');
+        }).error(function(data, status, headers, config){
+          $ionicLoading.hide();
+        });
+      }
+      
   }
 
 
@@ -592,6 +697,63 @@ angular.module('starter.controllers', [])
   }
 })
 
+.controller('TypeCtrl',function($scope,$state,$ionicNavBarDelegate,$timeout,$http,principal){
+  if (($state.fromState.name == 'app.availability' && $state.toStateParams.firstTime == 'isFirstTime') || $state.fromState.name == 'app.login'){
+    $timeout(function(){
+      $ionicNavBarDelegate.showBackButton(false);
+    });
+  }  
+  $scope.coffee = false;
+  $scope.lunch = false;
+  $scope.drinks = false;
+  $scope.dinner = false;
+
+  $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
+  .success(function(data,status,headers,config){
+    $scope.coffee = data.coffee || false;
+    $scope.lunch = data.lunch || false; 
+    $scope.drinks = data.drinks || false;
+    $scope.dinner = data.dinner || false;
+
+  })
+  .error(function(data,status,headers,config){
+  })
+
+  $scope.save = function(){
+      principal.coffee = $scope.coffee;
+      principal.lunch = $scope.lunch;
+      principal.dinner = $scope.dinner;
+      principal.drinks = $scope.drinks;
+      $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
+      {
+        profile:{
+          coffee: $scope.coffee,
+          lunch: $scope.lunch,
+          drinks: $scope.drinks,
+          dinner: $scope.dinner,
+        }
+      })
+      .success(function(data,status,headers,config){
+        $state.go('app.cards');
+      })
+      .error(function(data,status,headers,config){
+      }) 
+  }
+
+  $scope.select_coffee = function(){
+    $scope.coffee = !$scope.coffee;
+  }
+  $scope.select_drinks = function(){
+    $scope.drinks = !$scope.drinks;
+  }
+  $scope.select_lunch = function(){
+    $scope.lunch = !$scope.lunch;
+  }
+  $scope.select_dinner = function(){
+    $scope.dinner = !$scope.dinner;
+  }
+
+})
 
 .controller('AvailabilityCtrl', function($scope,$state,principal,$http,$ionicNavBarDelegate,$timeout) {
 
@@ -601,19 +763,25 @@ angular.module('starter.controllers', [])
     });
   }
   
-
   $scope.today_before_five = false;
   $scope.today_after_five = false;
   $scope.tomorrow_before_five = false;
   $scope.tomorrow_after_five = false;
+  $scope.remember_availability = false;
 
   $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
   .success(function(data,status,headers,config){
     console.log(data);
     var updated_at = new Date(data.updated_availability);
     var currentDate = new Date();
+    if (data.remember_availability){
+      $scope.today_before_five = data.today_before_five || false;
+      $scope.today_after_five = data.today_after_five || false;
+      $scope.tomorrow_before_five = data.tomorrow_before_five || false;
+      $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
+      $scope.remember_availability = true;
 
-    if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
+    } else if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
       $scope.today_before_five = data.today_before_five || false;
       $scope.today_after_five = data.today_after_five || false;
       $scope.tomorrow_before_five = data.tomorrow_before_five || false;
@@ -638,6 +806,11 @@ angular.module('starter.controllers', [])
   $scope.save = function(){
     var currentDate = new Date();
     var timezone = currentDate.getTimezoneOffset();
+    principal.today_before_five = $scope.today_before_five,
+    principal.today_after_five = $scope.today_after_five,
+    principal.tomorrow_before_five = $scope.tomorrow_before_five,
+    principal.tomorrow_after_five = $scope.tomorrow_after_five,
+
     $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
     {
       profile:{
@@ -646,13 +819,14 @@ angular.module('starter.controllers', [])
         tomorrow_before_five: $scope.tomorrow_before_five,
         tomorrow_after_five: $scope.tomorrow_after_five,
         updated_availability: currentDate,
+        remember_availability: remember_availability,
         timezone: timezone
       }
     })
     .success(function(data,status,headers,config){
       console.log(data)
       //Go to somewhere else
-      $state.go('app.cards');
+      $state.go('app.type_of_date');
     })
     .error(function(data,status,headers,config){
       
@@ -679,10 +853,10 @@ function manageRemainingCards(element,scope,http,liked,principal){
     
   if (liked){
     //move to the right off screen
-    element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (window.innerWidth) + "px" 
+    element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (window.innerWidth) + "px" 
   } else {
     // move left off screen
-    element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.right = "0" 
+    element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.right = "0" 
   }
     
     
@@ -728,8 +902,8 @@ function manageRemainingCards(element,scope,http,liked,principal){
       scope.cards[scope.cardPosition[0]%5].id = "";
       
       //TODO set a timeout on this because the ng-hide is taking a few seconds and it doesn't look good.
-      element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0" ;  
-      element[0].parentNode.parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
+      element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0" ;  
+      element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
     }
 
     //increment card position
