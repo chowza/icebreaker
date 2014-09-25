@@ -42,6 +42,7 @@ angular.module('starter.controllers', [])
 
     $http.get(AppSettings.baseApiUrl + 'profiles',{params:{facebook_id:principal.facebook_id}})
       .success(function(data,status,headers,config){
+        console.log("on cards page successfully got profiles");
         if (data.length){
           for(i=0;i<data.length;i++){
             $scope.skip_ids.push(data[i].id);
@@ -108,8 +109,8 @@ angular.module('starter.controllers', [])
       $ionicGesture.on('drag',function(e){
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
         var disty = parseInt(e.gesture.touches[0].clientY) - starty
-        element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (distx) + "px"
-        element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = (disty) + "px"
+        element[0].parentNode.parentNode.children[0].style.left = (distx) + "px"
+        element[0].parentNode.parentNode.children[0].style.top = (disty) + "px"
         
       },element);
 
@@ -129,8 +130,8 @@ angular.module('starter.controllers', [])
               
             } else {
               // did not swipe far enough, return back to original position
-                element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0";
-                element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
+                element[0].parentNode.parentNode.children[0].style.left = "0";
+                element[0].parentNode.parentNode.children[0].style.top = "0";
             }
 
       },element);
@@ -386,7 +387,103 @@ angular.module('starter.controllers', [])
     };
 })
 
+
+.directive("cropper",['$ionicGesture',function($ionicGesture){
+  return {
+    restrict:"A",
+    scope:true,
+    link: function(scope,element,attrs){
+      startx = 0;
+      starty = 0;
+      leftPos = 0;
+      topPos = 0;
+      var originalHeight = 305; 
+      
+      $ionicGesture.on('pinch',function(e){
+
+        console.log(element[0].children[1].offsetWidth);
+        
+        if (element[0].children[1].offsetHeight = 305){
+          element[0].children[1].style.height = e.gesture.scale*100 +"%";  
+          element[0].children[1].style.width = e.gesture.scale*100 +"%";  
+        } else {
+          currentHeight = element[0].children[1].offsetHeight;
+          element[0].children[1].style.height = currentHeight/305*e.gesture.scale +"%";  
+        }
+
+        
+        
+
+        // if (e.gesture.startEvent.target.className == "cropper"){
+          
+        //   if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale <= originalHeight && e.gesture.startEvent.target.offsetHeight*e.gesture.scale >=0){
+            
+        //     element[0].children[1].style.height = e.gesture.startEvent.target.offsetHeight*e.gesture.scale + "px";
+        //     element[0].children[1].style.width = e.gesture.startEvent.target.offsetWidth*e.gesture.scale + "px";
+        
+        //   } else if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale > originalHeight){
+        //     element[0].children[1].style.height = "100%";
+        //     element[0].children[1].style.width = "100%";
+        //   }
+        // } else if (e.gesture.startEvent.target.className == "main-image-height"){
+          
+        //   if (e.gesture.startEvent.target.offsetParent.children[1].offsetHeight*e.gesture.scale <= originalHeight && e.gesture.startEvent.target.offsetParent.children[1].offsetHeight*e.gesture.scale >=0){
+        //     element[0].children[1].style.height = e.gesture.startEvent.target.offsetParent.children[1].offsetHeight*e.gesture.scale + "px";
+        //     element[0].children[1].style.width = e.gesture.startEvent.target.offsetParent.children[1].offsetWidth*e.gesture.scale + "px";
+        //   } else if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale > originalHeight){
+        //     element[0].children[1].style.height = "100%";
+        //     element[0].children[1].style.width = "100%";
+        //   }
+        // } else {
+          
+        //   if (e.gesture.startEvent.target.children[1].offsetHeight*e.gesture.scale <= originalHeight && e.gesture.startEvent.target.children[1].offsetHeight*e.gesture.scale >=0){
+        //     element[0].children[1].style.height = e.gesture.startEvent.target.children[1].offsetHeight*e.gesture.scale + "px";
+        //     element[0].children[1].style.width = e.gesture.startEvent.target.children[1].offsetWidth*e.gesture.scale + "px";
+        //   } else if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale > originalHeight){
+        //     element[0].children[1].style.height = "100%";
+        //     element[0].children[1].style.width = "100%";
+        //   }
+        // }
+
+      },element);
+
+      $ionicGesture.on('dragstart',function(e){
+        console.log(e.gesture.startEvent);
+        startx = parseInt(e.gesture.touches[0].clientX);
+        starty = parseInt(e.gesture.touches[0].clientY);
+      },element);
+
+      $ionicGesture.on('drag',function(e){
+        var distx = parseInt(e.gesture.touches[0].clientX) - startx
+        var disty = parseInt(e.gesture.touches[0].clientY) - starty
+        element[0].children[0].style.left = (leftPos + distx) + "px"
+        element[0].children[0].style.top = (topPos + disty) + "px"
+      },element);
+
+      $ionicGesture.on('dragend',function(e){
+        leftPos = element[0].children[0].offsetLeft;
+        topPos = element[0].children[0].offsetTop;
+      },element);
+    }
+
+  }
+}])
+
+
 .controller('ChoosePhotosCtrl',function($scope,$ionicModal,$timeout,principal,$http,$state,$q,$ionicLoading,$ionicNavBarDelegate){
+  
+
+
+
+
+
+
+
+
+  $scope.number_selected = 0;
+  $scope.showChangeImage = false;
+  $scope.showSwapImage = false;
+  $scope.second_selected = null;
   
   // we add currentTime to the image so that if the image is cached on the users phone, 
   // then looking for image.jpg?someothertimehere will trigger the phone to look for another image
@@ -405,11 +502,11 @@ angular.module('starter.controllers', [])
     });
   } 
   
-  $scope.image_infos = [{ url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/1.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(0);} },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/2.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(1);} },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/3.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(2);} },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/4.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(3);} },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/5.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(4);} }]
+  $scope.image_infos = [{ url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/1.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(0);},selected_image:false },
+  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/2.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(1);},selected_image:false },
+  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/3.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(2);},selected_image:false },
+  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/4.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(3);},selected_image:false },
+  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/5.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(4);},selected_image:false }]
     
   //photourls loaded for fb
   $scope.photoUrls = [];
@@ -425,26 +522,130 @@ angular.module('starter.controllers', [])
     $scope.modal = modal;
   });
 
+  //define picture editing modal
+  $ionicModal.fromTemplateUrl('templates/crop_modal.html',{
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(crop,t){
+    $scope.crop = crop;
+  });
+
   // this button in the photos modal, clicking back hides the modal
   $scope.goBack = function(){
     $scope.modal.hide();
+    $scope.currently_selected = null; 
   }
   
-  //monitor which profile image the user wants to change
+  // //monitor which profile image the user wants to change
+  // function selectImageToEdit(n){
+  //   $scope.modal.show();
+  //   $scope.currently_selected = n;
+  //   if ($scope.firstClick){
+  //     $scope.loadMore();
+  //     $scope.firstClick = false;
+  //   } 
+  // }
+
   function selectImageToEdit(n){
+    if ($scope.number_selected == 0){
+      //nothing selected yet, select image
+      $scope.currently_selected = n;
+      $scope.image_infos[n].selected_image = !$scope.image_infos[n].selected_image;
+      $scope.number_selected = 1;
+      $scope.showChangeImage = true;
+    } else if ($scope.number_selected == 1){
+      // 1 image already selected, see if clicked image is that image
+      if ($scope.currently_selected == n) {
+        //deselect image cause image is already selected
+        $scope.image_infos[n].selected_image = !$scope.image_infos[n].selected_image;
+        $scope.currently_selected = null;
+        $scope.number_selected = 0;
+        $scope.showChangeImage = false;
+      } else {
+        //select a second image since clicked image is not already selected
+        $scope.second_selected = n;
+        $scope.image_infos[n].selected_image = !$scope.image_infos[n].selected_image;
+        $scope.number_selected = 2;
+        $scope.showChangeImage = false;
+        $scope.showSwapImage = true;
+      }
+    } else {
+      //number selected is 2
+      if ($scope.second_selected == n){
+        //deselect
+        $scope.second_selected = null;
+        $scope.image_infos[n].selected_image = !$scope.image_infos[n].selected_image;
+        $scope.number_selected = 1;
+        $scope.showChangeImage = true;
+        $scope.showSwapImage = false;
+      } else if ($scope.currently_selected == n) {
+        $scope.currently_selected = $scope.second_selected;
+        $scope.second_selected = null;
+        console.log("currently selected is " +$scope.currently_selected);
+        $scope.image_infos[n].selected_image = !$scope.image_infos[n].selected_image;
+        $scope.number_selected = 1;
+        $scope.showChangeImage = true;
+        $scope.showSwapImage = false;
+      }
+    } 
+    
+  }
+
+  $scope.removeImage = function(){
+    
+    $scope.number_selected = 0;
+    $scope.showChangeImage = false;
+    $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
+    
+    if ($scope.currently_selected == 0) {
+      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/iconlight.jpg";
+    } else {
+      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/icondark.jpg";
+    }
+    $scope.currently_selected = null;
+  }
+
+  $scope.changeImage = function(){
     $scope.modal.show();
-    $scope.currently_selected = n;
     if ($scope.firstClick){
       $scope.loadMore();
       $scope.firstClick = false;
     } 
+    $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
+    $scope.number_selected = 0;
+    $scope.showChangeImage = false;
   }
 
-  // within the photos modal the user has chosen an image for their profile. Replace the url of the image with this new url
-  $scope.selectPictureForProfile = function(t){
-    $scope.image_infos[$scope.currently_selected].url = t.photo;
-    $scope.modal.hide();
+  $scope.swapImage = function(){
+    tempurl = $scope.image_infos[$scope.currently_selected].url
+    $scope.image_infos[$scope.currently_selected].url = $scope.image_infos[$scope.second_selected].url;
+    $scope.image_infos[$scope.second_selected].url = tempurl;
+    $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
+    $scope.image_infos[$scope.second_selected].selected_image = !$scope.image_infos[$scope.second_selected].selected_image;
+    $scope.number_selected = 0;
+    $scope.showSwapImage = false;
+    $scope.currently_selected = null;
+    $scope.second_selected = null;
   }
+
+  $scope.selectPictureForProfile = function(t){
+    
+    if (typeof($scope.currently_selected)!="null"){
+      $scope.image_infos[$scope.currently_selected].url = t.photo;  
+    }
+    $scope.modal.hide();
+    $scope.crop.show();
+    //$scope.currently_selected = null; 
+    
+    
+    //TODO: on selecting save crop need to set currently_selected to null
+  }
+
+  // // within the photos modal the user has chosen an image for their profile. Replace the url of the image with this new url
+  // $scope.selectPictureForProfile = function(t){
+  //   $scope.image_infos[$scope.currently_selected].url = t.photo;
+  //   $scope.modal.hide();
+  // }
   
   // send data to server
   $scope.save_photos = function(){
@@ -698,7 +899,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('TypeCtrl',function($scope,$state,$ionicNavBarDelegate,$timeout,$http,principal){
-  if (($state.fromState.name == 'app.availability' && $state.toStateParams.firstTime == 'isFirstTime') || $state.fromState.name == 'app.login'){
+  if (($state.fromState.name == 'app.availability') || $state.fromState.name == 'app.login'){
     $timeout(function(){
       $ionicNavBarDelegate.showBackButton(false);
     });
@@ -819,7 +1020,7 @@ angular.module('starter.controllers', [])
         tomorrow_before_five: $scope.tomorrow_before_five,
         tomorrow_after_five: $scope.tomorrow_after_five,
         updated_availability: currentDate,
-        remember_availability: remember_availability,
+        remember_availability: $scope.remember_availability,
         timezone: timezone
       }
     })
@@ -853,10 +1054,10 @@ function manageRemainingCards(element,scope,http,liked,principal){
     
   if (liked){
     //move to the right off screen
-    element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = (window.innerWidth) + "px" 
+    element[0].parentNode.parentNode.children[0].style.left = (window.innerWidth) + "px" 
   } else {
     // move left off screen
-    element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.right = "0" 
+    element[0].parentNode.parentNode.children[0].style.right = "0" 
   }
     
     
@@ -902,8 +1103,8 @@ function manageRemainingCards(element,scope,http,liked,principal){
       scope.cards[scope.cardPosition[0]%5].id = "";
       
       //TODO set a timeout on this because the ng-hide is taking a few seconds and it doesn't look good.
-      element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.left = "0" ;  
-      element[0].parentNode.parentNode.children[scope.cardPosition[0]%5].style.top = "0";
+      element[0].parentNode.parentNode.children[0].style.left = "0" ;  
+      element[0].parentNode.parentNode.children[0].style.top = "0";
     }
 
     //increment card position
@@ -925,7 +1126,8 @@ function uploadSwipeDetails(http,likes,card,principal){
   console.log("uploaded"+card.first_name);
   http.post(AppSettings.baseApiUrl + 'matches',{match:{likes:likes,swipee_name:card.first_name,swipee_id:card.id,profile_id:principal.id}})
   .success(function(data,status,headers,config){
-    
+    console.log(data);
+    console.log(config);
   })
   .error(function(data,status,headers,config){
     console.log(config);

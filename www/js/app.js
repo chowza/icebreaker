@@ -238,9 +238,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     registerForPush: function(){
       deferred = $q.defer();
       // Whenever the appversion changes you must reregister a push notification. Therefore we check if the appVersion stored is different
-      if (window.localStorage.getItem("hasRegisteredForPush") && window.localStorage.getItem("appVersion") == this.appVersion){
+      if (window.localStorage.getItem("hasRegisteredForPush") =="true" && window.localStorage.getItem("appVersion") == this.appVersion){
         deferred.resolve('previously registered for push');
       } else {
+        console.log(this.appVersion);
         // have not yet registered for push notifications. save the type of push ('gcm','apns',etc) so we can use it later.
         // then run the device dependent register function for the push notification
         try{
@@ -288,8 +289,9 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             // Notification indicates that the phone has been successfully registered, 
             // send the registration details to our server and save the details locally so that we know not to register the phone next time
             this.client_identification_sequence = e.regid;
-            window.localStorage.setItem("hasRegisteredForPush",true);
+            window.localStorage.setItem("hasRegisteredForPush","true");
             deferred.resolve("received GCM!");
+            console.log("starting send client identification to server...");
             this.sendClientIdentificationToServer();
           }
           break;
@@ -402,7 +404,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     //token handler for iOS
     tokenHandler : function(result) {
       this.client_identification_sequence = result.token, //<--NOT TESTED yet, not sure what the variable name is
-      window.localStorage.setItem("hasRegisteredForPush",true); 
+      window.localStorage.setItem("hasRegisteredForPush","true"); 
       deferred.resolve(result);
       this.sendClientIdentificationToServer();
     },
@@ -410,7 +412,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     // channel handler for WP8
     channelHandler: function(result){
       this.client_identification_sequence = result.channel // <--NOT TESTED yet, not sure what variable name is
-      window.localStorage.setItem("hasRegisteredForPush",true);
+      window.localStorage.setItem("hasRegisteredForPush","true");
       deferred.resolve(result);
     },
 
@@ -424,10 +426,13 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
     //uploading identification to server
     sendClientIdentificationToServer : function (){
+      window.localStorage.setItem("appVersion",this.appVersion);
+      console.log(this.appVersion)
       $http.put(AppSettings.baseApiUrl + 'profiles/'+this.facebook_id,{profile:{client_identification_sequence:this.client_identification_sequence, push_type:this.push_type}})
       .success(function(data,status,headers,config){
         //on successful registration and successfully sending details to server save on the phone the local app version
-        window.localStorage.setItem("appVersion",PushService.appVersion);
+        console.log("sent client identification to server");
+        
       })
       .error(function(data,status,headers,config){})
     },
@@ -649,7 +654,6 @@ function updateGeoCoordinates(q,principal,http){
   } else {
     http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age}})
     .success(function(data, status, headers, config){
-      console.log(data);
       deferred.resolve(data);
     }).error(function(data, status, headers, config){
       deferred.reject(data);
@@ -663,8 +667,7 @@ function updateGeoCoordinates(q,principal,http){
 function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopup,http,PushService){
 
   q.all([getFacebookData(q,principal),GEOLocation(q,principal)]).then(function(response){
-      console.log(response);
-
+      console.log("done geting facebook data and geolocation");
       currentYear = new Date().getFullYear()
       principal.facebook_id = response[0].id;
       PushService.facebook_id = response[0].id;
@@ -677,8 +680,7 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
     // check first time user
     checkIfFirstTimeUser(q,principal,http).then(function(data){
       if(data){
-        console.log(data);
-        
+        console.log("done checking first time user");
         principal.firstTimeUser = false;
         // save details locally
         principal.answer1 = data.answer1;
@@ -694,6 +696,7 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         //not a first time user, then update the geo coordinates since we need update location details.
 
         updateGeoCoordinates(q,principal,http).then(function(){
+          console.log("done updating geo coordinates and done updating availability times if user has remember_avialability = true")
           // once done updating location, send to cards page or whichever page you came from
           // also hide loading page
 
@@ -716,10 +719,13 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         });
 
         //not a first time user, check if the app version has changed. changed app versions need to reregister for push.
-        if (window.localStorage.getItem("hasRegisteredForPush") && window.localStorage.getItem("appVersion") == PushService.appVersion){
+        if (window.localStorage.getItem("hasRegisteredForPush") == "true" && window.localStorage.getItem("appVersion") == PushService.appVersion){
           //all good, already registered and app versions are same, nothing to do
           console.log("same app version nothing to do...")
         } else {
+          console.log(window.localStorage.getItem("hasRegisteredForPush"));
+          console.log(window.localStorage.getItem("appVersion"));
+          console.log(PushService.appVersion);
           console.log("new app version registering for push...")
           PushService.registerForPush();
         }

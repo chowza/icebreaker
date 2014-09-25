@@ -7447,7 +7447,7 @@ textarea {
   height: 50%; }
 
 .cropped-main {
-  /*background-position:center;*/
+  background-repeat: no-repeat;
   background-size: cover; }
 
 .cropped {
@@ -7544,7 +7544,7 @@ textarea {
 .unselected-border {
   height: 97%;
   margin: 5px;
-  border-color: transparent;
+  border-color: white;
   border-width: 2px;
   border-style: solid; }
 
@@ -7559,3 +7559,31 @@ textarea {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat; }
+
+/*** choose photos ***/
+/**main image height also on crop modal***/
+.main-image-height {
+  height: 300px;
+  position: relative; }
+
+.selected-border-main {
+  border-color: #52c234;
+  border-width: 2px;
+  border-style: solid; }
+
+.unselected-border-main {
+  border-color: white;
+  border-width: 2px;
+  border-style: solid; }
+
+/***crop modal page ***/
+.cropper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  border-color: orange;
+  border-width: 4px;
+  border-style: solid;
+  height: 100%;
+  width: 100%; }

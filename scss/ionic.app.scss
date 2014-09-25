@@ -241,7 +241,7 @@ textarea {
 }
 
 .cropped-main{
-	/*background-position:center;*/
+	background-repeat:no-repeat;
 	background-size:cover;
 
 }
@@ -315,12 +315,6 @@ textarea {
 	margin:auto;*/
 }
 
-.item.item-thumbnail-left.row.row-center .button{
-/*	margin-left:auto;
-	margin-right:auto;
-	display:table;*/
-}
-
 .row .col.text-center .item.button {
 	margin-bottom:20px;
 }
@@ -381,4 +375,38 @@ textarea {
 	background-position:center;
 	background-size:contain;
 	background-repeat:no-repeat;
+}
+
+/*** choose photos ***/
+/**main image height also on crop modal***/
+.main-image-height{
+	height:300px;
+	position:relative;
+}
+
+.selected-border-main {
+	border-color:#52c234;
+	border-width:2px;
+	border-style:solid;	
+}
+.unselected-border-main {
+	border-color:white;
+	border-width:2px;
+	border-style:solid;	
+
+}
+
+/***crop modal page ***/
+
+.cropper{
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:10;
+	border-color:orange;
+	border-width:4px;
+	border-style:solid;
+	height:100%;
+	width:100%;
+
 }
