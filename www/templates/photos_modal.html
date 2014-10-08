@@ -5,16 +5,20 @@
   	  <h1 class="title"> Click Image to Add</h1>
     </ion-header-bar>
     <ion-content>
-    <div class="list">
-		<div ng-repeat="n in [] | range:(photoUrls.length/2)+1">
+    <div class="list" style="height:100%">
+		<!-- <div ng-repeat="n in [] | range:(photoUrls.length/2)+1">
 			<div class="no-padding row text-center" style="display:inline-table;height:200px">
 				<div class="col pictureslist" ng-repeat="photo in photoUrls.slice($index*2,($index*2+2))" ng-style="{'background-image':'url({{photo}})'}" ng-click="selectPictureForProfile(this)">
 				</div>
 			</div>
-		</div>
-	    </div>
+		</div> -->
+    <div style="padding-left:1%;padding-top:1%;height:33%;width:33%;overflow:hidden;" collection-repeat="photo in photoUrls" collection-item-width="'33%'" collection-item-height="'33%'" ng-click="selectPictureForProfile(this)"> 
+      <img style="height:100%;" ng-src={{photo}}>
+	 </div>
+    
 	</div>
-       <ion-infinite-scroll on-infinite="loadMore()" distance="50%">
-       </ion-infinite-scroll>
+
     </ion-content>
+           <ion-infinite-scroll on-infinite="loadMore()" distance="10%">
+       </ion-infinite-scroll>
 </ion-modal-view>

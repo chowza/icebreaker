@@ -18,9 +18,9 @@
   		<!--<div class="col text-center no-padding" ng-hide="image_infos[0].url">
     			<i class="button-clear icon ion-image no-padding"> </i>
 			</div> -->
-			<div class="list card item" ng-click="image_infos[0].onClickFunction()" ng-class="image_infos[0].selected_image? 'selected-border-main cropped-main' : 'unselected-border-main cropped-main'">
+			<div class="list card item main-image-height" ng-click="image_infos[0].onClickFunction()" ng-class="image_infos[0].selected_image? 'selected-border-main cropped-main' : 'unselected-border-main cropped-main'">
 
-			<img ng-src={{image_infos[0].url}} class="main-image-height">
+			<img ng-src={{image_infos[0].url}} class="center-image">
 			</div>
 			<!-- <div vh-fifty ng-class="image_infos[0].selected_image? 'selected-border col cropped-main' : 'unselected-border col cropped-main'" ng-style="image_infos[0].url ? {'background-image':'url(' +image_infos[0].url+')'} : {}"> -->
 				

@@ -203,11 +203,16 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             // since already logged in, perform post login actions (i.e. save basic user details and upload the current geo location data to our surveys)
             postLoginPromises($q,principal,login_status,$state,$ionicLoading,$ionicPopup,$http,PushService);
           } else {
+            console.log(login_status.status);
+            if (login_status.status ==="not_authorized"){
+              logout(principal,$state);
+            } else {
+              // not already logged in, go to the login page and close the loading page.
+              principal.isFBLoggedIn = false;
+              $state.go('app.login')
+            }
 
-            // not already logged in, go to the login page and close the loading page.
-            principal.isFBLoggedIn = false;
-            $state.go('app.login')
-            $ionicLoading.hide();
+            $ionicLoading.hide();  
           }
         });
       });
@@ -239,9 +244,9 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       deferred = $q.defer();
       // Whenever the appversion changes you must reregister a push notification. Therefore we check if the appVersion stored is different
       if (window.localStorage.getItem("hasRegisteredForPush") =="true" && window.localStorage.getItem("appVersion") == this.appVersion){
+        console.log('previously registered for push');
         deferred.resolve('previously registered for push');
       } else {
-        console.log(this.appVersion);
         // have not yet registered for push notifications. save the type of push ('gcm','apns',etc) so we can use it later.
         // then run the device dependent register function for the push notification
         try{
@@ -427,7 +432,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     //uploading identification to server
     sendClientIdentificationToServer : function (){
       window.localStorage.setItem("appVersion",this.appVersion);
-      console.log(this.appVersion)
       $http.put(AppSettings.baseApiUrl + 'profiles/'+this.facebook_id,{profile:{client_identification_sequence:this.client_identification_sequence, push_type:this.push_type}})
       .success(function(data,status,headers,config){
         //on successful registration and successfully sending details to server save on the phone the local app version
@@ -584,6 +588,8 @@ function checkFBConnectPluginLoadedRecursive(attempts,timeout,deferred){
   var i = attempts + 1;
   if (typeof(facebookConnectPlugin) !='undefined' && facebookConnectPlugin!=null){
     console.log("resolved FB Connect Plugin defined");
+    console.log(facebookConnectPlugin);
+    console.log(JSON.stringify(facebookConnectPlugin));
     deferred.resolve("FBConnectPlugin is now defined");
   } else if (i <=10){
       timeout(function() {checkFBConnectPluginLoadedRecursive(i,timeout,deferred);},50);
@@ -601,9 +607,8 @@ function getFBLoginStatus(q,principal){
       if (typeof(res) != 'undefined' && res.status === 'connected'){
         deferred.resolve(res);
       } else {
-        console.log(res.status);
-        // not connected, try logging out and relogging in
-        deferred.resolve("Not connected to facebook: status is: " + res.status+" + try logging out and logging back in");
+        console.log("Not connected to facebook: status is: " + res.status+" + try logging out and logging back in");
+        deferred.resolve(res);
       }
     },
     function(err){
@@ -612,6 +617,17 @@ function getFBLoginStatus(q,principal){
     }
   );
   return deferred.promise;
+}
+
+function logout(principal,state){
+  facebookConnectPlugin.logout(
+    function(){
+        console.log("successfully logged out");
+        principal.isFBLoggedIn = false;
+        state.go('app.login');
+    },function(){
+      console.log("failed to logout");
+  });
 }
 
 // this function checks if the user's facebook id is saved on our server. If not, then it's the first time the user has used this app.
@@ -723,9 +739,6 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
           //all good, already registered and app versions are same, nothing to do
           console.log("same app version nothing to do...")
         } else {
-          console.log(window.localStorage.getItem("hasRegisteredForPush"));
-          console.log(window.localStorage.getItem("appVersion"));
-          console.log(PushService.appVersion);
           console.log("new app version registering for push...")
           PushService.registerForPush();
         }

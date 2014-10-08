@@ -333,11 +333,12 @@ angular.module('starter.controllers', [])
         function(res){
           if (res.status === 'connected'){
             principal.isFBLoggedIn = true;
+            console.log("logged into facebook successfully");
             postLoginPromises($q,principal,res,$state,$ionicLoading,$ionicPopup,$http,PushService);  
           } else {
+            console.log("problem logging into facebook but successful attempt. Response: " + res.status);
             principal.isFBLoggedIn = false;
             //TODO: try logging out or sending a toast that there was an error
-            console.log(res);
             $ionicLoading.hide();
           }
         }, 
@@ -346,7 +347,7 @@ angular.module('starter.controllers', [])
           //TODO: try logging out or sending a toast that there was an error
           console.error(res);
           $ionicLoading.hide();
-      });    
+      });
     }
 
     $scope.showLogin = false;
@@ -376,93 +377,185 @@ angular.module('starter.controllers', [])
   }
 })
 
-//range filter needed for photos modal in choosePhotos controller. Basically this allows me to 2 columns of facebook images
-.filter('range', function () {
-    return function (input, total) {
-        total = parseInt(total);
-        for (var i = 0; i < total; i++) {
-            input.push(i);
+
+.directive("imageResizer",function(){
+  return {
+    restrict: "A",
+    scope:true,
+    link:function(scope,element,attrs){
+      var phoneHeight = window.innerHeight;
+      var phoneWidth = window.innerWidth;
+
+
+      element.bind('load',function(){
+        element[0].nextElementSibling.style.height = "305px";
+        element[0].nextElementSibling.style.width = "338px";
+        imageHeight = element[0].offsetHeight; 
+        imageWidth = element[0].offsetWidth;
+        
+        if (imageHeight / phoneHeight >= imageWidth / phoneWidth){
+          element[0].parentNode.style.height = "90%";//(imageHeight) + "px";
+          element[0].style.height = "100%";
+          element[0].style.width = "auto";
+          imageHeight = element[0].offsetHeight; 
+          imageWidth = element[0].offsetWidth;
+          containerWidth = element[0].parentElement.clientWidth;
+          containerHeight = element[0].parentElement.clientHeight;
+          element[0].nextElementSibling.style.left = Math.max(0,Math.floor((containerWidth- imageWidth)/2)) +"px";
+          element[0].nextElementSibling.style.top = 0;
+          
+        } else {
+          element[0].parentNode.style.height = "90%";//(phoneWidth/imageWidth *imageHeight) + "px";
+          element[0].style.width = "100%";
+          element[0].style.height = "auto";
+          imageHeight = element[0].offsetHeight; 
+          imageWidth = element[0].offsetWidth;
+          containerWidth = element[0].parentElement.clientWidth;
+          containerHeight = element[0].parentElement.clientHeight;
+          element[0].nextElementSibling.style.left = 0;
+          element[0].nextElementSibling.style.top = Math.max(0,Math.floor((containerHeight - imageHeight)/2)) + "px";
         }
-        return input;
-    };
+        
+      });
+
+    }
+  }
 })
 
-
-.directive("cropper",['$ionicGesture',function($ionicGesture){
+.directive("cropper",['$ionicGesture','$timeout',function($ionicGesture,$timeout){
   return {
     restrict:"A",
-    scope:true,
+    scope:false,
     link: function(scope,element,attrs){
       startx = 0;
       starty = 0;
       leftPos = 0;
       topPos = 0;
-      var originalHeight = 305; 
+      var phoneHeight = window.innerHeight;
+      var phoneWidth = window.innerWidth;
+      var mostLeft;
+      var mostTop;
       
       $ionicGesture.on('pinch',function(e){
-
-        console.log(element[0].children[1].offsetWidth);
-        
-        if (element[0].children[1].offsetHeight = 305){
-          element[0].children[1].style.height = e.gesture.scale*100 +"%";  
-          element[0].children[1].style.width = e.gesture.scale*100 +"%";  
-        } else {
-          currentHeight = element[0].children[1].offsetHeight;
-          element[0].children[1].style.height = currentHeight/305*e.gesture.scale +"%";  
-        }
-
-        
-        
-
-        // if (e.gesture.startEvent.target.className == "cropper"){
-          
-        //   if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale <= originalHeight && e.gesture.startEvent.target.offsetHeight*e.gesture.scale >=0){
-            
-        //     element[0].children[1].style.height = e.gesture.startEvent.target.offsetHeight*e.gesture.scale + "px";
-        //     element[0].children[1].style.width = e.gesture.startEvent.target.offsetWidth*e.gesture.scale + "px";
-        
-        //   } else if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale > originalHeight){
-        //     element[0].children[1].style.height = "100%";
-        //     element[0].children[1].style.width = "100%";
-        //   }
-        // } else if (e.gesture.startEvent.target.className == "main-image-height"){
-          
-        //   if (e.gesture.startEvent.target.offsetParent.children[1].offsetHeight*e.gesture.scale <= originalHeight && e.gesture.startEvent.target.offsetParent.children[1].offsetHeight*e.gesture.scale >=0){
-        //     element[0].children[1].style.height = e.gesture.startEvent.target.offsetParent.children[1].offsetHeight*e.gesture.scale + "px";
-        //     element[0].children[1].style.width = e.gesture.startEvent.target.offsetParent.children[1].offsetWidth*e.gesture.scale + "px";
-        //   } else if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale > originalHeight){
-        //     element[0].children[1].style.height = "100%";
-        //     element[0].children[1].style.width = "100%";
-        //   }
-        // } else {
-          
-        //   if (e.gesture.startEvent.target.children[1].offsetHeight*e.gesture.scale <= originalHeight && e.gesture.startEvent.target.children[1].offsetHeight*e.gesture.scale >=0){
-        //     element[0].children[1].style.height = e.gesture.startEvent.target.children[1].offsetHeight*e.gesture.scale + "px";
-        //     element[0].children[1].style.width = e.gesture.startEvent.target.children[1].offsetWidth*e.gesture.scale + "px";
-        //   } else if (e.gesture.startEvent.target.offsetHeight*e.gesture.scale > originalHeight){
-        //     element[0].children[1].style.height = "100%";
-        //     element[0].children[1].style.width = "100%";
-        //   }
-        // }
+          console.log("cropper height: " + element[0].children[1].offsetHeight + " cropper width " + element[0].children[1].offsetWidth + " left " + element[0].children[1].offsetLeft + " top " + element[0].children[1].offsetTop)
+          if ((element[0].children[1].offsetHeight +10*(e.gesture.scale-1))>=305){
+            element[0].children[1].style.height = "305px";
+            element[0].children[1].style.width = "338px";
+          } else if ((element[0].children[1].offsetHeight +10*(e.gesture.scale-1))<=100){
+            element[0].children[1].style.height = "100px";
+            element[0].children[1].style.width = "111px";
+          } else if (element[0].children[1].offsetLeft + element[0].children[1].offsetHeight*338/305 < phoneWidth || element[0].children[1].offsetTop + element[0].children[1].offsetHeight < phoneHeight){
+              element[0].children[1].style.height = (element[0].children[1].offsetHeight +10*(e.gesture.scale-1))+ "px";
+              element[0].children[1].style.width =  (element[0].children[1].offsetHeight*338/305) + "px";  
+          }
 
       },element);
 
       $ionicGesture.on('dragstart',function(e){
-        console.log(e.gesture.startEvent);
         startx = parseInt(e.gesture.touches[0].clientX);
         starty = parseInt(e.gesture.touches[0].clientY);
+        widthDuringDrag = element[0].children[1].offsetWidth;
+        heightDuringDrag = element[0].children[1].offsetHeight;
+        imageWidth = element[0].children[0].offsetWidth;
+        imageHeight = element[0].children[0].offsetHeight;
+        containerHeight = element[0].clientHeight;
+        containerWidth = element[0].clientWidth;
+      
+        if (imageHeight / phoneHeight >= imageWidth / phoneWidth){
+          mostLeft = Math.max(0,Math.floor((containerWidth-imageWidth)/2));
+          mostTop = 0;
+        } else {
+          mostLeft = 0;
+          mostTop = Math.max(0,Math.floor((containerHeight - imageHeight)/2));
+        }
+
+        if ( imageHeight >=containerHeight){
+          heightToCheck = containerHeight;
+        } else {
+          heightToCheck = Math.max(imageHeight,containerHeight - mostTop);
+        }
+
+        if (imageWidth >= containerWidth ){
+          widthToCheck = containerWidth;
+        } else {
+          widthToCheck = Math.max(imageWidth,containerWidth - mostLeft);  
+        }
+        
+        if (scope.newImage.newImage){
+          leftPos = mostLeft;
+          topPos = mostTop;
+          scope.newImage.newImage = false;
+        }
+
+        // console.log("imageHeight " + imageHeight + " imageWidth " + imageWidth + " heightDuringDrag " + heightDuringDrag + " widthDuringDrag " + widthDuringDrag);
+        console.log("mostLeft =" + mostLeft + " mostTop =" + mostTop);
       },element);
 
       $ionicGesture.on('drag',function(e){
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
         var disty = parseInt(e.gesture.touches[0].clientY) - starty
-        element[0].children[0].style.left = (leftPos + distx) + "px"
-        element[0].children[0].style.top = (topPos + disty) + "px"
+        // console.log("leftPos: " + leftPos + " distx " + distx + " topPos " + topPos + " disty " + disty);
+
+
+        if (leftPos + distx >= mostLeft && topPos + disty >= mostTop && leftPos+widthDuringDrag+distx <=widthToCheck && topPos + disty + heightDuringDrag <=heightToCheck){
+          // if drag has not touched sides allow drag anywhere
+          element[0].children[1].style.left = (leftPos + distx) + "px";
+          element[0].children[1].style.top = (topPos + disty) + "px";   
+        } else if (leftPos +distx < mostLeft){
+          //if drag has touched left side...
+          if (topPos + disty + heightDuringDrag > heightToCheck){
+            // and drag has also touched bottom, keep the drag at bottom left
+            element[0].children[1].style.left = (mostLeft) + "px";
+            element[0].children[1].style.top = (heightToCheck - heightDuringDrag) + "px";  
+          } else if (topPos + disty>= mostTop) {
+            //drag touched left side but not bottom, allow it to move up and down on left side 
+            element[0].children[1].style.left = (mostLeft) + "px";
+            element[0].children[1].style.top = (topPos + disty) + "px";
+          } else if (leftPos +distx < mostLeft && topPos + disty< mostTop) {
+            //drag touched left side and top, do not allow it to move any higher
+            element[0].children[1].style.left = (mostLeft) + "px";
+            element[0].children[1].style.top = (mostTop) + "px";
+          }
+        } else if (topPos + disty< mostTop){
+          //drag touched top 
+          if (leftPos + distx >=mostLeft && leftPos+widthDuringDrag+distx <=widthToCheck){
+            //and being dragging between top left and top right, allow movement left and right along top
+            element[0].children[1].style.top = (mostTop) + "px";
+            element[0].children[1].style.left = (leftPos + distx) + "px";
+          } else if (leftPos +distx <mostLeft){
+            //drag touched top and left, keep at top left
+            element[0].children[1].style.left = (mostLeft) + "px";
+            element[0].children[1].style.top = (mostTop) + "px";
+          } else if (leftPos+widthDuringDrag+distx >widthToCheck){
+            //drag touched top and right, keep at top right
+            element[0].children[1].style.top = (mostTop) + "px";  
+            element[0].children[1].style.left = (widthToCheck - widthDuringDrag) + "px";
+          } 
+        } else if (leftPos+widthDuringDrag+distx >widthToCheck){
+          //drag touching right side
+          if (topPos + disty + heightDuringDrag > heightToCheck){
+            //and also touching bottom, keep at bottom
+            element[0].children[1].style.top = (heightToCheck - heightDuringDrag) + "px";  
+            element[0].children[1].style.left = (widthToCheck - widthDuringDrag) + "px";
+          } else {
+            //allow movement
+            element[0].children[1].style.top = (topPos + disty) + "px";
+            element[0].children[1].style.left = (widthToCheck - widthDuringDrag) + "px";
+          }
+        } else if (topPos + disty + heightDuringDrag > heightToCheck){
+          //allow dragging along bottom
+          element[0].children[1].style.left = (leftPos + distx) + "px";
+          element[0].children[1].style.top = (heightToCheck - heightDuringDrag) + "px";
+        }
+      
+
       },element);
 
       $ionicGesture.on('dragend',function(e){
-        leftPos = element[0].children[0].offsetLeft;
-        topPos = element[0].children[0].offsetTop;
+        leftPos = element[0].children[1].offsetLeft;
+        topPos = element[0].children[1].offsetTop;
+        
+
       },element);
     }
 
@@ -473,21 +566,17 @@ angular.module('starter.controllers', [])
 .controller('ChoosePhotosCtrl',function($scope,$ionicModal,$timeout,principal,$http,$state,$q,$ionicLoading,$ionicNavBarDelegate){
   
 
-
-
-
-
-
-
-
   $scope.number_selected = 0;
   $scope.showChangeImage = false;
   $scope.showSwapImage = false;
   $scope.second_selected = null;
-  
+  $scope.cropShown = false;
+  $scope.newImage = { newImage: true};
+  $scope.selected_photo = null;
+  $scope.croppedImageDetails = [{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338}]
+
   // we add currentTime to the image so that if the image is cached on the users phone, 
   // then looking for image.jpg?someothertimehere will trigger the phone to look for another image
-
   var currentTime = new Date().getTime();
 
   // variable firstClick is true when you first enter this controller. on clicking an image (ie selectImageToEdit method) this becomes false
@@ -502,6 +591,7 @@ angular.module('starter.controllers', [])
     });
   } 
   
+  //the view uses the url parameter
   $scope.image_infos = [{ url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/1.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(0);},selected_image:false },
   { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/2.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(1);},selected_image:false },
   { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/3.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(2);},selected_image:false },
@@ -514,7 +604,7 @@ angular.module('starter.controllers', [])
   $scope.firstload=true; 
   $scope.currently_selected = null;
 
-  //define the photos_modal
+  //define the photos_modal: this modal shows all the images from facebook
   $ionicModal.fromTemplateUrl('templates/photos_modal.html',{
     scope: $scope,
     animation: 'slide-in-up'
@@ -522,7 +612,7 @@ angular.module('starter.controllers', [])
     $scope.modal = modal;
   });
 
-  //define picture editing modal
+  //define crop picture modal: this modal shows 1 image which the user can crop
   $ionicModal.fromTemplateUrl('templates/crop_modal.html',{
     scope: $scope,
     animation: 'slide-in-up'
@@ -535,17 +625,15 @@ angular.module('starter.controllers', [])
     $scope.modal.hide();
     $scope.currently_selected = null; 
   }
-  
-  // //monitor which profile image the user wants to change
-  // function selectImageToEdit(n){
-  //   $scope.modal.show();
-  //   $scope.currently_selected = n;
-  //   if ($scope.firstClick){
-  //     $scope.loadMore();
-  //     $scope.firstClick = false;
-  //   } 
-  // }
 
+  //this button in crop modal, clicking back hides the crop modal
+  $scope.goBackCropPage = function(){
+    $scope.crop.hide();
+    $scope.cropShown=false;
+    
+  }
+  
+  //monitor which profile image the user wants to change
   function selectImageToEdit(n){
     if ($scope.number_selected == 0){
       //nothing selected yet, select image
@@ -591,8 +679,8 @@ angular.module('starter.controllers', [])
     
   }
 
+  //allows user to remove image
   $scope.removeImage = function(){
-    
     $scope.number_selected = 0;
     $scope.showChangeImage = false;
     $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
@@ -605,6 +693,7 @@ angular.module('starter.controllers', [])
     $scope.currently_selected = null;
   }
 
+  //selecting this brings up the facebook pictures modal
   $scope.changeImage = function(){
     $scope.modal.show();
     if ($scope.firstClick){
@@ -616,6 +705,7 @@ angular.module('starter.controllers', [])
     $scope.showChangeImage = false;
   }
 
+  //swap 2 images to change orientation
   $scope.swapImage = function(){
     tempurl = $scope.image_infos[$scope.currently_selected].url
     $scope.image_infos[$scope.currently_selected].url = $scope.image_infos[$scope.second_selected].url;
@@ -628,24 +718,32 @@ angular.module('starter.controllers', [])
     $scope.second_selected = null;
   }
 
+  //user has saved cropped image
+  $scope.saveCroppedImage = function(){
+    $scope.image_infos[$scope.currently_selected].url = $scope.selected_photo;  
+    $scope.crop.hide();
+
+    //save location and size details of cropped immage
+    $scope.croppedImageDetails[$scope.currently_selected].height = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight;
+    $scope.croppedImageDetails[$scope.currently_selected].width = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth;
+    $scope.croppedImageDetails[$scope.currently_selected].top = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetTop;
+    $scope.croppedImageDetails[$scope.currently_selected].left = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetLeft;
+
+    $scope.cropShown=false;
+    
+  }
+
+  //user has just selected picture to edit / crop
   $scope.selectPictureForProfile = function(t){
     
     if (typeof($scope.currently_selected)!="null"){
-      $scope.image_infos[$scope.currently_selected].url = t.photo;  
+      $scope.selected_photo = t.photo;  
     }
     $scope.modal.hide();
+    $scope.cropShown = true;
+    $scope.newImage.newImage = true;
     $scope.crop.show();
-    //$scope.currently_selected = null; 
-    
-    
-    //TODO: on selecting save crop need to set currently_selected to null
   }
-
-  // // within the photos modal the user has chosen an image for their profile. Replace the url of the image with this new url
-  // $scope.selectPictureForProfile = function(t){
-  //   $scope.image_infos[$scope.currently_selected].url = t.photo;
-  //   $scope.modal.hide();
-  // }
   
   // send data to server
   $scope.save_photos = function(){
@@ -700,7 +798,7 @@ angular.module('starter.controllers', [])
     if ($scope.next_page){
       $http.get($scope.next_page).success(function(res){
         for (i = 0; i < res.data.length; i++){
-          $scope.photoUrls.push(res.data[i].images[res.data[i].images.length-1].source);
+          $scope.photoUrls.push(res.data[i].images[3].source);//res.data[i].images.length-2
          }
          if (typeof(res.paging)!='undefined'){
           $scope.next_page = res.paging.next; 
@@ -711,10 +809,10 @@ angular.module('starter.controllers', [])
       });
     } else if ($scope.firstload) {
       
-      facebookConnectPlugin.api('/me/photos?limit=10',['public_profile','user_photos','user_birthday'],
+      facebookConnectPlugin.api('/me/photos?limit=9',['public_profile','user_photos','user_birthday'],
         function(res){
           for (i = 0; i < res.data.length; i++){
-            $scope.photoUrls.push(res.data[i].images[res.data[i].images.length-1].source);
+            $scope.photoUrls.push(res.data[i].images[3].source); //res.data[i].images.length-2
            }
            if (typeof(res.paging)!='undefined'){
             $scope.next_page = res.paging.next; 

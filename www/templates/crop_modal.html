@@ -1,22 +1,22 @@
 <ion-modal-view>
 
     <ion-header-bar>
-      <button class="button button-clear icon ion-ios7-arrow-back" ng-click="goBack()"> Back</button>
+      
   	  <h1 class="title"> Crop Image </h1>
     </ion-header-bar>
       <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
       <ion-pane style="background-color:rgba(0,0,0,0);">
-      <div cropper class="list card item" >
-        <img ng-src={{image_infos[currently_selected].url}} class="main-image-height">
+      <div cropper class="list card item main-image-height" style="margin:0;">
+        <img image-resizer class="center-image" ng-if="cropShown" ng-src={{selected_photo}}>
 
         <div class="cropper"></div>  
       </div>
       
 
   <div class="row">
-  <button class="col button">Preview</button>
+  <button class="col button" ng-click="goBackCropPage()">Cancel</button>
   <!-- <button class="col button">Reset</button> -->
-  <button class="col button">Save</button>
+  <button class="col button" ng-click="saveCroppedImage()">Save</button>
   </div>
 
   </ion-pane>
