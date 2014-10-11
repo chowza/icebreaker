@@ -1,0 +1,38 @@
+
+
+
+<ion-view>
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    <a href= "#/app/matches" class="button button-clear"><i class="ion-chatbubbles"></i></a>
+    <h1 class="title"> Availability </h1>
+  </ion-nav-buttons>
+  <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
+  	<div class="row row-center forty-five">
+		<div ng-class="today_before_five? 'selected col padding text-center' :'unselected col padding text-center'" ng-click="select_today_before_five()">
+		<span class="col vertical-center">Today before 5?</span>
+		</div>
+		<div ng-class="tomorrow_before_five? 'selected col padding text-center' :'unselected col padding text-center'" ng-click="select_tomorrow_before_five()">
+		<span class="col vertical-center">Tomorrow before 5?</span>
+		</div>
+	</div>
+	<div class="row row-center forty-five">
+		<div ng-class="today_after_five?'selected col padding text-center':'unselected col padding text-center'" ng-click="select_today_after_five()">
+		<span class="col vertical-center"> Today after 5?</span>
+		</div>
+		<div ng-class="tomorrow_after_five? 'selected col padding text-center':'unselected col padding text-center'" ng-click="select_tomorrow_after_five()">
+		<span class="col vertical-center">Tomorrow after 5?	</span>
+		</div>
+	</div>
+	<div class="row">
+		<ion-checkbox ng-model="remember_availability">Remember availability? </ion-checkbox>
+	</div>
+
+	<div class="row">
+		<div class="col text-center">
+			<button class="button button-large" ng-click="save()"> Save! </button>
+		</div>
+	</div>
+
+  </ion-content>
+</ion-view>

@@ -1,0 +1,52 @@
+<ion-view>
+	
+	<ion-nav-buttons side="left">
+		<!-- <button class="button button-clear icon ion-ios7-arrow-back" ng-click="goToPrevious()" ng-hide="hideBack"> Back</button> -->
+		<button menu-toggle="left" class="button button-icon icon ion-navicon" ng-hide="hideBack"></button>
+    	<a href= "#/app/matches" class="button button-clear" ng-hide="hideBack"><i class="ion-chatbubbles"></i></a>
+		<h1 class="title">Choose Photos</h1>
+	</ion-nav-buttons>
+  	<ion-nav-buttons side="right">
+		<!-- <button class="button button-clear icon ion-ios7-arrow-back" ng-click="goToPrevious()" ng-hide="hideBack"> Back</button> -->
+		<button class="button button-icon icon ion-edit" ng-show="showChangeImage" ng-click="changeImage()"></button>
+		<button class="button button-icon icon ion-trash-a" ng-show="showChangeImage" ng-click="removeImage()"></button>
+		<button class="button button-icon icon ion-arrow-swap" ng-show="showSwapImage" ng-click="swapImage()"></button>
+	</ion-nav-buttons>
+  <ion-content class="has-header" >
+  	<!-- <div class="card main-image"> -->
+  		<!-- <div vh-fifty class="item row no-padding" ng-click="image_infos[0].onClickFunction()"> -->
+  		<!--<div class="col text-center no-padding" ng-hide="image_infos[0].url">
+    			<i class="button-clear icon ion-image no-padding"> </i>
+			</div> -->
+			<div class="list card item main-image-height" ng-click="image_infos[0].onClickFunction()" ng-class="image_infos[0].selected_image? 'selected-border-main cropped-main' : 'unselected-border-main cropped-main'">
+
+			<img ng-src={{image_infos[0].url}} class="center-image">
+			</div>
+			<!-- <div vh-fifty ng-class="image_infos[0].selected_image? 'selected-border col cropped-main' : 'unselected-border col cropped-main'" ng-style="image_infos[0].url ? {'background-image':'url(' +image_infos[0].url+')'} : {}"> -->
+				
+			<!-- </div> -->
+
+		<!-- </div> -->
+	<!-- </div> -->
+	<div class="card">
+		<div vw-twenty class="item row secondary-images-row" >
+				<!-- <div ng-repeat-start="image_info in image_infos.slice(1,5)" class='col text-center secondary-images' ng-hide="image_info.url" ng-click="image_info.onClickFunction()">
+					<i class="icon ion-image"> </i>
+				</div>
+
+				also had ng-repeat-end in the below div-->
+				<div vw-twenty ng-repeat="image_info in image_infos.slice(1,5)" ng-class="image_info.selected_image? 'selected-border col cropped secondary-images' : 'unselected-border col cropped secondary-images'" ng-style="image_info.url ? {'background-image':'url('+image_info.url+')'} : {}" ng-click="image_info.onClickFunction()">				
+				</div>
+			
+		</div>
+	</div>
+		<div class="row">
+			<div class="col text-center">
+				<button class="button button-large" ng-click="save_photos()">Save! </button>
+				
+			</div>
+		</div>
+		
+    
+  </ion-content>
+</ion-view>

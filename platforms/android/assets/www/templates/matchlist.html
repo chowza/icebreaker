@@ -1,0 +1,34 @@
+<ion-view >
+  <ion-nav-buttons side="left">
+    <!-- <button class="button button-clear icon ion-ios7-arrow-back" ng-click="goToPrevious()"> Back</button> -->
+    <h1 class="title">Matches</h1>
+  </ion-nav-buttons>
+
+
+  <ion-content class="has-header" has-bouncing="false" scroll="true" scrollbar-y="true">
+
+	<div class="list">
+
+    
+	    <div ng-repeat="match in matches" ng-class="{true:'greyed item item-thumbnail-left row', false:'item item-thumbnail-left row'}[match.too_late]" >
+        <div class="encapsulate-thumbnail">
+	         <img ng-src={{match.picture1}}>
+        </div>
+          <div class="row row-center">
+  	      <div class="col">{{match.first_name}}</div>
+          <a href="#/app/chats/{{match.swipee_id}}" class="col button"><i class="ion-chatbubble"></i></a>
+           <!-- <div class="col button"> in-App-Call </div> -->
+          <!-- <div class="col button"> Rate Your Date </div> -->
+        </div>
+          
+          
+        <div class="overlay"></div>
+	    </div>
+      
+    
+  </div>
+
+  </ion-content>
+
+
+</ion-view>

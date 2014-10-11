@@ -1,0 +1,63 @@
+<ion-view>
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    <a href= "#/app/matches" class="button button-clear"><i class="ion-chatbubbles"></i></a>
+    <h1 class="title">IceBreaker</h1>
+  </ion-nav-buttons>
+  <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
+  	<ion-pane ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0)" ng-show="card.id">
+  	<div class="list card item" >
+    		<!-- <a href="#/app/individual_page/{{card.facebook_id}}" class="item item-image"> -->
+        <ion-slide-box>
+          <ion-slide>
+          <img ng-src={{card.picture1}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture2}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture3}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture4}}>
+          </ion-slide>
+          <ion-slide>
+          <img ng-src={{card.picture5}}>
+          </ion-slide>
+        </ion-slide-box>
+          
+  			<!-- </a> -->
+        <div swipeable class="item profile">
+  			<div class="row">
+	  			<div class="col col-50">
+	  				<h2> {{card.first_name}} </h2>
+	  			</div>
+					<div class= "col col-50 rating">
+  	  				Wallyness: 
+  	  				<i class="ion-star"></i>
+  		  			<i class="ion-star"></i>
+  		  			<i class="ion-star"></i>
+  		  			<i class="ion-star"></i>
+  		  			<i class="ion-star"></i>
+  		  	</div>
+	  		</div>
+        <div class="row second">
+          <div class="col">
+            {{card.answer1}},&#160;{{card.answer2}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            {{card.answer4}} &#38; {{card.answer3}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            {{card.answer5}}
+          </div>
+        </div>
+        </div>
+	  </div>
+	</ion-pane>
+  </ion-content>
+</ion-view>
