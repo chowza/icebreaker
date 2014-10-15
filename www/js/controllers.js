@@ -147,6 +147,8 @@ angular.module('starter.controllers', [])
   $scope.preferred_min_age = principal.preferred_min_age;
   $scope.preferred_max_age = principal.preferred_max_age;
   $scope.preferred_distance = principal.preferred_distance/1000;
+
+
   $scope.today_before_five = principal.today_before_five || false;
   $scope.today_after_five = principal.today_after_five || false;
   $scope.tomorrow_before_five = principal.tomorrow_before_five || false;
@@ -155,23 +157,33 @@ angular.module('starter.controllers', [])
   $scope.lunch = principal.lunch || false;
   $scope.dinner = principal.dinner || false;
   $scope.drinks = principal.drinks || false;
+  $scope.remember_availability = principal.remember_availability;
+  console.log("principal remember_availability is " + principal.remember_availability);
 
     $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
     .success(function(data,status,headers,config){
-
-      $scope.coffee = data.coffee || false;
-      $scope.lunch = data.lunch || false; 
-      $scope.drinks = data.drinks || false;
-      $scope.dinner = data.dinner || false;
+      console.log(data);
+      $scope.coffee = data.coffee; 
+      $scope.lunch = data.lunch; 
+      $scope.drinks = data.drinks;
+      $scope.dinner = data.dinner;
+      $scope.remember_availability = data.remember_availability;
 
       var updated_at = new Date(data.updated_availability);
       var currentDate = new Date();
+      if (data.remember_availability){
+        //availability remembered for future
+        $scope.today_before_five = data.today_before_five;
+        $scope.today_after_five = data.today_after_five;
+        $scope.tomorrow_before_five = data.tomorrow_before_five;
+        $scope.tomorrow_after_five = data.tomorrow_after_five ; 
 
-      if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
-        $scope.today_before_five = data.today_before_five || false;
-        $scope.today_after_five = data.today_after_five || false;
-        $scope.tomorrow_before_five = data.tomorrow_before_five || false;
-        $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
+      } else if (updated_at.toDateString() == currentDate.toDateString()){ 
+        // updated availability is the same date as today
+        $scope.today_before_five = data.today_before_five;
+        $scope.today_after_five = data.today_after_five;
+        $scope.tomorrow_before_five = data.tomorrow_before_five;
+        $scope.tomorrow_after_five = data.tomorrow_after_five; 
       } else { 
         //need to check when it was last updated
         var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
@@ -203,6 +215,7 @@ angular.module('starter.controllers', [])
     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
       {
         profile:{
+          remember_availability:$scope.remember_availability,
           preferred_min_age: $scope.preferred_min_age,
           preferred_max_age: $scope.preferred_max_age,
           preferred_distance: pd,
@@ -378,51 +391,83 @@ angular.module('starter.controllers', [])
 })
 
 
+// resize each image in the crop modal to fit the page. This is necessary because there is no one css style that would work for
+// different image sizes (portrait vs landscape)
+// On image load, this directive determining whether to show 100% of height and partly crop width or 100% of width and crop height
+// Also sets the crop square size
 .directive("imageResizer",function(){
   return {
     restrict: "A",
-    scope:true,
+    scope:false,
     link:function(scope,element,attrs){
       var phoneHeight = window.innerHeight;
       var phoneWidth = window.innerWidth;
+      containerWidth = element[0].parentElement.clientWidth;
+      containerHeight = element[0].parentElement.clientHeight;
 
-
+      //need to bind on image load because otherwise the element has no height or width
       element.bind('load',function(){
-        element[0].nextElementSibling.style.height = "305px";
-        element[0].nextElementSibling.style.width = "338px";
+        //get height and width
         imageHeight = element[0].offsetHeight; 
         imageWidth = element[0].offsetWidth;
         
+        //determine if height is more important or less important in the image. 
         if (imageHeight / phoneHeight >= imageWidth / phoneWidth){
-          element[0].parentNode.style.height = "90%";//(imageHeight) + "px";
+          //height more important, set image height to 100% and width to auto
           element[0].style.height = "100%";
           element[0].style.width = "auto";
+
+          //ratio needed for cropping
+          scope.croppedImageDetails[scope.currently_selected].ratio = imageHeight/element[0].offsetHeight;
+
+          //recalculate new image dimensions to set cropping square dimensions
           imageHeight = element[0].offsetHeight; 
           imageWidth = element[0].offsetWidth;
-          containerWidth = element[0].parentElement.clientWidth;
-          containerHeight = element[0].parentElement.clientHeight;
-          element[0].nextElementSibling.style.left = Math.max(0,Math.floor((containerWidth- imageWidth)/2)) +"px";
-          element[0].nextElementSibling.style.top = 0;
+
+          //since width is 338px vs height of 305px, the below is necessary to ensure we don't have too big a crop square
+          if (imageWidth >= phoneWidth){
+            originalCropHeight = imageHeight*0.9;
+            originalCropWidth = originalCropHeight*338/305;
+          } else {
+            originalCropWidth = imageWidth*0.9;
+            originalCropHeight = originalCropWidth*305/338;
+          }
           
         } else {
-          element[0].parentNode.style.height = "90%";//(phoneWidth/imageWidth *imageHeight) + "px";
+          //width more important, set image width to 100% and height to auto
           element[0].style.width = "100%";
           element[0].style.height = "auto";
+
+          //ratio needed for cropping
+          scope.croppedImageDetails[scope.currently_selected].ratio = imageHeight/element[0].offsetHeight;
+
+          //recalculate new image dimensions to set cropping square dimensions
           imageHeight = element[0].offsetHeight; 
           imageWidth = element[0].offsetWidth;
-          containerWidth = element[0].parentElement.clientWidth;
-          containerHeight = element[0].parentElement.clientHeight;
-          element[0].nextElementSibling.style.left = 0;
-          element[0].nextElementSibling.style.top = Math.max(0,Math.floor((containerHeight - imageHeight)/2)) + "px";
+          
+          //since width is 338px vs height of 305px, the below is necessary to ensure we don't have too big a crop square
+          if (imageWidth <= imageHeight){
+            originalCropWidth = imageWidth*0.9;
+            originalCropHeight = originalCropWidth*305/338;
+          } else {
+            originalCropHeight = imageHeight*0.9;
+            originalCropWidth = originalCropHeight*338/305;
+          }
         }
-        
+
+        //set size and position of cropping square
+        element[0].nextElementSibling.style.width = (originalCropWidth) + "px";
+        element[0].nextElementSibling.style.height = (originalCropHeight) + "px";
+        element[0].nextElementSibling.style.left = ((containerWidth - originalCropWidth)/2) +"px";
+        element[0].nextElementSibling.style.top = ((containerHeight - originalCropHeight)/2) +"px";
       });
 
     }
   }
 })
 
-.directive("cropper",['$ionicGesture','$timeout',function($ionicGesture,$timeout){
+//cropper container for the image as well as the crop square
+.directive("cropper",['$ionicGesture',function($ionicGesture){
   return {
     restrict:"A",
     scope:false,
@@ -435,22 +480,108 @@ angular.module('starter.controllers', [])
       var phoneWidth = window.innerWidth;
       var mostLeft;
       var mostTop;
+      var centerX;
+      var centerY;
+      var scale = 1;
+      var lastScale = 1;
+
       
-      $ionicGesture.on('pinch',function(e){
-          console.log("cropper height: " + element[0].children[1].offsetHeight + " cropper width " + element[0].children[1].offsetWidth + " left " + element[0].children[1].offsetLeft + " top " + element[0].children[1].offsetTop)
-          if ((element[0].children[1].offsetHeight +10*(e.gesture.scale-1))>=305){
-            element[0].children[1].style.height = "305px";
-            element[0].children[1].style.width = "338px";
-          } else if ((element[0].children[1].offsetHeight +10*(e.gesture.scale-1))<=100){
-            element[0].children[1].style.height = "100px";
-            element[0].children[1].style.width = "111px";
-          } else if (element[0].children[1].offsetLeft + element[0].children[1].offsetHeight*338/305 < phoneWidth || element[0].children[1].offsetTop + element[0].children[1].offsetHeight < phoneHeight){
-              element[0].children[1].style.height = (element[0].children[1].offsetHeight +10*(e.gesture.scale-1))+ "px";
-              element[0].children[1].style.width =  (element[0].children[1].offsetHeight*338/305) + "px";  
+      $ionicGesture.on('transformstart',function(e){
+        //track container dimensions
+        containerHeight = element[0].clientHeight;
+        containerWidth = element[0].clientWidth;
+
+        //track original image dimensions
+        originalImageHeight = element[0].children[0].offsetHeight; 
+        originalImageWidth = element[0].children[0].offsetWidth;
+
+        //each pinch has a different starting crop dimensions, we need to track this starting crop dimensions
+        startingCropHeight = element[0].children[1].offsetHeight;
+        startingCropWidth = element[0].children[1].offsetWidth;
+
+        //track original left and original top
+        originalLeft = element[0].children[1].offsetLeft;
+        originalTop = element[0].children[1].offsetTop;
+
+        //track original center of image
+        imageCenterX = (element[0].children[0].offsetLeft + element[0].children[0].offsetWidth)/2
+        imageCenterY = (element[0].children[0].offsetTop + element[0].children[0].offsetHeight)/2
+      
+        //track original image width  
+        imageWidth = element[0].children[0].offsetWidth;
+        imageHeight = element[0].children[0].offsetHeight;
+      
+        //track original crop square dimensions 
+        if (element[0].children[0].style.height =="100%"){
+          if (imageWidth >= phoneWidth){
+            originalCropHeight = imageHeight*0.9;
+            originalCropWidth = originalCropHeight*338/305;
+          } else {
+            originalCropWidth = imageWidth*0.9;
+            originalCropHeight = originalCropWidth*305/338;
           }
+        } else {
+          if (imageWidth <= imageHeight){
+            originalCropWidth = imageWidth*0.9;
+            originalCropHeight = originalCropWidth*305/338;
+          } else {
+            originalCropHeight = imageHeight*0.9;
+            originalCropWidth = originalCropHeight*338/305;
+          }
+        }
 
-      },element);
+        //track center of crop square
 
+        centerX = element[0].children[1].offsetWidth/2 + element[0].children[1].offsetLeft;
+        centerY = element[0].children[1].offsetHeight/2 + element[0].children[1].offsetTop;
+
+      },element)
+
+      $ionicGesture.on('transform',function(e){ 
+        
+        
+        newHeight = startingCropHeight*e.gesture.scale;
+        newWidth = startingCropWidth*e.gesture.scale;
+        deltaHeight = newHeight - startingCropHeight;
+        deltaWidth = newWidth - startingCropWidth;
+        newLeft = originalLeft - deltaWidth/2;
+        newTop = originalTop - deltaHeight/2;
+
+        if (newHeight <= originalImageHeight && newWidth <= originalImageWidth && newHeight >= 100 && newWidth >= 111){
+          scale = e.gesture.scale;
+          newHeight = startingCropHeight*scale;
+          newWidth = startingCropWidth*scale;
+          element[0].children[1].style.height = (newHeight) + "px";
+          element[0].children[1].style.width =  (newWidth) + "px";
+          element[0].children[1].style.left = (newLeft) + "px";
+          element[0].children[1].style.top = (newTop) + "px";
+          leftPos = element[0].children[1].offsetLeft;
+          topPos = element[0].children[1].offsetTop;
+        } 
+
+      },element)
+
+      $ionicGesture.on('transformend',function(e){
+
+          // scalePercent = scale*lastScale;
+
+          // shiftX = centerX*(imageWidth*scalePercent - imageWidth)/(imageWidth*scalePercent);
+          // shiftY = centerY*(imageHeight*scalePercent - imageHeight)/(imageHeight*scalePercent);
+
+          // element[0].children[0].style.transform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
+          // element[0].children[0].style.webkitTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
+          // element[0].children[0].style.MozTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
+          // element[0].children[0].style.msTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
+          // element[0].children[0].style.OTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'  
+          // element[0].children[1].style.width = (element[0].children[1].offsetWidth * scalePercent) + "px";
+          // element[0].children[1].style.height = (element[0].children[1].offsetHeight * scalePercent) + "px";
+          // element[0].children[1].style.left = (element[0].children[1].offsetLeft - (centerX-imageCenterX)/2) + "px";
+          // element[0].children[1].style.top = (element[0].children[1].offsetTop - (centerX-imageCenterY)/2) + "px";
+
+          // lastScale = scale*lastScale;
+
+      },element)
+      
       $ionicGesture.on('dragstart',function(e){
         startx = parseInt(e.gesture.touches[0].clientX);
         starty = parseInt(e.gesture.touches[0].clientY);
@@ -458,8 +589,6 @@ angular.module('starter.controllers', [])
         heightDuringDrag = element[0].children[1].offsetHeight;
         imageWidth = element[0].children[0].offsetWidth;
         imageHeight = element[0].children[0].offsetHeight;
-        containerHeight = element[0].clientHeight;
-        containerWidth = element[0].clientWidth;
       
         if (imageHeight / phoneHeight >= imageWidth / phoneWidth){
           mostLeft = Math.max(0,Math.floor((containerWidth-imageWidth)/2));
@@ -482,20 +611,16 @@ angular.module('starter.controllers', [])
         }
         
         if (scope.newImage.newImage){
-          leftPos = mostLeft;
-          topPos = mostTop;
+          leftPos = element[0].children[1].offsetLeft;
+          topPos = element[0].children[1].offsetTop;
           scope.newImage.newImage = false;
         }
 
-        // console.log("imageHeight " + imageHeight + " imageWidth " + imageWidth + " heightDuringDrag " + heightDuringDrag + " widthDuringDrag " + widthDuringDrag);
-        console.log("mostLeft =" + mostLeft + " mostTop =" + mostTop);
       },element);
 
       $ionicGesture.on('drag',function(e){
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
         var disty = parseInt(e.gesture.touches[0].clientY) - starty
-        // console.log("leftPos: " + leftPos + " distx " + distx + " topPos " + topPos + " disty " + disty);
-
 
         if (leftPos + distx >= mostLeft && topPos + disty >= mostTop && leftPos+widthDuringDrag+distx <=widthToCheck && topPos + disty + heightDuringDrag <=heightToCheck){
           // if drag has not touched sides allow drag anywhere
@@ -573,7 +698,7 @@ angular.module('starter.controllers', [])
   $scope.cropShown = false;
   $scope.newImage = { newImage: true};
   $scope.selected_photo = null;
-  $scope.croppedImageDetails = [{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338},{top:0,left:0,height:305,width:338}]
+  $scope.croppedImageDetails = [{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1}]
 
   // we add currentTime to the image so that if the image is cached on the users phone, 
   // then looking for image.jpg?someothertimehere will trigger the phone to look for another image
@@ -720,24 +845,62 @@ angular.module('starter.controllers', [])
 
   //user has saved cropped image
   $scope.saveCroppedImage = function(){
-    $scope.image_infos[$scope.currently_selected].url = $scope.selected_photo;  
-    $scope.crop.hide();
+    
 
     //save location and size details of cropped immage
-    $scope.croppedImageDetails[$scope.currently_selected].height = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight;
-    $scope.croppedImageDetails[$scope.currently_selected].width = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth;
-    $scope.croppedImageDetails[$scope.currently_selected].top = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetTop;
-    $scope.croppedImageDetails[$scope.currently_selected].left = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetLeft;
+    $scope.croppedImageDetails[$scope.currently_selected].crop_h = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight * $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[$scope.currently_selected].crop_w = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth * $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[$scope.currently_selected].crop_y = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetTop-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetTop)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[$scope.currently_selected].crop_x = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetLeft-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetLeft)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    params = {profile:{
+                crop_x: $scope.croppedImageDetails[$scope.currently_selected].crop_x,
+                crop_y: $scope.croppedImageDetails[$scope.currently_selected].crop_y,
+                crop_w: $scope.croppedImageDetails[$scope.currently_selected].crop_w,
+                crop_h: $scope.croppedImageDetails[$scope.currently_selected].crop_h
+                }
+              }
+    switch ($scope.currently_selected){
+      case 0:
+        params.profile.picture1_url = $scope.selected_photo;
+        break;
+      case 1:
+        params.profile.picture2_url = $scope.selected_photo;
+        break;
+      case 2:
+        params.profile.picture3_url = $scope.selected_photo;
+        break;
+      case 3:
+        params.profile.picture4_url = $scope.selected_photo;
+        break;
+      case 4:
+        params.profile.picture5_url = $scope.selected_photo;
+        break;
+      default:
+        break;
+    }
 
-    $scope.cropShown=false;
-    
+    $ionicLoading.show({
+      templateUrl: "templates/loading.html"
+    });
+    console.log(params);
+    $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id+'/crop',params)
+    .success(function(data, status, headers, config){
+      $ionicLoading.hide();
+      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + $scope.currently_selected+".jpg";
+      $scope.crop.hide();  
+      $scope.cropShown=false;
+    }).error(function(data, status, headers, config){
+      $ionicLoading.hide();
+      $scope.crop.hide();  
+      $scope.cropShown=false;
+    });
   }
 
   //user has just selected picture to edit / crop
   $scope.selectPictureForProfile = function(t){
-    
+    console.log(t);
     if (typeof($scope.currently_selected)!="null"){
-      $scope.selected_photo = t.photo;  
+      $scope.selected_photo = t.photo[1];  
     }
     $scope.modal.hide();
     $scope.cropShown = true;
@@ -746,18 +909,13 @@ angular.module('starter.controllers', [])
   }
   
   // send data to server
-  $scope.save_photos = function(){
+  $scope.continue = function(){
     $ionicLoading.show({
       templateUrl: "templates/loading.html"
     });
-      console.log("save photos clicked");
+
       if($state.toStateParams.firstTime == 'isFirstTime'){
         $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
-          picture1_url: $scope.image_infos[0].url,
-          picture2_url: $scope.image_infos[1].url,
-          picture3_url: $scope.image_infos[2].url,
-          picture4_url: $scope.image_infos[3].url,
-          picture5_url: $scope.image_infos[4].url,
           today_before_five: false,
           today_after_five: false,
           tomorrow_before_five: false,
@@ -774,21 +932,9 @@ angular.module('starter.controllers', [])
           $ionicLoading.hide();
         });
       } else {
-        $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
-          picture1_url: $scope.image_infos[0].url,
-          picture2_url: $scope.image_infos[1].url,
-          picture3_url: $scope.image_infos[2].url,
-          picture4_url: $scope.image_infos[3].url,
-          picture5_url: $scope.image_infos[4].url
-        }})
-        .success(function(data, status, headers, config){
-          $ionicLoading.hide();
-            $state.go('app.cards');
-        }).error(function(data, status, headers, config){
-          $ionicLoading.hide();
-        });
-      }
-      
+        $ionicLoading.hide();
+        $state.go('app.cards');
+      }      
   }
 
 
@@ -798,7 +944,7 @@ angular.module('starter.controllers', [])
     if ($scope.next_page){
       $http.get($scope.next_page).success(function(res){
         for (i = 0; i < res.data.length; i++){
-          $scope.photoUrls.push(res.data[i].images[3].source);//res.data[i].images.length-2
+          $scope.photoUrls.push([res.data[i].images[res.data[i].images.length-1].source,res.data[i].images[2].source]);//res.data[i].images.length-2
          }
          if (typeof(res.paging)!='undefined'){
           $scope.next_page = res.paging.next; 
@@ -812,7 +958,7 @@ angular.module('starter.controllers', [])
       facebookConnectPlugin.api('/me/photos?limit=9',['public_profile','user_photos','user_birthday'],
         function(res){
           for (i = 0; i < res.data.length; i++){
-            $scope.photoUrls.push(res.data[i].images[3].source); //res.data[i].images.length-2
+            $scope.photoUrls.push([res.data[i].images[res.data[i].images.length-1].source,res.data[i].images[2].source]); //res.data[i].images.length-2
            }
            if (typeof(res.paging)!='undefined'){
             $scope.next_page = res.paging.next; 
@@ -1070,7 +1216,6 @@ angular.module('starter.controllers', [])
 
   $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
   .success(function(data,status,headers,config){
-    console.log(data);
     var updated_at = new Date(data.updated_availability);
     var currentDate = new Date();
     if (data.remember_availability){
