@@ -144,9 +144,9 @@ angular.module('starter.controllers', [])
 
   //prepopulate the params with what user's current preferences are
   
-  $scope.preferred_min_age = principal.preferred_min_age;
-  $scope.preferred_max_age = principal.preferred_max_age;
-  $scope.preferred_distance = principal.preferred_distance/1000;
+  $scope.preferred_min_age = [principal.preferred_min_age];
+  $scope.preferred_max_age = [principal.preferred_max_age];
+  $scope.preferred_distance = [principal.preferred_distance/1000];
 
 
   $scope.today_before_five = principal.today_before_five || false;
@@ -157,8 +157,7 @@ angular.module('starter.controllers', [])
   $scope.lunch = principal.lunch || false;
   $scope.dinner = principal.dinner || false;
   $scope.drinks = principal.drinks || false;
-  $scope.remember_availability = principal.remember_availability;
-  console.log("principal remember_availability is " + principal.remember_availability);
+  $scope.remember_availability = [principal.remember_availability];
 
     $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
     .success(function(data,status,headers,config){
@@ -167,7 +166,7 @@ angular.module('starter.controllers', [])
       $scope.lunch = data.lunch; 
       $scope.drinks = data.drinks;
       $scope.dinner = data.dinner;
-      $scope.remember_availability = data.remember_availability;
+      $scope.remember_availability[0] = data.remember_availability;
 
       var updated_at = new Date(data.updated_availability);
       var currentDate = new Date();
@@ -202,12 +201,13 @@ angular.module('starter.controllers', [])
     }) 
 
   
-  //save to server
+  //save to server TODO: figure out why remember_availability is always false...
   $scope.saveSettings = function(){
+
     $ionicLoading.show({
       templateUrl: "templates/loading.html"
     });
-    var pd = $scope.preferred_distance*1000;
+    var pd = $scope.preferred_distance[0]*1000;
 
     var currentDate = new Date();
     var timezone = currentDate.getTimezoneOffset();
@@ -215,9 +215,9 @@ angular.module('starter.controllers', [])
     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
       {
         profile:{
-          remember_availability:$scope.remember_availability,
-          preferred_min_age: $scope.preferred_min_age,
-          preferred_max_age: $scope.preferred_max_age,
+          remember_availability:$scope.remember_availability[0],
+          preferred_min_age: $scope.preferred_min_age[0],
+          preferred_max_age: $scope.preferred_max_age[0],
           preferred_distance: pd,
           today_before_five: $scope.today_before_five,
           today_after_five: $scope.today_after_five,
@@ -233,8 +233,8 @@ angular.module('starter.controllers', [])
       })
     .success(function(data,status,headers,config){
       
-      principal.preferred_min_age = $scope.preferred_min_age;
-      principal.preferred_max_age = $scope.preferred_max_age;
+      principal.preferred_min_age = $scope.preferred_min_age[0];
+      principal.preferred_max_age = $scope.preferred_max_age[0];
       principal.preferred_distance = pd; 
       principal.today_before_five = $scope.today_before_five;
       principal.today_after_five = $scope.today_after_five;
@@ -244,7 +244,7 @@ angular.module('starter.controllers', [])
       principal.lunch = $scope.lunch;
       principal.dinner = $scope.dinner;
       principal.drinks = $scope.drinks;
-
+      principal.remember_availability = $scope.remember_availability[0];
       $state.go('app.cards');
       $ionicLoading.hide();
     })
@@ -886,7 +886,8 @@ angular.module('starter.controllers', [])
     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id+'/crop',params)
     .success(function(data, status, headers, config){
       $ionicLoading.hide();
-      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + $scope.currently_selected+".jpg";
+      var currentTime = new Date().getTime();      
+      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + ($scope.currently_selected+1)+".jpg?" + currentTime;
       $scope.crop.hide();  
       $scope.cropShown=false;
     }).error(function(data, status, headers, config){
@@ -1212,10 +1213,11 @@ angular.module('starter.controllers', [])
   $scope.today_after_five = false;
   $scope.tomorrow_before_five = false;
   $scope.tomorrow_after_five = false;
-  $scope.remember_availability = false;
+  $scope.remember_availability = [false];
 
   $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
   .success(function(data,status,headers,config){
+
     var updated_at = new Date(data.updated_availability);
     var currentDate = new Date();
     if (data.remember_availability){
@@ -1223,7 +1225,7 @@ angular.module('starter.controllers', [])
       $scope.today_after_five = data.today_after_five || false;
       $scope.tomorrow_before_five = data.tomorrow_before_five || false;
       $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
-      $scope.remember_availability = true;
+      $scope.remember_availability[0] = true;
 
     } else if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
       $scope.today_before_five = data.today_before_five || false;
@@ -1263,7 +1265,7 @@ angular.module('starter.controllers', [])
         tomorrow_before_five: $scope.tomorrow_before_five,
         tomorrow_after_five: $scope.tomorrow_after_five,
         updated_availability: currentDate,
-        remember_availability: $scope.remember_availability,
+        remember_availability: $scope.remember_availability[0],
         timezone: timezone
       }
     })

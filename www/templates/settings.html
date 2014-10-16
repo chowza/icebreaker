@@ -9,13 +9,13 @@
       <div class="list list-inset">
       	<div class="item">
       	Youngest you will date:
-      	<input type="number" ng-model="preferred_min_age" min="18" value={{preferred_min_age}}>
+      	<input type="number" ng-model="preferred_min_age[0]" min="18" value={{preferred_min_age[0]}}>
       	</div>
       	<div class="item">
-      		Oldest you will date: <input type="number" ng-model="preferred_max_age" min="{{preferred_min_age}}" value={{preferred_max_age}}>
+      		Oldest you will date: <input type="number" ng-model="preferred_max_age[0]" min="{{preferred_min_age[0]}}" value={{preferred_max_age[0]}}>
       	</div>
       	<div class="item">
-      		Distance to search (km): <input type="number" ng-model="preferred_distance" value={{preferred_distance}}>
+      		Distance to search (km): <input type="number" ng-model="preferred_distance[0]" value={{preferred_distance[0]}}>
       	</div>
 
         <div class="item">
@@ -31,7 +31,7 @@
           </div>
           
         </div>
-        <ion-checkbox ng-model="remember_availability">Remember availability? </ion-checkbox>
+        <ion-checkbox ng-model="remember_availability[0]">Remember availability? </ion-checkbox>
         
           <div class="item row">
             <div ng-class="coffee? 'selected col text-center' :'unselected col text-center'" ng-click="select_coffee()">Coffee</div>

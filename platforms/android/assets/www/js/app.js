@@ -174,7 +174,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     age: undefined,
     first_name: undefined,
     token: undefined,
-    image1: undefined,
     preferred_min_age: undefined,
     preferred_max_age: undefined,
     preferred_distance: undefined,
@@ -708,11 +707,19 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         principal.preferred_max_age = data.preferred_max_age,
         principal.preferred_distance = data.preferred_distance
         principal.id = data.id;
+        console.log("data availability is" + data.remember_availability);
         principal.remember_availability = data.remember_availability;
+        if (principal.remember_availability){
+          principal.today_before_five = data.today_before_five;
+          principal.today_after_five = data.today_after_five;
+          principal.tomorrow_before_five = data.tomorrow_before_five;
+          principal.tomorrow_after_five = data.tomorrow_after_five;
+        }
+
         //not a first time user, then update the geo coordinates since we need update location details.
 
         updateGeoCoordinates(q,principal,http).then(function(){
-          console.log("done updating geo coordinates and done updating availability times if user has remember_avialability = true")
+          console.log("done updating geo coordinates and done updating availability times if user has remember_availability = true")
           // once done updating location, send to cards page or whichever page you came from
           // also hide loading page
 
