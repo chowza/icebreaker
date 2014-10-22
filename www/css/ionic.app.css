@@ -7482,6 +7482,11 @@ textarea {
   opacity: 0.7;
   cursor: arrow; }
 
+.overlay .row.row-center {
+  padding-left: 110px;
+  height: 100%;
+  padding-right: 10px; }
+
 .highlight-yellow {
   background-color: yellow; }
 
@@ -7529,7 +7534,8 @@ textarea {
 
 .vertical-center {
   position: relative;
-  top: 50%; }
+  top: 50%;
+  transform: translateY(-50%); }
 
 /*** cards ***/
 .profile {

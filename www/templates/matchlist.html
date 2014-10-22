@@ -16,13 +16,18 @@
         </div>
           <div class="row row-center">
   	      <div class="col">{{match.first_name}}</div>
-          <a href="#/app/chats/{{match.swipee_id}}" class="col button"><i class="ion-chatbubble"></i></a>
+          <a href="#/app/chats/{{match.swipee_id}}" class="col button" ng-hide="match.too_late"><i class="ion-chatbubble"></i></a>
            <!-- <div class="col button"> in-App-Call </div> -->
-          <!-- <div class="col button"> Rate Your Date </div> -->
         </div>
           
           
-        <div class="overlay"></div>
+        <div class="overlay">
+          
+            <div class="row row-center">
+            <div class="col"></div>
+              <a href="#/app/rate/{{match.swipee_id}}" class="col button">Rate!</a>
+            </div>
+        </div>
 	    </div>
       
     

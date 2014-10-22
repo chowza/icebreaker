@@ -10,6 +10,8 @@ angular.module('starter.controllers', [])
 // MenuCtrl -> templates/menu.html  this menu is available on all views
 // ChoosePhotosCtrl -> templates/choose_photos.html -> also opens up the photos_modal
 // ChooseAnswersCtrl -> templates/choose_answers.html
+// RateCtrl -> templates/rate.html
+// AvailabilityCtrl -> templates/availability.html
 
   .controller('CardsCtrl', function($scope,principal,$http,$ionicNavBarDelegate,$timeout,$ionicSlideBoxDelegate) {
     
@@ -55,11 +57,11 @@ angular.module('starter.controllers', [])
               $scope.cards[i].picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/3.jpg";
               $scope.cards[i].picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/4.jpg";
               $scope.cards[i].picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/5.jpg";
-              $scope.cards[i].answer1 = data[i].answer1;
-              $scope.cards[i].answer2 = data[i].answer2;
-              $scope.cards[i].answer3 = data[i].answer3;
-              $scope.cards[i].answer4 = data[i].answer4;
-              $scope.cards[i].answer5 = data[i].answer5;
+              $scope.cards[i].answer1 = ['Hooking up.','Casual dating.','Something serious.'][data[i].answer1];
+              $scope.cards[i].answer2 = ['Really Short','Kinda Short','Average','Above Average','Really Tall'][data[i].answer2];
+              $scope.cards[i].answer3 = ['Skinny','Athletic',"There's more important things than body type"][data[i].answer3];
+              $scope.cards[i].answer4 = ['answer 1','answer 2'][data[i].answer4];
+              $scope.cards[i].answer5 = ['answer 1','answer 2'][data[i].answer5];
               $ionicSlideBoxDelegate.update();
             } else {
               // all other cards can be pushed elsewhere
@@ -71,11 +73,11 @@ angular.module('starter.controllers', [])
                 picture3:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/3.jpg",
                 picture4:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/4.jpg",
                 picture5:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/5.jpg",
-                answer1: data[i].answer1,
-                answer2: data[i].answer2,
-                answer3: data[i].answer3,
-                answer4: data[i].answer4,
-                answer5: data[i].answer5
+                answer1: ['Hooking up.','Casual dating.','Something serious.'][data[i].answer1],
+                answer2: ['Really Short','Kinda Short','Average','Above Average','Really Tall'][data[i].answer2],
+                answer3: ['Skinny','Athletic',"There's more important things than body type"][data[i].answer3],
+                answer4: ['answer 1','answer 2'][data[i].answer4],
+                answer5: ['answer 1','answer 2'][data[i].answer5]
               });
             }
           }
@@ -149,56 +151,48 @@ angular.module('starter.controllers', [])
   $scope.preferred_distance = [principal.preferred_distance/1000];
 
 
-  $scope.today_before_five = principal.today_before_five || false;
-  $scope.today_after_five = principal.today_after_five || false;
-  $scope.tomorrow_before_five = principal.tomorrow_before_five || false;
-  $scope.tomorrow_after_five = principal.tomorrow_after_five || false;
-  $scope.coffee = principal.coffee || false;
-  $scope.lunch = principal.lunch || false;
-  $scope.dinner = principal.dinner || false;
-  $scope.drinks = principal.drinks || false;
-  $scope.remember_availability = [principal.remember_availability];
+  // $scope.today_before_five = principal.today_before_five || false;
+  // $scope.today_after_five = principal.today_after_five || false;
+  // $scope.tomorrow_before_five = principal.tomorrow_before_five || false;
+  // $scope.tomorrow_after_five = principal.tomorrow_after_five || false;
+  // $scope.remember_availability = [principal.remember_availability];
 
-    $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
-    .success(function(data,status,headers,config){
-      console.log(data);
-      $scope.coffee = data.coffee; 
-      $scope.lunch = data.lunch; 
-      $scope.drinks = data.drinks;
-      $scope.dinner = data.dinner;
-      $scope.remember_availability[0] = data.remember_availability;
+    // $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
+    // .success(function(data,status,headers,config){
+    //   console.log(data);
+    //   $scope.remember_availability[0] = data.remember_availability;
 
-      var updated_at = new Date(data.updated_availability);
-      var currentDate = new Date();
-      if (data.remember_availability){
-        //availability remembered for future
-        $scope.today_before_five = data.today_before_five;
-        $scope.today_after_five = data.today_after_five;
-        $scope.tomorrow_before_five = data.tomorrow_before_five;
-        $scope.tomorrow_after_five = data.tomorrow_after_five ; 
+    //   var updated_at = new Date(data.updated_availability);
+    //   var currentDate = new Date();
+    //   if (data.remember_availability){
+    //     //availability remembered for future
+    //     $scope.today_before_five = data.today_before_five;
+    //     $scope.today_after_five = data.today_after_five;
+    //     $scope.tomorrow_before_five = data.tomorrow_before_five;
+    //     $scope.tomorrow_after_five = data.tomorrow_after_five ; 
 
-      } else if (updated_at.toDateString() == currentDate.toDateString()){ 
-        // updated availability is the same date as today
-        $scope.today_before_five = data.today_before_five;
-        $scope.today_after_five = data.today_after_five;
-        $scope.tomorrow_before_five = data.tomorrow_before_five;
-        $scope.tomorrow_after_five = data.tomorrow_after_five; 
-      } else { 
-        //need to check when it was last updated
-        var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
+    //   } else if (updated_at.toDateString() == currentDate.toDateString()){ 
+    //     // updated availability is the same date as today
+    //     $scope.today_before_five = data.today_before_five;
+    //     $scope.today_after_five = data.today_after_five;
+    //     $scope.tomorrow_before_five = data.tomorrow_before_five;
+    //     $scope.tomorrow_after_five = data.tomorrow_after_five; 
+    //   } else { 
+    //     //need to check when it was last updated
+    //     var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
 
-        //updated yesterday, that means 'tomorrow dates are already determined'...
-        if (updated_at.toDateString() == yesterday.toDateString()){
-          $scope.today_before_five =  data.tomorrow_before_five;
-          $scope.today_after_five =   data.tomorrow_after_five;
-          //TODO: set a 'not yet updated' for the days not yet entered
-        }
-        //last updated before yesterday, keep availability as false;
-        //TODO: set a 'not yet updated' for all days
-      }
-    })
-    .error(function(data,status,headers,config){
-    }) 
+    //     //updated yesterday, that means 'tomorrow dates are already determined'...
+    //     if (updated_at.toDateString() == yesterday.toDateString()){
+    //       $scope.today_before_five =  data.tomorrow_before_five;
+    //       $scope.today_after_five =   data.tomorrow_after_five;
+    //       //TODO: set a 'not yet updated' for the days not yet entered
+    //     }
+    //     //last updated before yesterday, keep availability as false;
+    //     //TODO: set a 'not yet updated' for all days
+    //   }
+    // })
+    // .error(function(data,status,headers,config){
+    // }) 
 
   
   //save to server TODO: figure out why remember_availability is always false...
@@ -209,26 +203,22 @@ angular.module('starter.controllers', [])
     });
     var pd = $scope.preferred_distance[0]*1000;
 
-    var currentDate = new Date();
-    var timezone = currentDate.getTimezoneOffset();
+    // var currentDate = new Date();
+    // var timezone = currentDate.getTimezoneOffset();
     
     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
       {
         profile:{
-          remember_availability:$scope.remember_availability[0],
+          // remember_availability:$scope.remember_availability[0],
           preferred_min_age: $scope.preferred_min_age[0],
           preferred_max_age: $scope.preferred_max_age[0],
-          preferred_distance: pd,
-          today_before_five: $scope.today_before_five,
-          today_after_five: $scope.today_after_five,
-          tomorrow_before_five: $scope.tomorrow_before_five,
-          tomorrow_after_five: $scope.tomorrow_after_five,
-          coffee: $scope.coffee,
-          lunch: $scope.lunch,
-          drinks: $scope.drinks,
-          dinner: $scope.dinner,
-          updated_availability: currentDate,
-          timezone: timezone
+          preferred_distance: pd
+          // today_before_five: $scope.today_before_five,
+          // today_after_five: $scope.today_after_five,
+          // tomorrow_before_five: $scope.tomorrow_before_five,
+          // tomorrow_after_five: $scope.tomorrow_after_five,
+          // updated_availability: currentDate,
+          // timezone: timezone
         }
       })
     .success(function(data,status,headers,config){
@@ -236,15 +226,11 @@ angular.module('starter.controllers', [])
       principal.preferred_min_age = $scope.preferred_min_age[0];
       principal.preferred_max_age = $scope.preferred_max_age[0];
       principal.preferred_distance = pd; 
-      principal.today_before_five = $scope.today_before_five;
-      principal.today_after_five = $scope.today_after_five;
-      principal.tomorrow_before_five = $scope.tomorrow_before_five;
-      principal.tomorrow_after_five = $scope.tomorrow_after_five;
-      principal.coffee = $scope.coffee;
-      principal.lunch = $scope.lunch;
-      principal.dinner = $scope.dinner;
-      principal.drinks = $scope.drinks;
-      principal.remember_availability = $scope.remember_availability[0];
+      // principal.today_before_five = $scope.today_before_five;
+      // principal.today_after_five = $scope.today_after_five;
+      // principal.tomorrow_before_five = $scope.tomorrow_before_five;
+      // principal.tomorrow_after_five = $scope.tomorrow_after_five;
+      // principal.remember_availability = $scope.remember_availability[0];
       $state.go('app.cards');
       $ionicLoading.hide();
     })
@@ -254,30 +240,18 @@ angular.module('starter.controllers', [])
     })
   }
 
-  $scope.select_coffee = function(){
-    $scope.coffee = !$scope.coffee;
-  }
-  $scope.select_drinks = function(){
-    $scope.drinks = !$scope.drinks;
-  }
-  $scope.select_lunch = function(){
-    $scope.lunch = !$scope.lunch;
-  }
-  $scope.select_dinner = function(){
-    $scope.dinner = !$scope.dinner;
-  }
-  $scope.select_today_before_five = function(){
-    $scope.today_before_five = !$scope.today_before_five; 
-  }
-  $scope.select_today_after_five = function(){
-    $scope.today_after_five = !$scope.today_after_five;
-  }
-  $scope.select_tomorrow_before_five = function(){
-    $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
-  }
-  $scope.select_tomorrow_after_five = function(){
-    $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
-  }
+  // $scope.select_today_before_five = function(){
+  //   $scope.today_before_five = !$scope.today_before_five; 
+  // }
+  // $scope.select_today_after_five = function(){
+  //   $scope.today_after_five = !$scope.today_after_five;
+  // }
+  // $scope.select_tomorrow_before_five = function(){
+  //   $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
+  // }
+  // $scope.select_tomorrow_after_five = function(){
+  //   $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
+  // }
   
 })
 
@@ -289,6 +263,87 @@ angular.module('starter.controllers', [])
 
 })
 
+// rate a user
+.controller('RateCtrl',function($scope,principal,$http,$stateParams){
+  
+  $http.get(AppSettings.baseApiUrl + 'profiles/individual/' + $stateParams.user_id)
+  .success(function(data,status,headers,config){
+    console.log(data);
+    $scope.answer1 = ['Hooking up.','Casual dating.','Something serious.'][data.answer1];
+    $scope.answer2 = ['Really Short','Kinda Short','Average','Above Average','Really Tall'][data.answer2];
+    $scope.answer3 = ['Skinny','Athletic',"There's more important things than body type"][data.answer3];
+    $scope.answer4 = ['answer 1','answer 2'][data.answer4];
+    $scope.answer5 = ['answer 1','answer2'][data.answer5];
+    $scope.picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/1.jpg";
+    $scope.picture2 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/2.jpg";
+    $scope.picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/3.jpg";
+    $scope.picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/4.jpg";
+    $scope.picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/5.jpg";
+    $scope.first_name = data.first_name;
+  })
+  .error(function(data,status,headers,config){
+
+  })
+
+  
+
+  $scope.answer_stars = function(el,answer,num) {
+    
+    if (el.target.previousElementSibling === null){
+      el.target.className = "ion-ios7-star";
+      el.target.nextElementSibling.className = "ion-ios7-star-outline";
+      el.target.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
+      el.target.nextElementSibling.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
+      el.target.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
+    } else if (el.target.previousElementSibling.previousElementSibling === null){
+      el.target.className = "ion-ios7-star";
+      el.target.previousElementSibling.className = "ion-ios7-star";
+      el.target.nextElementSibling.className = "ion-ios7-star-outline";
+      el.target.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
+      el.target.nextElementSibling.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
+    } else if (el.target.previousElementSibling.previousElementSibling.previousElementSibling === null) {
+      el.target.className = "ion-ios7-star";
+      el.target.previousElementSibling.className = "ion-ios7-star";
+      el.target.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
+      el.target.nextElementSibling.className = "ion-ios7-star-outline";
+      el.target.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
+    } else if (el.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling === null){
+      el.target.className = "ion-ios7-star";
+      el.target.previousElementSibling.className = "ion-ios7-star";
+      el.target.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
+      el.target.previousElementSibling.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
+      el.target.nextElementSibling.className = "ion-ios7-star-outline";
+    } else if (el.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling === null){
+      el.target.className = "ion-ios7-star";
+      el.target.previousElementSibling.className = "ion-ios7-star";
+      el.target.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
+      el.target.previousElementSibling.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
+      el.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
+    }
+    
+    switch (answer){
+      case 1:
+        $scope.answer1_rating = num;
+        break;
+      case 2:
+        $scope.answer2_rating = num;
+        break;
+      case 3:
+        $scope.answer3_rating = num;
+        break;
+      case 4:
+        $scope.answer4_rating = num;
+        break;
+      case 5:
+        $scope.answer5_rating = num;
+        break;
+      default:
+        break;
+    }
+    //TODO: http to save rating
+  }
+
+})
 
 // show chat messages
 .controller('ChatCtrl',function($scope,$stateParams,$ionicScrollDelegate,$q,principal,$http,$timeout,PushService){
@@ -816,6 +871,7 @@ angular.module('starter.controllers', [])
       $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/icondark.jpg";
     }
     $scope.currently_selected = null;
+    //TODO: send to server to save
   }
 
   //selecting this brings up the facebook pictures modal
@@ -841,12 +897,12 @@ angular.module('starter.controllers', [])
     $scope.showSwapImage = false;
     $scope.currently_selected = null;
     $scope.second_selected = null;
+    //TODO: send to server to save
   }
 
   //user has saved cropped image
   $scope.saveCroppedImage = function(){
     
-
     //save location and size details of cropped immage
     $scope.croppedImageDetails[$scope.currently_selected].crop_h = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight * $scope.croppedImageDetails[$scope.currently_selected].ratio;
     $scope.croppedImageDetails[$scope.currently_selected].crop_w = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth * $scope.croppedImageDetails[$scope.currently_selected].ratio;
@@ -911,31 +967,27 @@ angular.module('starter.controllers', [])
   
   // send data to server
   $scope.continue = function(){
-    $ionicLoading.show({
-      templateUrl: "templates/loading.html"
-    });
+    // $ionicLoading.show({
+    //   templateUrl: "templates/loading.html"
+    // });
 
-      if($state.toStateParams.firstTime == 'isFirstTime'){
-        $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
-          today_before_five: false,
-          today_after_five: false,
-          tomorrow_before_five: false,
-          tomorrow_after_five: false,
-          coffee: false,
-          lunch: false,
-          dinner: false,
-          drinks: false
-        }})
-        .success(function(data, status, headers, config){
-          $ionicLoading.hide();
-            $state.go('app.availability');
-        }).error(function(data, status, headers, config){
-          $ionicLoading.hide();
-        });
-      } else {
-        $ionicLoading.hide();
+    //   if($state.toStateParams.firstTime == 'isFirstTime'){
+    //     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
+    //       today_before_five: false,
+    //       today_after_five: false,
+    //       tomorrow_before_five: false,
+    //       tomorrow_after_five: false
+    //     }})
+    //     .success(function(data, status, headers, config){
+    //       $ionicLoading.hide();
+    //         $state.go('app.availability');
+    //     }).error(function(data, status, headers, config){
+    //       $ionicLoading.hide();
+    //     });
+    //   } else {
+    //     $ionicLoading.hide();
         $state.go('app.cards');
-      }      
+      // }      
   }
 
 
@@ -1126,7 +1178,7 @@ angular.module('starter.controllers', [])
       principal.answer4 = $scope.answers.answer4;
       principal.answer5 = $scope.answers.answer5;
       // send 5 answers to servers
-      
+
       $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:$scope.answers})
       .success(function(data,status,headers,config){
         console.log(data);
@@ -1143,155 +1195,97 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('TypeCtrl',function($scope,$state,$ionicNavBarDelegate,$timeout,$http,principal){
-  if (($state.fromState.name == 'app.availability') || $state.fromState.name == 'app.login'){
-    $timeout(function(){
-      $ionicNavBarDelegate.showBackButton(false);
-    });
-  }  
-  $scope.coffee = false;
-  $scope.lunch = false;
-  $scope.drinks = false;
-  $scope.dinner = false;
+// .controller('AvailabilityCtrl', function($scope,$state,principal,$http,$ionicNavBarDelegate,$timeout) {
 
-  $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
-  .success(function(data,status,headers,config){
-    $scope.coffee = data.coffee || false;
-    $scope.lunch = data.lunch || false; 
-    $scope.drinks = data.drinks || false;
-    $scope.dinner = data.dinner || false;
-
-  })
-  .error(function(data,status,headers,config){
-  })
-
-  $scope.save = function(){
-      principal.coffee = $scope.coffee;
-      principal.lunch = $scope.lunch;
-      principal.dinner = $scope.dinner;
-      principal.drinks = $scope.drinks;
-      $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
-      {
-        profile:{
-          coffee: $scope.coffee,
-          lunch: $scope.lunch,
-          drinks: $scope.drinks,
-          dinner: $scope.dinner,
-        }
-      })
-      .success(function(data,status,headers,config){
-        $state.go('app.cards');
-      })
-      .error(function(data,status,headers,config){
-      }) 
-  }
-
-  $scope.select_coffee = function(){
-    $scope.coffee = !$scope.coffee;
-  }
-  $scope.select_drinks = function(){
-    $scope.drinks = !$scope.drinks;
-  }
-  $scope.select_lunch = function(){
-    $scope.lunch = !$scope.lunch;
-  }
-  $scope.select_dinner = function(){
-    $scope.dinner = !$scope.dinner;
-  }
-
-})
-
-.controller('AvailabilityCtrl', function($scope,$state,principal,$http,$ionicNavBarDelegate,$timeout) {
-
-  if (($state.fromState.name == 'app.choose_photos' && $state.toStateParams.firstTime == 'isFirstTime') || $state.fromState.name == 'app.login'){
-    $timeout(function(){
-      $ionicNavBarDelegate.showBackButton(false);
-    });
-  }
+//   if (($state.fromState.name == 'app.choose_photos' && $state.toStateParams.firstTime == 'isFirstTime') || $state.fromState.name == 'app.login'){
+//     $timeout(function(){
+//       $ionicNavBarDelegate.showBackButton(false);
+//     });
+//   }
   
-  $scope.today_before_five = false;
-  $scope.today_after_five = false;
-  $scope.tomorrow_before_five = false;
-  $scope.tomorrow_after_five = false;
-  $scope.remember_availability = [false];
+//   $scope.today_before_five = false;
+//   $scope.today_after_five = false;
+//   $scope.tomorrow_before_five = false;
+//   $scope.tomorrow_after_five = false;
+//   $scope.remember_availability = [false];
 
-  $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
-  .success(function(data,status,headers,config){
+//   $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
+//   .success(function(data,status,headers,config){
 
-    var updated_at = new Date(data.updated_availability);
-    var currentDate = new Date();
-    if (data.remember_availability){
-      $scope.today_before_five = data.today_before_five || false;
-      $scope.today_after_five = data.today_after_five || false;
-      $scope.tomorrow_before_five = data.tomorrow_before_five || false;
-      $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
-      $scope.remember_availability[0] = true;
+//     var updated_at = new Date(data.updated_availability);
+//     var currentDate = new Date();
+//     if (data.remember_availability){
+//       $scope.today_before_five = data.today_before_five || false;
+//       $scope.today_after_five = data.today_after_five || false;
+//       $scope.tomorrow_before_five = data.tomorrow_before_five || false;
+//       $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
+//       $scope.remember_availability[0] = true;
 
-    } else if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
-      $scope.today_before_five = data.today_before_five || false;
-      $scope.today_after_five = data.today_after_five || false;
-      $scope.tomorrow_before_five = data.tomorrow_before_five || false;
-      $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
-    } else { 
-      //need to check when it was last updated
-      var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
+//     } else if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
+//       $scope.today_before_five = data.today_before_five || false;
+//       $scope.today_after_five = data.today_after_five || false;
+//       $scope.tomorrow_before_five = data.tomorrow_before_five || false;
+//       $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
+//     } else { 
+//       //need to check when it was last updated
+//       var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
 
-      //updated yesterday, that means 'tomorrow dates are already determined'...
-      if (updated_at.toDateString() == yesterday.toDateString()){
-        $scope.today_before_five =  data.tomorrow_before_five;
-        $scope.today_after_five =   data.tomorrow_after_five;
-        //TODO: set a 'not yet updated' for the days not yet entered
-      }
-      //last updated before yesterday, keep availability as false;
-      //TODO: set a 'not yet updated' for all days
-    }
-  })
-  .error(function(data,status,headers,config){
-  }) 
+//       //updated yesterday, that means 'tomorrow dates are already determined'...
+//       if (updated_at.toDateString() == yesterday.toDateString()){
+//         $scope.today_before_five =  data.tomorrow_before_five;
+//         $scope.today_after_five =   data.tomorrow_after_five;
+//         //TODO: set a 'not yet updated' for the days not yet entered
+//       }
+//       //last updated before yesterday, keep availability as false;
+//       //TODO: set a 'not yet updated' for all days
+//     }
+//   })
+//   .error(function(data,status,headers,config){
+//   }) 
 
-  $scope.save = function(){
-    var currentDate = new Date();
-    var timezone = currentDate.getTimezoneOffset();
-    principal.today_before_five = $scope.today_before_five,
-    principal.today_after_five = $scope.today_after_five,
-    principal.tomorrow_before_five = $scope.tomorrow_before_five,
-    principal.tomorrow_after_five = $scope.tomorrow_after_five,
+//   $scope.save = function(){
+//     var currentDate = new Date();
+//     var timezone = currentDate.getTimezoneOffset();
+//     principal.today_before_five = $scope.today_before_five,
+//     principal.today_after_five = $scope.today_after_five,
+//     principal.tomorrow_before_five = $scope.tomorrow_before_five,
+//     principal.tomorrow_after_five = $scope.tomorrow_after_five,
 
-    $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
-    {
-      profile:{
-        today_before_five: $scope.today_before_five,
-        today_after_five: $scope.today_after_five,
-        tomorrow_before_five: $scope.tomorrow_before_five,
-        tomorrow_after_five: $scope.tomorrow_after_five,
-        updated_availability: currentDate,
-        remember_availability: $scope.remember_availability[0],
-        timezone: timezone
-      }
-    })
-    .success(function(data,status,headers,config){
-      console.log(data)
-      //Go to somewhere else
-      $state.go('app.type_of_date');
-    })
-    .error(function(data,status,headers,config){
+//     $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
+//     {
+//       profile:{
+//         today_before_five: $scope.today_before_five,
+//         today_after_five: $scope.today_after_five,
+//         tomorrow_before_five: $scope.tomorrow_before_five,
+//         tomorrow_after_five: $scope.tomorrow_after_five,
+//         updated_availability: currentDate,
+//         remember_availability: $scope.remember_availability[0],
+//         timezone: timezone
+//       }
+//     })
+//     .success(function(data,status,headers,config){
+//       console.log(data)
+//       //Go to somewhere else
+//       $state.go('app.cards');
+//     })
+//     .error(function(data,status,headers,config){
       
-    }) 
-  }
+//     }) 
+//   }
 
-  $scope.select_today_before_five = function(){
-    $scope.today_before_five = !$scope.today_before_five; 
-  }
-  $scope.select_today_after_five = function(){
-    $scope.today_after_five = !$scope.today_after_five;
-  }
-  $scope.select_tomorrow_before_five = function(){
-    $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
-  }
-  $scope.select_tomorrow_after_five = function(){
-    $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
-  }
-})
+//   $scope.select_today_before_five = function(){
+//     $scope.today_before_five = !$scope.today_before_five; 
+//   }
+//   $scope.select_today_after_five = function(){
+//     $scope.today_after_five = !$scope.today_after_five;
+//   }
+//   $scope.select_tomorrow_before_five = function(){
+//     $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
+//   }
+//   $scope.select_tomorrow_after_five = function(){
+//     $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
+//   }
+// })
 
 
 // determine what cards are displayed by replacing the element that was swiped in scope.cards with an element from scope.remainingCards

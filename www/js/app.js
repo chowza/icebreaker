@@ -32,30 +32,21 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.availability', {
-      url: "/availability",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/availability.html",
-          controller: 'AvailabilityCtrl'
-        }
-      }
-    })
+    // .state('app.availability', {
+    //   url: "/availability",
+    //   views: {
+    //     'menuContent' :{
+    //       templateUrl: "templates/availability.html",
+    //       controller: 'AvailabilityCtrl'
+    //     }
+    //   }
+    // })
     .state('app.matches',{
       url:"/matches",
       views: {
         'menuContent':{
           templateUrl: "templates/matchlist.html",
           controller: 'MatchCtrl'
-        }
-      }
-    })
-    .state('app.type_of_date',{
-      url:"/type",
-      views: {
-        'menuContent':{
-          templateUrl: "templates/type_of_date.html",
-          controller: 'TypeCtrl'
         }
       }
     })
@@ -92,6 +83,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         'menuContent':{
           templateUrl:'templates/choose_answers.html',
           controller: 'ChooseAnswersCtrl'
+        }
+      }
+    })
+    .state('app.rate',{
+      url:'/rate/{user_id}',
+      views:{
+        'menuContent':{
+          templateUrl:'templates/rate.html',
+          controller: 'RateCtrl'
         }
       }
     })
@@ -144,7 +144,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         } else if (principal.isFBLoggedIn && toState.name === 'app.login'){
           //if logged in and going to login page, you need to be in the cards page since logged in users shouldn't be shown a login page
           event.preventDefault();
-          $state.go('app.availability');
+          $state.go('app.cards');
 
         } else if (!principal.isFBLoggedIn && toState.name != 'app.login') {
           // not logged in you belong in the login page
@@ -654,26 +654,26 @@ function getFacebookData(q,principal){
   return deferred.promise;
 }
 
-// send geo location data to our servers and update availability if needed
+// send geo location data to our servers 
 function updateGeoCoordinates(q,principal,http){
   var deferred = q.defer();
-  if(principal.remember_availability){
-    var now = new Date();
-    http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age,updated_availability:now}})
-    .success(function(data, status, headers, config){
-      console.log(data);
-      deferred.resolve(data);
-    }).error(function(data, status, headers, config){
-      deferred.reject(data);
-    });
-  } else {
+  // if(principal.remember_availability){
+  //   var now = new Date();
+  //   http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age,updated_availability:now}})
+  //   .success(function(data, status, headers, config){
+  //     console.log(data);
+  //     deferred.resolve(data);
+  //   }).error(function(data, status, headers, config){
+  //     deferred.reject(data);
+  //   });
+  // } else {
     http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age}})
     .success(function(data, status, headers, config){
       deferred.resolve(data);
     }).error(function(data, status, headers, config){
       deferred.reject(data);
     });
-  }
+  // }
   return deferred.promise;
 }
 
@@ -707,25 +707,25 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         principal.preferred_max_age = data.preferred_max_age,
         principal.preferred_distance = data.preferred_distance
         principal.id = data.id;
-        console.log("data availability is" + data.remember_availability);
-        principal.remember_availability = data.remember_availability;
-        if (principal.remember_availability){
-          principal.today_before_five = data.today_before_five;
-          principal.today_after_five = data.today_after_five;
-          principal.tomorrow_before_five = data.tomorrow_before_five;
-          principal.tomorrow_after_five = data.tomorrow_after_five;
-        }
+        
+        // principal.remember_availability = data.remember_availability;
+        // if (principal.remember_availability){
+        //   principal.today_before_five = data.today_before_five;
+        //   principal.today_after_five = data.today_after_five;
+        //   principal.tomorrow_before_five = data.tomorrow_before_five;
+        //   principal.tomorrow_after_five = data.tomorrow_after_five;
+        // }
 
         //not a first time user, then update the geo coordinates since we need update location details.
 
         updateGeoCoordinates(q,principal,http).then(function(){
-          console.log("done updating geo coordinates and done updating availability times if user has remember_availability = true")
+          console.log("done updating geo coordinates ")
           // once done updating location, send to cards page or whichever page you came from
           // also hide loading page
 
-          var updated_at = new Date(data.updated_availability);
-          var currentDate = new Date();
-          if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
+          // var updated_at = new Date(data.updated_availability);
+          // var currentDate = new Date();
+          // if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
             //availbility was updated today, therefore go to cards or where you were planning on going
             if (state.toState.name ==='app.login'){
               ionicLoading.hide();
@@ -734,11 +734,11 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
               ionicLoading.hide();
               state.go(state.toState.name);
             }
-          } else {
-            //availbility was not updated today
-            ionicLoading.hide();
-            state.go('app.availability');
-          }
+          // } else {
+          //   //availbility was not updated today
+          //   ionicLoading.hide();
+          //   state.go('app.availability');
+          // }
         });
 
         //not a first time user, check if the app version has changed. changed app versions need to reregister for push.
