@@ -24,11 +24,11 @@ angular.module('starter.controllers', [])
     // we use only 5 cards because it is more efficient on mobile to only load what is currently visible on screen. 
     // In our case, since it is a tinder like interface, I load 5 cards even if they are not on screen because some people swipe quite fast...
 
-    $scope.cards =[{id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",answer3:"",answer4:"",answer5:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",answer3:"",answer4:"",answer5:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",answer3:"",answer4:"",answer5:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",answer3:"",answer4:"",answer5:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",answer3:"",answer4:"",answer5:""}];
+    $scope.cards =[{id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""}];
 
 
 
@@ -52,32 +52,62 @@ angular.module('starter.controllers', [])
               //Only push 5 cards for performance reasons
               $scope.cards[i].id = data[i].id;
               $scope.cards[i].first_name = data[i].first_name;
-              $scope.cards[i].picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/1.jpg";
-              $scope.cards[i].picture2 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/2.jpg";
-              $scope.cards[i].picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/3.jpg";
-              $scope.cards[i].picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/4.jpg";
-              $scope.cards[i].picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/5.jpg";
               $scope.cards[i].answer1 = ['Hooking up.','Casual dating.','Something serious.'][data[i].answer1];
-              $scope.cards[i].answer2 = ['Really Short','Kinda Short','Average','Above Average','Really Tall'][data[i].answer2];
-              $scope.cards[i].answer3 = ['Skinny','Athletic',"There's more important things than body type"][data[i].answer3];
-              $scope.cards[i].answer4 = ['answer 1','answer 2'][data[i].answer4];
-              $scope.cards[i].answer5 = ['answer 1','answer 2'][data[i].answer5];
+              $scope.cards[i].answer2 = ['Skinny','Athletic',"There's more important things than body type"][data[i].answer2];
+              $scope.cards[i].feet = data[i].feet;
+              $scope.cards[i].inches = data[i].inches;
+              $scope.cards[i].blurb = data[i].blurb;
+
+              // determine if photos have been uploaded...
+              if (data[i].photos_uploaded){
+                //photos have been uploaded, display user's photos
+                $scope.cards[i].picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[0]+1)+".jpg";
+                $scope.cards[i].picture2 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[1]+1)+".jpg";
+                $scope.cards[i].picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[2]+1)+".jpg";
+                $scope.cards[i].picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[3]+1)+".jpg";
+                $scope.cards[i].picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[4]+1)+".jpg";
+              } else {
+                //photos not uploaded, use generic photo
+                $scope.cards[i].picture1 = "./img/iconlight.jpg";
+                $scope.cards[i].picture2 = "./img/icondark.jpg";
+                $scope.cards[i].picture3 = "./img/icondark.jpg";
+                $scope.cards[i].picture4 = "./img/icondark.jpg";
+                $scope.cards[i].picture5 = "./img/icondark.jpg";
+              }
               $ionicSlideBoxDelegate.update();
             } else {
               // all other cards can be pushed elsewhere
+
+              // determine if photos have been uploaded...
+              if (data[i].photos_uploaded){
+                //photos have been uploaded, display user's photos
+                picture1_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[0]+1)+".jpg";
+                picture2_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[1]+1)+".jpg";
+                picture3_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[2]+1)+".jpg";
+                picture4_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[3]+1)+".jpg";
+                picture5_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[4]+1)+".jpg";
+              } else {
+                //photos not uploaded, use generic photo
+                picture1_url = "./img/iconlight.jpg";
+                picture2_url = "./img/icondark.jpg";
+                picture3_url = "./img/icondark.jpg";
+                picture4_url = "./img/icondark.jpg";
+                picture5_url = "./img/icondark.jpg";
+              }
+
               $scope.remainingCards[0].push({
                 id:data[i].id, 
                 first_name:data[i].first_name,
-                picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/1.jpg",
-                picture2:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/2.jpg",
-                picture3:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/3.jpg",
-                picture4:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/4.jpg",
-                picture5:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/5.jpg",
+                picture1:picture1_url,
+                picture2:picture2_url,
+                picture3:picture3_url,
+                picture4:picture4_url,
+                picture5:picture5_url,
                 answer1: ['Hooking up.','Casual dating.','Something serious.'][data[i].answer1],
-                answer2: ['Really Short','Kinda Short','Average','Above Average','Really Tall'][data[i].answer2],
-                answer3: ['Skinny','Athletic',"There's more important things than body type"][data[i].answer3],
-                answer4: ['answer 1','answer 2'][data[i].answer4],
-                answer5: ['answer 1','answer 2'][data[i].answer5]
+                answer2: ['Skinny','Athletic',"There's more important things than body type"][data[i].answer2],
+                feet: data[i].feet,
+                inches: data[i].inches,
+                blurb: data[i].blurb
               });
             }
           }
@@ -264,22 +294,28 @@ angular.module('starter.controllers', [])
 })
 
 // rate a user
-.controller('RateCtrl',function($scope,principal,$http,$stateParams){
-  
+.controller('RateCtrl',function($scope,principal,$http,$stateParams,$ionicLoading,$state){
+
+
   $http.get(AppSettings.baseApiUrl + 'profiles/individual/' + $stateParams.user_id)
   .success(function(data,status,headers,config){
-    console.log(data);
     $scope.answer1 = ['Hooking up.','Casual dating.','Something serious.'][data.answer1];
-    $scope.answer2 = ['Really Short','Kinda Short','Average','Above Average','Really Tall'][data.answer2];
-    $scope.answer3 = ['Skinny','Athletic',"There's more important things than body type"][data.answer3];
-    $scope.answer4 = ['answer 1','answer 2'][data.answer4];
-    $scope.answer5 = ['answer 1','answer2'][data.answer5];
-    $scope.picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/1.jpg";
-    $scope.picture2 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/2.jpg";
-    $scope.picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/3.jpg";
-    $scope.picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/4.jpg";
-    $scope.picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/5.jpg";
+    $scope.answer2 = ['Skinny','Athletic',"There's more important things than body type"][data.answer2];
+    $scope.feet = data.feet;
+    $scope.inches = data.inches;
+    $scope.picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/" + (data.order[0]+1)+".jpg";
+    $scope.picture2 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/" + (data.order[1]+1)+".jpg";
+    $scope.picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/" + (data.order[2]+1)+".jpg";
+    $scope.picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/" + (data.order[3]+1)+".jpg";
+    $scope.picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/" + (data.order[4]+1)+".jpg";
     $scope.first_name = data.first_name;
+    if (data.gender =='female'){
+      $scope.pronoun = 'She';
+      $scope.pronoun_two = 'Her';
+    } else {
+      $scope.pronoun = 'He';
+      $scope.pronoun_two = 'His';
+    }
   })
   .error(function(data,status,headers,config){
 
@@ -322,6 +358,8 @@ angular.module('starter.controllers', [])
     }
     
     switch (answer){
+      case 0:
+        $scope.looks_rating = num;
       case 1:
         $scope.answer1_rating = num;
         break;
@@ -331,18 +369,33 @@ angular.module('starter.controllers', [])
       case 3:
         $scope.answer3_rating = num;
         break;
-      case 4:
-        $scope.answer4_rating = num;
-        break;
-      case 5:
-        $scope.answer5_rating = num;
-        break;
       default:
         break;
     }
-    //TODO: http to save rating
   }
 
+  $scope.rate = function(){
+  
+    $ionicLoading.show({
+      templateUrl: "templates/loading.html"
+    });
+    var params = {match:{
+        swipee_id: $stateParams.user_id,
+        looks_rating: $scope.looks_rating,
+        answer1_rating: $scope.answer1_rating,
+        answer2_rating: $scope.answer2_rating,
+        answer3_rating: $scope.answer3_rating
+      }
+    }
+    $http.put(AppSettings.baseApiUrl + 'matches/'+principal.id,params)
+    .success(function(data,status,headers,config){
+      $ionicLoading.hide();
+      $state.go('app.matches');
+    })
+    .error(function(data,status,headers,config){
+      $ionicLoading.hide();
+    })
+  }
 })
 
 // show chat messages
@@ -745,7 +798,6 @@ angular.module('starter.controllers', [])
 
 .controller('ChoosePhotosCtrl',function($scope,$ionicModal,$timeout,principal,$http,$state,$q,$ionicLoading,$ionicNavBarDelegate){
   
-
   $scope.number_selected = 0;
   $scope.showChangeImage = false;
   $scope.showSwapImage = false;
@@ -769,14 +821,26 @@ angular.module('starter.controllers', [])
       $scope.hideBack = true;
       $ionicNavBarDelegate.showBackButton(false);
     });
-  } 
+  }
+
+  if (principal.photos_uploaded){
+    //the view uses the url parameter
+    $scope.image_infos = [{ url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + (principal.order[0]+1) + ".jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(0);},selected_image:false },
+    { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + (principal.order[1]+1) + ".jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(1);},selected_image:false },
+    { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + (principal.order[2]+1) + ".jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(2);},selected_image:false },
+    { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + (principal.order[3]+1) + ".jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(3);},selected_image:false },
+    { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + (principal.order[4]+1) + ".jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(4);},selected_image:false }]
+
+  } else {
+    //the view uses the url parameter, different images when it's your first time.
+    $scope.image_infos = [{ url:"./img/iconlight.jpg", onClickFunction: function(){selectImageToEdit(0);},selected_image:false },
+    { url: "./img/icondark.jpg", onClickFunction: function(){selectImageToEdit(1);},selected_image:false },
+    { url: "./img/icondark.jpg", onClickFunction: function(){selectImageToEdit(2);},selected_image:false },
+    { url: "./img/icondark.jpg", onClickFunction: function(){selectImageToEdit(3);},selected_image:false },
+    { url: "./img/icondark.jpg", onClickFunction: function(){selectImageToEdit(4);},selected_image:false }]
+      
+  }
   
-  //the view uses the url parameter
-  $scope.image_infos = [{ url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/1.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(0);},selected_image:false },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/2.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(1);},selected_image:false },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/3.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(2);},selected_image:false },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/4.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(3);},selected_image:false },
-  { url:AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/5.jpg?"+currentTime, onClickFunction: function(){selectImageToEdit(4);},selected_image:false }]
     
   //photourls loaded for fb
   $scope.photoUrls = [];
@@ -856,23 +920,24 @@ angular.module('starter.controllers', [])
         $scope.showSwapImage = false;
       }
     } 
+    console.log($scope.currently_selected + " " + $scope.second_selected)
     
   }
 
-  //allows user to remove image
-  $scope.removeImage = function(){
-    $scope.number_selected = 0;
-    $scope.showChangeImage = false;
-    $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
+  // //allows user to remove image
+  // $scope.removeImage = function(){
+  //   $scope.number_selected = 0;
+  //   $scope.showChangeImage = false;
+  //   $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
     
-    if ($scope.currently_selected == 0) {
-      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/iconlight.jpg";
-    } else {
-      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/icondark.jpg";
-    }
-    $scope.currently_selected = null;
-    //TODO: send to server to save
-  }
+  //   if ($scope.currently_selected == 0) {
+  //     $scope.image_infos[$scope.currently_selected].url = "./img/iconlight.jpg";
+  //   } else {
+  //     $scope.image_infos[$scope.currently_selected].url = "./img/icondark.jpg";
+  //   }
+  //   $scope.currently_selected = null;
+  //   //TODO: send to server to save
+  // }
 
   //selecting this brings up the facebook pictures modal
   $scope.changeImage = function(){
@@ -888,34 +953,74 @@ angular.module('starter.controllers', [])
 
   //swap 2 images to change orientation
   $scope.swapImage = function(){
-    tempurl = $scope.image_infos[$scope.currently_selected].url
-    $scope.image_infos[$scope.currently_selected].url = $scope.image_infos[$scope.second_selected].url;
-    $scope.image_infos[$scope.second_selected].url = tempurl;
-    $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
-    $scope.image_infos[$scope.second_selected].selected_image = !$scope.image_infos[$scope.second_selected].selected_image;
-    $scope.number_selected = 0;
-    $scope.showSwapImage = false;
-    $scope.currently_selected = null;
-    $scope.second_selected = null;
-    //TODO: send to server to save
+    
+    //send to server to save swap
+
+    //show loading screen
+    $ionicLoading.show({
+      templateUrl: "templates/loading.html"
+    });
+    //set parameters
+    var params = {
+      profile:{
+        order: principal.order
+      }
+    }
+
+    for(i = 0; i < 5; i++){
+      if ($scope.currently_selected === i){
+        for (j=0;j<5;j++){
+          if ($scope.second_selected === j){
+            var temp = params.profile.order[i];
+            params.profile.order[i] = params.profile.order[j];
+            params.profile.order[j] = temp;
+          }
+        }
+      }
+    }
+
+    $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,params)
+    .success(function(data, status, headers, config){
+      //swap images locally
+      var tempurl = $scope.image_infos[$scope.currently_selected].url
+      $scope.image_infos[$scope.currently_selected].url = $scope.image_infos[$scope.second_selected].url;
+      $scope.image_infos[$scope.second_selected].url = tempurl;
+
+      //unselect images 
+      $scope.image_infos[$scope.currently_selected].selected_image = !$scope.image_infos[$scope.currently_selected].selected_image;
+      $scope.image_infos[$scope.second_selected].selected_image = !$scope.image_infos[$scope.second_selected].selected_image;
+      $scope.number_selected = 0;
+      $scope.showSwapImage = false;
+      $scope.currently_selected = null;
+      $scope.second_selected = null;
+
+      //save new order locally
+      principal.order = params.profile.order;
+      $ionicLoading.hide();
+    }).error(function(data, status, headers, config){
+      $ionicLoading.hide();
+    });
+
+
+
   }
 
   //user has saved cropped image
   $scope.saveCroppedImage = function(){
-    
+    console.log(principal.order);
     //save location and size details of cropped immage
-    $scope.croppedImageDetails[$scope.currently_selected].crop_h = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight * $scope.croppedImageDetails[$scope.currently_selected].ratio;
-    $scope.croppedImageDetails[$scope.currently_selected].crop_w = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth * $scope.croppedImageDetails[$scope.currently_selected].ratio;
-    $scope.croppedImageDetails[$scope.currently_selected].crop_y = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetTop-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetTop)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
-    $scope.croppedImageDetails[$scope.currently_selected].crop_x = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetLeft-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetLeft)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_h = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight * $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_w = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth * $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_y = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetTop-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetTop)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_x = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetLeft-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetLeft)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
     params = {profile:{
-                crop_x: $scope.croppedImageDetails[$scope.currently_selected].crop_x,
-                crop_y: $scope.croppedImageDetails[$scope.currently_selected].crop_y,
-                crop_w: $scope.croppedImageDetails[$scope.currently_selected].crop_w,
-                crop_h: $scope.croppedImageDetails[$scope.currently_selected].crop_h
+                crop_x: $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_x,
+                crop_y: $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_y,
+                crop_w: $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_w,
+                crop_h: $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_h
                 }
               }
-    switch ($scope.currently_selected){
+    switch (principal.order[$scope.currently_selected]){
       case 0:
         params.profile.picture1_url = $scope.selected_photo;
         break;
@@ -938,12 +1043,12 @@ angular.module('starter.controllers', [])
     $ionicLoading.show({
       templateUrl: "templates/loading.html"
     });
-    console.log(params);
+    
     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id+'/crop',params)
     .success(function(data, status, headers, config){
       $ionicLoading.hide();
       var currentTime = new Date().getTime();      
-      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + ($scope.currently_selected+1)+".jpg?" + currentTime;
+      $scope.image_infos[$scope.currently_selected].url = AppSettings.amazonBaseUrl + "app/public/pictures/"+principal.facebook_id+"/medium/" + (principal.order[$scope.currently_selected]+1)+".jpg?" + currentTime;
       $scope.crop.hide();  
       $scope.cropShown=false;
     }).error(function(data, status, headers, config){
@@ -967,9 +1072,9 @@ angular.module('starter.controllers', [])
   
   // send data to server
   $scope.continue = function(){
-    // $ionicLoading.show({
-    //   templateUrl: "templates/loading.html"
-    // });
+    $ionicLoading.show({
+      templateUrl: "templates/loading.html"
+    });
 
     //   if($state.toStateParams.firstTime == 'isFirstTime'){
     //     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
@@ -986,8 +1091,37 @@ angular.module('starter.controllers', [])
     //     });
     //   } else {
     //     $ionicLoading.hide();
-        $state.go('app.cards');
-      // }      
+    //     $state.go('app.cards');
+    //   } 
+
+    var pat = /icon/i
+    for (i=0;i<5;i++){
+      
+      var res = $scope.image_infos[i].url.search(pat)
+      if (res!==-1){
+        //TODO put a toast that you must have 5 pictures loaded
+        $ionicLoading.hide();
+        break;
+      }
+      if(i===4){
+        // 5 images uploaded
+        if (principal.photos_uploaded){
+          $ionicLoading.hide();
+          $state.go('app.cards');  
+        } else {
+          $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
+              photos_uploaded:true
+          }})
+          .success(function(data,status,headers,config){
+            $ionicLoading.hide();
+            $state.go('app.cards');  
+          }).error(function(data, status, headers, config){
+            $ionicLoading.hide();
+          })
+        }
+      }
+    }
+      
   }
 
 
@@ -1037,8 +1171,8 @@ angular.module('starter.controllers', [])
     restrict:"A",
     link: function(scope,element,attrs){
       var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-      element[0].style.fontSize = w/5+"px";
-      element[0].style.height = w/5+"px";
+      element[0].style.fontSize = w/5+10+"px";
+      element[0].style.height = w/5+10+"px";
     }
   }
 })
@@ -1063,9 +1197,10 @@ angular.module('starter.controllers', [])
     //populate answers if not the users first time
     $scope.answers.answer1 = principal.answer1;
     $scope.answers.answer2 = principal.answer2;
-    $scope.answers.answer3 = principal.answer3;
-    $scope.answers.answer4 = principal.answer4;
-    $scope.answers.answer5 = principal.answer5;
+    $scope.answers.blurb = principal.blurb;
+    $scope.answers.feet = principal.feet;
+    $scope.answers.inches = principal.inches;
+    
     //scope.firstTime is used in an ngHide to hide navigation buttons. Since it's not first time, no need to hide
     $scope.firstTime = false;
   } else {
@@ -1078,18 +1213,12 @@ angular.module('starter.controllers', [])
   }
 
   //possible answers to the questions
-  $scope.question_1_answers = [{value:'Hooking up?'},{value:'Casual dating but not necessarily hookups?'},{value:'Something more serious?'}];
-  $scope.question_2_answers = [{value:'Really Short'},{value:'Kinda Short'},{value:'Average'},{value:'Above Average'},{value:'Really Tall'}];
-  $scope.question_3_answers = [{value:'Skinny'},{value:'Athletic'},{value:"There's more important things than body type"}];
-  $scope.question_4_answers = [{value:'answer 1'},{value:'answer 2'}];
-  $scope.question_5_answers = [{value:'answer 1'},{value:'answer 2'}];
-
+  $scope.question_1_answers = [{value:'Hooking up'},{value:'Dating'},{value:'Serious Tings'}];
+  $scope.question_2_answers = [{value:'Skinny'},{value:'Athletic'},{value:"There's more important things than body type"}];
+  
   //ng hide information (setting to true causes the information to hide with an animation that slides it up)
   $scope.hide1 = false;
   $scope.hide2 = false;
-  $scope.hide3 = false;
-  $scope.hide4 = false;
-  $scope.hide5 = false;
   
   // on clicking an answer we want to hide the answer so we set the below attributes to true. (They are watched by ng-hide)
   $scope.hide_q1 = function(){
@@ -1098,100 +1227,92 @@ angular.module('starter.controllers', [])
   $scope.hide_q2 = function(){
     $scope.hide2 = true;
   }
-  $scope.hide_q3 = function(){
-    $scope.hide3 = true;
-  }
-  $scope.hide_q4 = function(){
-    $scope.hide4 = true;
-  }
-  $scope.hide_q5 = function(){
-    $scope.hide5 = true;
-  }
   $scope.show_q1 = function(){
     $scope.hide1 = false;
   }
   $scope.show_q2 = function(){
     $scope.hide2 = false;
   }
-  $scope.show_q3 = function(){
-    $scope.hide3 = false;
-  }
-  $scope.show_q4 = function(){
-    $scope.hide4 = false;
-  }
-  $scope.show_q5 = function(){
-    $scope.hide5 = false;
-  }
-
+  
   //on clicking answer questions...
   $scope.answerQuestions = function(){
 
-    $ionicLoading.show({
-      templateUrl: "templates/loading.html"
-    });
+    //make sure all fields were answered before proceeding 
+    if ((principal.answer1||$scope.answers.answer1) && (principal.answer2||$scope.answers.answer2) && $scope.answers.blurb && $scope.answers.feet && $scope.answers.inches){
 
-    if (principal.firstTimeUser){
-      //first time users we need to send the 5 answers to the server and all the details that we saved on logging in and making calls to FB.
-      // see the postLoginPromises function for more details
-      $scope.answers.facebook_id = principal.facebook_id;    
-      $scope.answers.age = principal.age;
-      $scope.answers.first_name = principal.first_name;
-      $scope.answers.latitude = principal.latitude;
-      $scope.answers.longitude = principal.longitude;
-      var preferred_min_age = Math.round(principal.age/2)+7;
-      var preferred_max_age = (principal.age-7)*2;
-      $scope.answers.preferred_min_age = Math.max(preferred_min_age,18);
-      $scope.answers.preferred_max_age = Math.max(preferred_max_age,18);
-      $scope.answers.preferred_gender = (principal.gender == 'male')? 'female' : 'male'; 
-      $scope.answers.preferred_sound = true;
-      $scope.answers.preferred_distance = 25000;
-      $scope.answers.gender = principal.gender; 
-      principal.answer1 = $scope.answers.answer1;
-      principal.answer2 = $scope.answers.answer2;
-      principal.answer3 = $scope.answers.answer3;
-      principal.answer4 = $scope.answers.answer4;
-      principal.answer5 = $scope.answers.answer5;
-      principal.preferred_min_age = $scope.answers.preferred_min_age;
-      principal.preferred_max_age = $scope.answers.preferred_max_age;
-      principal.preferred_distance = $scope.answers.preferred_distance;
-
-      // send the details to server. 
-      $http.post(AppSettings.baseApiUrl + 'profiles',{profile:$scope.answers})
-      .success(function(data,status,headers,config){
-        //on success, register for push notifications and route the user to the photos page with the parameter that it is a first time user
-        //hide the loading page
-        $ionicLoading.hide();
-        principal.firstTimeUser = false;
-        $state.go('app.choose_photos',{firstTime:'isFirstTime'});
-        PushService.registerForPush();
-      })
-      .error(function(data,status,headers,config){
-        console.log(data);
-        console.log(config);
-        //put toast to say error sending answers
-        $ionicLoading.hide();
+      $ionicLoading.show({
+        templateUrl: "templates/loading.html"
       });
+
+      if (principal.firstTimeUser){
+        //first time users we need to send the 5 answers to the server and all the details that we saved on logging in and making calls to FB.
+        // see the postLoginPromises function for more details
+        $scope.answers.facebook_id = principal.facebook_id;    
+        $scope.answers.age = principal.age;
+        $scope.answers.first_name = principal.first_name;
+        $scope.answers.latitude = principal.latitude;
+        $scope.answers.longitude = principal.longitude;
+        var preferred_min_age = Math.round(principal.age/2)+7;
+        var preferred_max_age = (principal.age-7)*2;
+        $scope.answers.preferred_min_age = Math.max(preferred_min_age,18);
+        $scope.answers.preferred_max_age = Math.max(preferred_max_age,18);
+        $scope.answers.preferred_gender = (principal.gender == 'male')? 'female' : 'male'; 
+        $scope.answers.preferred_sound = true;
+        $scope.answers.preferred_distance = 25000;
+        $scope.answers.gender = principal.gender; 
+        $scope.answers.order = [0,1,2,3,4];
+        principal.answer1 = $scope.answers.answer1;
+        principal.answer2 = $scope.answers.answer2;
+        principal.blurb = $scope.answers.blurb;
+        principal.feet = $scope.answers.feet;
+        principal.inches = $scope.answers.inches;
+        principal.preferred_min_age = $scope.answers.preferred_min_age;
+        principal.preferred_max_age = $scope.answers.preferred_max_age;
+        principal.preferred_distance = $scope.answers.preferred_distance;
+        principal.order = [0,1,2,3,4];
+
+        // send the details to server. 
+        $http.post(AppSettings.baseApiUrl + 'profiles',{profile:$scope.answers})
+        .success(function(data,status,headers,config){
+          //on success, register for push notifications and route the user to the photos page with the parameter that it is a first time user
+          //hide the loading page
+          $ionicLoading.hide();
+          principal.firstTimeUser = false;
+          $state.go('app.choose_photos',{firstTime:'isFirstTime'});
+          PushService.registerForPush();
+        })
+        .error(function(data,status,headers,config){
+          console.log(data);
+          console.log(config);
+          //put toast to say error sending answers
+          $ionicLoading.hide();
+        });
+      } else {
+        principal.answer1 = $scope.answers.answer1;
+        principal.answer2 = $scope.answers.answer2;
+        principal.blurb = $scope.answers.blurb;
+        principal.feet = $scope.answers.feet;
+        principal.inches = $scope.answers.inches;
+        // send 5 answers to servers
+
+        $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:$scope.answers})
+        .success(function(data,status,headers,config){
+          console.log(data);
+          $ionicLoading.hide();
+          $state.go('app.cards');
+        })
+        .error(function(data,status,headers,config){
+          console.log(data);
+          console.log(config);
+          //put toast to say error sending answers
+          $ionicLoading.hide();
+        });
+      }
     } else {
-      principal.answer1 = $scope.answers.answer1;
-      principal.answer2 = $scope.answers.answer2;
-      principal.answer3 = $scope.answers.answer3;
-      principal.answer4 = $scope.answers.answer4;
-      principal.answer5 = $scope.answers.answer5;
-      // send 5 answers to servers
-
-      $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:$scope.answers})
-      .success(function(data,status,headers,config){
-        console.log(data);
-        $ionicLoading.hide();
-        $state.go('app.cards');
-      })
-      .error(function(data,status,headers,config){
-        console.log(data);
-        console.log(config);
-        //put toast to say error sending answers
-        $ionicLoading.hide();
-      });
-    }
+      console.log("problem: ")
+      console.log(principal.answer1 + " " + $scope.answers.answer1 + " " + principal.answer2 + " " + $scope.answers.answer2+ " " + $scope.answers.blurb+ " " +  $scope.answers.feet+ " " +  $scope.answers.inches)
+      //TODO: toast to ask to fill out all the input boxes before proceeding
+    } 
   }
 })
 
@@ -1329,9 +1450,9 @@ function manageRemainingCards(element,scope,http,liked,principal){
       scope.cards[scope.cardPosition[0]%5].picture5 = scope.remainingCards[0][scope.cardPosition[0]].picture5;  
       scope.cards[scope.cardPosition[0]%5].answer1 = scope.remainingCards[0][scope.cardPosition[0]].answer1;  
       scope.cards[scope.cardPosition[0]%5].answer2 = scope.remainingCards[0][scope.cardPosition[0]].answer2;  
-      scope.cards[scope.cardPosition[0]%5].answer3 = scope.remainingCards[0][scope.cardPosition[0]].answer3;  
-      scope.cards[scope.cardPosition[0]%5].answer4 = scope.remainingCards[0][scope.cardPosition[0]].answer4;  
-      scope.cards[scope.cardPosition[0]%5].answer5 = scope.remainingCards[0][scope.cardPosition[0]].answer5;  
+      scope.cards[scope.cardPosition[0]%5].feet = scope.remainingCards[0][scope.cardPosition[0]].feet;  
+      scope.cards[scope.cardPosition[0]%5].inches = scope.remainingCards[0][scope.cardPosition[0]].inches;  
+      scope.cards[scope.cardPosition[0]%5].blurb = scope.remainingCards[0][scope.cardPosition[0]].blurb;  
       element[0].style.left = "0" 
       element[0].style.top = "0";
       // set z index back 5
@@ -1389,39 +1510,70 @@ function getMoreProfiles(http,scope,principal){
         scope.skip_ids.push(data[i].id);
         if (n <5){
           console.log("adding..." + data[i].first_name + "to scope cards");
+
+          //push to current cards array
           scope.cards[n].id = data[i].id;
           scope.cards[n].first_name = data[i].first_name;
-          scope.cards[n].picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/1.jpg";
-          scope.cards[n].picture2 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/2.jpg";
-          scope.cards[n].picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/3.jpg";
-          scope.cards[n].picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/4.jpg";
-          scope.cards[n].picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/5.jpg";
           scope.cards[n].answer1 = data[i].answer1;
           scope.cards[n].answer2 = data[i].answer2;
-          scope.cards[n].answer3 = data[i].answer3;
-          scope.cards[n].answer4 = data[i].answer4;
-          scope.cards[n].answer5 = data[i].answer5;
+          scope.cards[n].feet = data[i].feet;
+          scope.cards[n].inches = data[i].inches;
+          scope.cards[n].blurb = data[i].blurb;
+
+          // determine if photos have been uploaded...
+          if (data[i].photos_uploaded){
+            //photos have been uploaded, display user's photos
+            scope.cards[n].picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[0]+1)+".jpg";
+            scope.cards[n].picture2 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[1]+1)+".jpg";
+            scope.cards[n].picture3 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[2]+1)+".jpg";
+            scope.cards[n].picture4 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[3]+1)+".jpg";
+            scope.cards[n].picture5 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[4]+1)+".jpg";
+          } else {
+            //photos not uploaded, use generic photo
+            scope.cards[n].picture1 = "./img/iconlight.jpg";
+            scope.cards[n].picture2 = "./img/icondark.jpg";
+            scope.cards[n].picture3 = "./img/icondark.jpg";
+            scope.cards[n].picture4 = "./img/icondark.jpg";
+            scope.cards[n].picture5 = "./img/icondark.jpg";
+          }
           n +=1;
         } else {
           console.log("adding..." + data[i].first_name + "to remaining cards");
+          // determine if photos have been uploaded...
+          if (data[i].photos_uploaded){
+            //photos have been uploaded, display user's photos
+            picture1_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[0]+1)+".jpg";
+            picture2_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[1]+1)+".jpg";
+            picture3_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[2]+1)+".jpg";
+            picture4_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[3]+1)+".jpg";
+            picture5_url = AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/" + (data[i].order[4]+1)+".jpg";
+          } else {
+            //photos not uploaded, use generic photo
+            picture1_url = "./img/iconlight.jpg";
+            picture2_url = "./img/icondark.jpg";
+            picture3_url = "./img/icondark.jpg";
+            picture4_url = "./img/icondark.jpg";
+            picture5_url = "./img/icondark.jpg";
+          }
+          //Push details to remaining cards array
           scope.remainingCards[0].push({
             id:data[i].id, 
             first_name:data[i].first_name,
-            picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/1.jpg",
-            picture2:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/2.jpg",
-            picture3:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/3.jpg",
-            picture4:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/4.jpg",
-            picture5:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].facebook_id+"/medium/5.jpg",
+            picture1: picture1_url,
+            picture2: picture2_url,
+            picture3: picture3_url,
+            picture4: picture4_url,
+            picture5: picture5_url,
             answer1: data[i].answer1,
             answer2: data[i].answer2,
-            answer3: data[i].answer3,
-            answer4: data[i].answer4,
-            answer5: data[i].answer5
+            feet: data[i].feet,
+            inches: data[i].inches,
+            blurb: data[i].blurb
           });  
         }
       }
     } else {
-      // TODO No more data! show a 'no more data page where you can pull down to try again.'
+      // TODO No more data! show a 'no more data toast'
     }
   })
   .error(function(data,status,headers,config){

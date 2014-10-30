@@ -5,6 +5,13 @@
     <h1 class="title">IceBreaker</h1>
   </ion-nav-buttons>
   <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
+    <ion-pane style="background-color:rgba(0,0,0,0)">
+    <div class="list card item" style="height:50%;position:relative;z-index:-99999;">
+      <div class="no-more-cards">
+        No more people!
+      </div>
+      
+    </div>
   	<ion-pane ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0)" ng-show="card.id">
   	<div class="list card item" >
     		<!-- <a href="#/app/individual_page/{{card.facebook_id}}" class="item item-image"> -->
@@ -48,12 +55,12 @@
         </div>
         <div class="row">
           <div class="col">
-            {{card.answer3}} &#38; {{card.answer4}}
+            {{card.feet}} Ft &#38; {{card.inches}} In
           </div>
         </div>
         <div class="row">
           <div class="col">
-            {{card.answer5}}
+            {{card.blurb}}
           </div>
         </div>
         </div>

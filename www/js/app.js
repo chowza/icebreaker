@@ -180,9 +180,11 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     preferred_gender: undefined,
     answer1:undefined,
     answer2:undefined,
-    answer3:undefined,
-    answer4:undefined,
-    answer5:undefined,
+    blurb:undefined,
+    feet:undefined,
+    inches:undefined,
+    order:undefined,
+    photos_uploaded:undefined,
     initialization: function(){
 
       var principal = this;
@@ -700,12 +702,14 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         // save details locally
         principal.answer1 = data.answer1;
         principal.answer2 = data.answer2;
-        principal.answer3 = data.answer3;
-        principal.answer4 = data.answer4;
-        principal.answer5 = data.answer5;
-        principal.preferred_min_age = data.preferred_min_age,
-        principal.preferred_max_age = data.preferred_max_age,
-        principal.preferred_distance = data.preferred_distance
+        principal.blurb = data.blurb;
+        principal.feet = data.feet;
+        principal.inches = data.inches;
+        principal.order = data.order;
+        principal.photos_uploaded = data.photos_uploaded;
+        principal.preferred_min_age = data.preferred_min_age;
+        principal.preferred_max_age = data.preferred_max_age;
+        principal.preferred_distance = data.preferred_distance;
         principal.id = data.id;
         
         // principal.remember_availability = data.remember_availability;

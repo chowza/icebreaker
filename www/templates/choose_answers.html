@@ -3,46 +3,46 @@
   	<!-- <button class="button button-clear icon ion-ios7-arrow-back" ng-click="goToPrevious()"> Back</button> -->
   	<button menu-toggle="left" class="button button-icon icon ion-navicon" ng-hide="firstTime"></button>
   	<a href= "#/app/matches" class="button button-clear" ng-hide="firstTime"><i class="ion-chatbubbles"></i></a>
-    <h1 class="title">Answer 5 Questions</h1>
+    <h1 class="title">Your Profile</h1>
   </ion-nav-buttons>
   <ion-content class="has-header" scrollbar-y="true" has-bouncing="false">
     
     <div class="list list-inset">
     	
-    	<div class="item item-divider" ng-click="show_q1()"> Are you here for... </div>
+    	<div class="item item-divider question" ng-click="show_q1()"> What are you here for? </div>
 		<div class="answerRadioButtons" ng-hide="hide1">
 		  	<ion-radio ng-repeat="answer in question_1_answers" ng-value="$index" ng-model="answers.answer1" name="q1" ng-click="hide_q1()">
 				{{answer.value}}
 		  	</ion-radio>
 		</div>
-	  	
-	  	<div class="item item-divider" ng-click="show_q2()"> How tall are you? </div>
+
+	</div>
+
+	<div class="list list-inset">	
+		<div class="item item-divider question" ng-click="show_q2()"> What is your body type? </div>
 		<div class="answerRadioButtons" ng-hide="hide2">
-		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_2_answers track by $index" ng-value="$index" ng-model="answers.answer2" name="q2" ng-click="hide_q2()">
+		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_2_answers" ng-value="$index" ng-model="answers.answer2" name="q2" ng-click="hide_q2()">
 				{{answer.value}}
 		  	</ion-radio>
+		</div>
+	</div>
+
+	<div class="list list-inset">
+		<div class="item item-divider"> 
+	  		<div class="vertical-center question"> How tall are you?
+	  		</div>
+	  		<input class="height-question-inputs" type="number" placeholder="In" ng-model="answers.inches" max="11" min="0"> 
+    		<input class="height-question-inputs" type="number" placeholder="Ft" ng-model="answers.feet" max="8" min="1"> 
 	  	</div>
-		
-		<div class="item item-divider" ng-click="show_q3()"> What is your body type? </div>
-		<div class="answerRadioButtons" ng-hide="hide3">
-		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_3_answers" ng-value="$index" ng-model="answers.answer3" name="q3" ng-click="hide_q3()">
-				{{answer.value}}
-		  	</ion-radio>
-		</div>
 
-	  	<div class="item item-divider" ng-click="show_q4()"> Question 4 </div>
-		<div class="answerRadioButtons" ng-hide="hide4">
-		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_4_answers" ng-value="$index" ng-model="answers.answer4" name="q4" ng-click="hide_q4()">
-				{{answer.value}}
-		  	</ion-radio>
-		</div>
+	</div>
+	<div class="list list-inset">
+	  	<div class="item item-divider question"> You in 140 characters </div>
+	  	<textarea class="freeform-profile" maxlength="140" ng-model="answers.blurb">
+	  		
+	  	</textarea>
+	</div>
 
-	  	<div class="item item-divider" ng-click="show_q5()"> Question 5 </div>
-		<div class="answerRadioButtons" ng-hide="hide5">
-		  	<ion-radio class="answerRadioButtons" ng-repeat="answer in question_5_answers" ng-value="$index" ng-model="answers.answer5" name="q5" ng-click="hide_q5()">
-				{{answer.value}}
-		  	</ion-radio>
-		</div>
   	</div>
 	<div class="row">
 		<div class="col text-center">
