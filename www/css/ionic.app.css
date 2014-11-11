@@ -7390,9 +7390,18 @@ a.button {
     height: 60%; }
 
 .row .rating {
-  font-size: 0.9em;
+  font-size: 1em;
   padding-right: 0;
   text-align: right; }
+
+/* Rate */
+.characteristic {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0; }
+
+input[type=range] {
+  margin: 0; }
 
 /* footer and send chat messages */
 .bar.bar-footer {
@@ -7407,6 +7416,14 @@ textarea {
   border-width: 1px;
   border-color: lightgrey;
   border-style: solid; }
+
+/* settings*/
+.item input[type=number] {
+  padding: 0;
+  float: right;
+  width: 11%;
+  text-align: center;
+  margin-left: 5px; }
 
 /*answer questions*/
 input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
@@ -7576,14 +7593,89 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   border-bottom-width: 0;
   border-left-width: 0; }
 
+.item.profile {
+  height: 20%;
+  top: 78%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border-width: 0;
+  position: absolute; }
+
+.item.profile.rating-height {
+  height: auto; }
+
+.profile .row {
+  position: relative;
+  padding-bottom: 0; }
+
+.row p {
+  white-space: normal; }
+
+.row.second p {
+  white-space: normal;
+  padding-top: 0; }
+
 .list.card .row.second {
   border-top-width: 0; }
 
+ion-slide img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto; }
+
+.slider {
+  height: 100%;
+  overflow: initial; }
+
+.slider-pager {
+  top: 70%; }
+
+.login.row {
+  bottom: 5%;
+  position: absolute; }
+
+.login-card-size-and-position {
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 0;
+  margin-bottom: 0; }
+
 .no-more-cards {
+  z-index: -99999; }
+
+.main-card-size {
+  height: 90%;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 0;
+  margin-bottom: 0; }
+
+.main-card-size .slider {
+  height: 100%;
+  overflow: initial; }
+
+.main-card-size .slider-pager {
+  top: 73%; }
+
+.main-card-size .slider .slider-slides ion-slide img {
+  height: 78%; }
+
+.main-images {
+  height: 78%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center; }
+
+.no-more-cards-text {
   top: 50%;
   left: 50%;
   position: absolute;
-  transform: translate(-50%, -50%); }
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%); }
 
 /**type of date***/
 .unselected-border {

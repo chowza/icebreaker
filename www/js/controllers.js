@@ -11,7 +11,7 @@ angular.module('starter.controllers', [])
 // ChoosePhotosCtrl -> templates/choose_photos.html -> also opens up the photos_modal
 // ChooseAnswersCtrl -> templates/choose_answers.html
 // RateCtrl -> templates/rate.html
-// AvailabilityCtrl -> templates/availability.html
+
 
   .controller('CardsCtrl', function($scope,principal,$http,$ionicNavBarDelegate,$timeout,$ionicSlideBoxDelegate) {
     
@@ -24,11 +24,11 @@ angular.module('starter.controllers', [])
     // we use only 5 cards because it is more efficient on mobile to only load what is currently visible on screen. 
     // In our case, since it is a tinder like interface, I load 5 cards even if they are not on screen because some people swipe quite fast...
 
-    $scope.cards =[{id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""},
-    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:""}];
+    $scope.cards =[{id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:"",looks_last_5_average_rating:"",answer1_last_5_average_rating:"",answer2_last_5_average_rating:"",answer3_last_5_average_rating:"",pronoun:"",pronoun_two:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:"",looks_last_5_average_rating:"",answer1_last_5_average_rating:"",answer2_last_5_average_rating:"",answer3_last_5_average_rating:"",pronoun:"",pronoun_two:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:"",looks_last_5_average_rating:"",answer1_last_5_average_rating:"",answer2_last_5_average_rating:"",answer3_last_5_average_rating:"",pronoun:"",pronoun_two:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:"",looks_last_5_average_rating:"",answer1_last_5_average_rating:"",answer2_last_5_average_rating:"",answer3_last_5_average_rating:"",pronoun:"",pronoun_two:""},
+    {id:"", first_name:"",picture1:"",picture2:"",picture3:"",picture4:"",picture5:"",answer1:"",answer2:"",feet:"",inches:"",blurb:"",looks_last_5_average_rating:"",answer1_last_5_average_rating:"",answer2_last_5_average_rating:"",answer3_last_5_average_rating:"",pronoun:"",pronoun_two:""}];
 
 
 
@@ -45,6 +45,7 @@ angular.module('starter.controllers', [])
     $http.get(AppSettings.baseApiUrl + 'profiles',{params:{facebook_id:principal.facebook_id}})
       .success(function(data,status,headers,config){
         console.log("on cards page successfully got profiles");
+        console.log(data);
         if (data.length){
           for(i=0;i<data.length;i++){
             $scope.skip_ids.push(data[i].id);
@@ -52,11 +53,22 @@ angular.module('starter.controllers', [])
               //Only push 5 cards for performance reasons
               $scope.cards[i].id = data[i].id;
               $scope.cards[i].first_name = data[i].first_name;
-              $scope.cards[i].answer1 = ['Hooking up.','Casual dating.','Something serious.'][data[i].answer1];
-              $scope.cards[i].answer2 = ['Skinny','Athletic',"There's more important things than body type"][data[i].answer2];
+              $scope.cards[i].answer1 = ['Hook up','Date','Relationship'][data[i].answer1];
+              $scope.cards[i].answer2 = ['Skinny','Athletic','Chubby','Overweight'][data[i].answer2];
               $scope.cards[i].feet = data[i].feet;
               $scope.cards[i].inches = data[i].inches;
               $scope.cards[i].blurb = data[i].blurb;
+              $scope.cards[i].looks_last_5_average_rating = data[i].looks_last_5_average_rating;
+              $scope.cards[i].answer1_last_5_average_rating = data[i].answer1_last_5_average_rating;
+              $scope.cards[i].answer2_last_5_average_rating = data[i].answer2_last_5_average_rating;
+              $scope.cards[i].answer3_last_5_average_rating = data[i].answer3_last_5_average_rating;
+              if (data[i].gender =='female'){
+                $scope.cards[i].pronoun = 'She';
+                $scope.cards[i].pronoun_two = 'Her';
+              } else {
+                $scope.cards[i].pronoun = 'He';
+                $scope.cards[i].pronoun_two = 'His';
+              }
 
               // determine if photos have been uploaded...
               if (data[i].photos_uploaded){
@@ -95,6 +107,14 @@ angular.module('starter.controllers', [])
                 picture5_url = "./img/icondark.jpg";
               }
 
+              if (data[i].gender =='female'){
+                pronoun = 'She';
+                pronoun_two = 'Her';
+              } else {
+                pronoun = 'He';
+                pronoun_two = 'His';
+              }
+
               $scope.remainingCards[0].push({
                 id:data[i].id, 
                 first_name:data[i].first_name,
@@ -103,11 +123,17 @@ angular.module('starter.controllers', [])
                 picture3:picture3_url,
                 picture4:picture4_url,
                 picture5:picture5_url,
-                answer1: ['Hooking up.','Casual dating.','Something serious.'][data[i].answer1],
-                answer2: ['Skinny','Athletic',"There's more important things than body type"][data[i].answer2],
+                answer1: ['Hook up','Date','Relationship'][data[i].answer1],
+                answer2: ['Skinny','Athletic','Chubby','Overweight'][data[i].answer2],
                 feet: data[i].feet,
                 inches: data[i].inches,
-                blurb: data[i].blurb
+                blurb: data[i].blurb,
+                looks_last_5_average_rating: data[i].looks_last_5_average_rating,
+                answer1_last_5_average_rating: data[i].answer1_last_5_average_rating,
+                answer2_last_5_average_rating: data[i].answer2_last_5_average_rating,
+                answer3_last_5_average_rating: data[i].answer3_last_5_average_rating,
+                pronoun: pronoun,
+                pronoun_two: pronoun_two
               });
             }
           }
@@ -130,20 +156,21 @@ angular.module('starter.controllers', [])
         var distx = 0;
         var starty = 0;
         var disty = 0;
+        var initialTop = (element[0].parentNode.parentNode.parentNode.parentNode.offsetHeight)/2;
 
       $ionicGesture.on('dragstart',function(e){
         startx = parseInt(e.gesture.touches[0].clientX);
         starty = parseInt(e.gesture.touches[0].clientY);
         distx = 0;
         disty = 0;
+        console.log(element);
       },element);
 
       $ionicGesture.on('drag',function(e){
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
         var disty = parseInt(e.gesture.touches[0].clientY) - starty
         element[0].parentNode.parentNode.children[0].style.left = (distx) + "px"
-        element[0].parentNode.parentNode.children[0].style.top = (disty) + "px"
-        
+        element[0].parentNode.parentNode.children[0].style.top = (disty + initialTop) + "px"
       },element);
 
       $ionicGesture.on('dragend',function(e){
@@ -163,7 +190,7 @@ angular.module('starter.controllers', [])
             } else {
               // did not swipe far enough, return back to original position
                 element[0].parentNode.parentNode.children[0].style.left = "0";
-                element[0].parentNode.parentNode.children[0].style.top = "0";
+                element[0].parentNode.parentNode.children[0].style.top = "50%";
             }
 
       },element);
@@ -173,94 +200,91 @@ angular.module('starter.controllers', [])
 
 
 .controller('SettingsCtrl', function($scope,$state,principal,$ionicLoading,$http){
+  console.log(principal);
 
   //prepopulate the params with what user's current preferences are
+  $scope.preferences = {
+    preferred_min_age: principal.preferred_min_age, 
+    preferred_max_age: principal.preferred_max_age,
+    preferred_distance: principal.preferred_distance/1000,
+    preferred_min_feet: principal.preferred_min_feet,
+    preferred_max_feet: principal.preferred_max_feet,
+    preferred_min_inches: principal.preferred_min_inches,
+    preferred_max_inches: principal.preferred_max_inches,
+  }
+
+
+  // convert principal.preferred_intentions & principal.preferred_body_type from array of integers to array of booleans
+  var preferred_intentions = [false,false,false]
+  var preferred_body_type = [false,false,false,false]
+
+  for (i =0; i<3; i++){
+    if (principal.preferred_intentions.indexOf(i)>-1){
+      preferred_intentions[i] = true;
+    } 
+  }
   
-  $scope.preferred_min_age = [principal.preferred_min_age];
-  $scope.preferred_max_age = [principal.preferred_max_age];
-  $scope.preferred_distance = [principal.preferred_distance/1000];
+  for (i =0; i<4; i++){
+    if (principal.preferred_body_type.indexOf(i)>-1){
+      preferred_body_type[i] = true;
+    } 
+  }
 
-
-  // $scope.today_before_five = principal.today_before_five || false;
-  // $scope.today_after_five = principal.today_after_five || false;
-  // $scope.tomorrow_before_five = principal.tomorrow_before_five || false;
-  // $scope.tomorrow_after_five = principal.tomorrow_after_five || false;
-  // $scope.remember_availability = [principal.remember_availability];
-
-    // $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
-    // .success(function(data,status,headers,config){
-    //   console.log(data);
-    //   $scope.remember_availability[0] = data.remember_availability;
-
-    //   var updated_at = new Date(data.updated_availability);
-    //   var currentDate = new Date();
-    //   if (data.remember_availability){
-    //     //availability remembered for future
-    //     $scope.today_before_five = data.today_before_five;
-    //     $scope.today_after_five = data.today_after_five;
-    //     $scope.tomorrow_before_five = data.tomorrow_before_five;
-    //     $scope.tomorrow_after_five = data.tomorrow_after_five ; 
-
-    //   } else if (updated_at.toDateString() == currentDate.toDateString()){ 
-    //     // updated availability is the same date as today
-    //     $scope.today_before_five = data.today_before_five;
-    //     $scope.today_after_five = data.today_after_five;
-    //     $scope.tomorrow_before_five = data.tomorrow_before_five;
-    //     $scope.tomorrow_after_five = data.tomorrow_after_five; 
-    //   } else { 
-    //     //need to check when it was last updated
-    //     var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
-
-    //     //updated yesterday, that means 'tomorrow dates are already determined'...
-    //     if (updated_at.toDateString() == yesterday.toDateString()){
-    //       $scope.today_before_five =  data.tomorrow_before_five;
-    //       $scope.today_after_five =   data.tomorrow_after_five;
-    //       //TODO: set a 'not yet updated' for the days not yet entered
-    //     }
-    //     //last updated before yesterday, keep availability as false;
-    //     //TODO: set a 'not yet updated' for all days
-    //   }
-    // })
-    // .error(function(data,status,headers,config){
-    // }) 
-
+  $scope.preferences.preferred_intentions = preferred_intentions;
+  $scope.preferences.preferred_body_type = preferred_body_type;
   
-  //save to server TODO: figure out why remember_availability is always false...
+  //possible answers to the questions
+  $scope.question_1_answers = [{value:'Hooking up'},{value:'Dating'},{value:'Serious Things'}];
+  $scope.question_2_answers = [{value:'Skinny'},{value:'Athletic'},{value:"Chubby"},{value:"Overweight"}];
+    
   $scope.saveSettings = function(){
-
+    var preferred_intentions = [];
+    var preferred_body_type = [];
+   
     $ionicLoading.show({
       templateUrl: "templates/loading.html"
     });
-    var pd = $scope.preferred_distance[0]*1000;
 
-    // var currentDate = new Date();
-    // var timezone = currentDate.getTimezoneOffset();
+    var pd = $scope.preferences.preferred_distance*1000;
+    $scope.preferences.preferred_distance = pd;
+    $scope.preferences.preferred_min_height = $scope.preferences.preferred_min_feet + $scope.preferences.preferred_min_inches/12;
+    $scope.preferences.preferred_max_height = $scope.preferences.preferred_max_feet + $scope.preferences.preferred_max_inches/12;
+
+    //convert array of booleans to array of ints
+
+    for (i =0; i<3; i++){
+      if ($scope.preferences.preferred_intentions[i]){
+        preferred_intentions.push(i);
+      }
+    }
     
+    for (i =0; i<4; i++){
+      if ($scope.preferences.preferred_body_type[i]){
+        preferred_body_type.push(i); 
+      }
+    }
+    //deep copy preferences so that for user he doesn't see checkboxes moving
+    var preferences = JSON.parse(JSON.stringify($scope.preferences));
+    preferences.preferred_intentions = preferred_intentions;
+    preferences.preferred_body_type = preferred_body_type;
+    console.log(preferences);
+  
     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
       {
-        profile:{
-          // remember_availability:$scope.remember_availability[0],
-          preferred_min_age: $scope.preferred_min_age[0],
-          preferred_max_age: $scope.preferred_max_age[0],
-          preferred_distance: pd
-          // today_before_five: $scope.today_before_five,
-          // today_after_five: $scope.today_after_five,
-          // tomorrow_before_five: $scope.tomorrow_before_five,
-          // tomorrow_after_five: $scope.tomorrow_after_five,
-          // updated_availability: currentDate,
-          // timezone: timezone
-        }
+        profile:preferences
       })
     .success(function(data,status,headers,config){
       
-      principal.preferred_min_age = $scope.preferred_min_age[0];
-      principal.preferred_max_age = $scope.preferred_max_age[0];
+      principal.preferred_min_age = $scope.preferences.preferred_min_age;
+      principal.preferred_max_age = $scope.preferences.preferred_max_age;
       principal.preferred_distance = pd; 
-      // principal.today_before_five = $scope.today_before_five;
-      // principal.today_after_five = $scope.today_after_five;
-      // principal.tomorrow_before_five = $scope.tomorrow_before_five;
-      // principal.tomorrow_after_five = $scope.tomorrow_after_five;
-      // principal.remember_availability = $scope.remember_availability[0];
+      principal.preferred_min_feet = $scope.preferences.preferred_min_feet;
+      principal.preferred_max_feet = $scope.preferences.preferred_max_feet;
+      principal.preferred_min_inches = $scope.preferences.preferred_min_inches;
+      principal.preferred_max_inches = $scope.preferences.preferred_max_inches;
+      principal.preferred_intentions = preferences.preferred_intentions;
+      principal.preferred_body_type = preferences.preferred_body_type;
+
       $state.go('app.cards');
       $ionicLoading.hide();
     })
@@ -270,26 +294,13 @@ angular.module('starter.controllers', [])
     })
   }
 
-  // $scope.select_today_before_five = function(){
-  //   $scope.today_before_five = !$scope.today_before_five; 
-  // }
-  // $scope.select_today_after_five = function(){
-  //   $scope.today_after_five = !$scope.today_after_five;
-  // }
-  // $scope.select_tomorrow_before_five = function(){
-  //   $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
-  // }
-  // $scope.select_tomorrow_after_five = function(){
-  //   $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
-  // }
-  
 })
 
 // show matches
 .controller('MatchCtrl',function($scope,principal,$http,PushService){
   
   $scope.matches = PushService.matches = [];
-  PushService.getMatches(principal.facebook_id);
+  PushService.getMatches(principal.id);
 
 })
 
@@ -299,8 +310,8 @@ angular.module('starter.controllers', [])
 
   $http.get(AppSettings.baseApiUrl + 'profiles/individual/' + $stateParams.user_id)
   .success(function(data,status,headers,config){
-    $scope.answer1 = ['Hooking up.','Casual dating.','Something serious.'][data.answer1];
-    $scope.answer2 = ['Skinny','Athletic',"There's more important things than body type"][data.answer2];
+    $scope.answer1 = ['Hookup','Date','Relationship'][data.answer1];
+    $scope.answer2 = ['Skinny','Athletic','Chubby','Overweight'][data.answer2];
     $scope.feet = data.feet;
     $scope.inches = data.inches;
     $scope.picture1 = AppSettings.amazonBaseUrl + "app/public/pictures/"+data.facebook_id+"/medium/" + (data.order[0]+1)+".jpg";
@@ -321,57 +332,13 @@ angular.module('starter.controllers', [])
 
   })
 
-  
 
-  $scope.answer_stars = function(el,answer,num) {
-    
-    if (el.target.previousElementSibling === null){
-      el.target.className = "ion-ios7-star";
-      el.target.nextElementSibling.className = "ion-ios7-star-outline";
-      el.target.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
-      el.target.nextElementSibling.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
-      el.target.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
-    } else if (el.target.previousElementSibling.previousElementSibling === null){
-      el.target.className = "ion-ios7-star";
-      el.target.previousElementSibling.className = "ion-ios7-star";
-      el.target.nextElementSibling.className = "ion-ios7-star-outline";
-      el.target.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
-      el.target.nextElementSibling.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
-    } else if (el.target.previousElementSibling.previousElementSibling.previousElementSibling === null) {
-      el.target.className = "ion-ios7-star";
-      el.target.previousElementSibling.className = "ion-ios7-star";
-      el.target.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
-      el.target.nextElementSibling.className = "ion-ios7-star-outline";
-      el.target.nextElementSibling.nextElementSibling.className = "ion-ios7-star-outline";
-    } else if (el.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling === null){
-      el.target.className = "ion-ios7-star";
-      el.target.previousElementSibling.className = "ion-ios7-star";
-      el.target.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
-      el.target.previousElementSibling.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
-      el.target.nextElementSibling.className = "ion-ios7-star-outline";
-    } else if (el.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling === null){
-      el.target.className = "ion-ios7-star";
-      el.target.previousElementSibling.className = "ion-ios7-star";
-      el.target.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
-      el.target.previousElementSibling.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
-      el.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.className = "ion-ios7-star";
-    }
-    
-    switch (answer){
-      case 0:
-        $scope.looks_rating = num;
-      case 1:
-        $scope.answer1_rating = num;
-        break;
-      case 2:
-        $scope.answer2_rating = num;
-        break;
-      case 3:
-        $scope.answer3_rating = num;
-        break;
-      default:
-        break;
-    }
+  $scope.ratings = {
+    swipee_id: $stateParams.user_id,
+    looks_rating: 3,
+    answer1_rating: 3,
+    answer2_rating: 3,
+    answer3_rating: 3
   }
 
   $scope.rate = function(){
@@ -379,14 +346,8 @@ angular.module('starter.controllers', [])
     $ionicLoading.show({
       templateUrl: "templates/loading.html"
     });
-    var params = {match:{
-        swipee_id: $stateParams.user_id,
-        looks_rating: $scope.looks_rating,
-        answer1_rating: $scope.answer1_rating,
-        answer2_rating: $scope.answer2_rating,
-        answer3_rating: $scope.answer3_rating
-      }
-    }
+    var params = {match:$scope.ratings}
+    
     $http.put(AppSettings.baseApiUrl + 'matches/'+principal.id,params)
     .success(function(data,status,headers,config){
       $ionicLoading.hide();
@@ -416,7 +377,7 @@ angular.module('starter.controllers', [])
       $scope.message = ""; 
       //add the message to the array so it appear that it was sent right away, 
       //TODO: add some 'sending' notification somewhere in case of failures that you can replace that to 'failed'
-      PushService.addMessagesToChat(principal.first_name, msg,principal.facebook_id);
+      PushService.addMessagesToChat(principal.first_name, msg,principal.facebook_id,principal.order[0]);
       $ionicScrollDelegate.scrollBottom(true);
         
       // post message to server
@@ -796,7 +757,7 @@ angular.module('starter.controllers', [])
 }])
 
 
-.controller('ChoosePhotosCtrl',function($scope,$ionicModal,$timeout,principal,$http,$state,$q,$ionicLoading,$ionicNavBarDelegate){
+.controller('ChoosePhotosCtrl',function($scope,$ionicModal,$timeout,principal,$http,$state,$q,$ionicLoading,$ionicNavBarDelegate,$ionicPopup){
   
   $scope.number_selected = 0;
   $scope.showChangeImage = false;
@@ -820,6 +781,13 @@ angular.module('starter.controllers', [])
     $timeout(function(){
       $scope.hideBack = true;
       $ionicNavBarDelegate.showBackButton(false);
+    });
+
+    $http.get(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id).success(function(data,status,headers,config){
+      console.log(principal)  
+      principal.id = data.id    
+    }).error(function(data,status,headers,config){
+      //TODO: show no internet error
     });
   }
 
@@ -1076,31 +1044,14 @@ angular.module('starter.controllers', [])
       templateUrl: "templates/loading.html"
     });
 
-    //   if($state.toStateParams.firstTime == 'isFirstTime'){
-    //     $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{
-    //       today_before_five: false,
-    //       today_after_five: false,
-    //       tomorrow_before_five: false,
-    //       tomorrow_after_five: false
-    //     }})
-    //     .success(function(data, status, headers, config){
-    //       $ionicLoading.hide();
-    //         $state.go('app.availability');
-    //     }).error(function(data, status, headers, config){
-    //       $ionicLoading.hide();
-    //     });
-    //   } else {
-    //     $ionicLoading.hide();
-    //     $state.go('app.cards');
-    //   } 
-
     var pat = /icon/i
     for (i=0;i<5;i++){
       
       var res = $scope.image_infos[i].url.search(pat)
       if (res!==-1){
-        //TODO put a toast that you must have 5 pictures loaded
         $ionicLoading.hide();
+        // put an alert that you must have 5 pictures loaded
+        $scope.showAlert();
         break;
       }
       if(i===4){
@@ -1113,6 +1064,7 @@ angular.module('starter.controllers', [])
               photos_uploaded:true
           }})
           .success(function(data,status,headers,config){
+            principal.photos_uploaded = true;
             $ionicLoading.hide();
             $state.go('app.cards');  
           }).error(function(data, status, headers, config){
@@ -1124,6 +1076,14 @@ angular.module('starter.controllers', [])
       
   }
 
+  $scope.showAlert = function(){
+    var alertPopup = $ionicPopup.alert({
+      title: 'Please use 5 photos!'
+      // template: 'It might taste good'
+    });
+      alertPopup.then(function(res) {
+    });
+  }
 
   // this function is executed when the user hits the bottom of the infinite scroll or the first time the user selects an image to edit (selectImageToEdit)
   $scope.loadMore = function(){
@@ -1189,7 +1149,7 @@ angular.module('starter.controllers', [])
 
 
 
-.controller('ChooseAnswersCtrl',function($scope,$state,principal,$http,$ionicLoading,PushService,$q,$ionicNavBarDelegate,$timeout){
+.controller('ChooseAnswersCtrl',function($scope,$state,principal,$http,$ionicLoading,PushService,$q,$ionicNavBarDelegate,$timeout,$ionicPopup){
 
   $scope.answers = {};
 
@@ -1213,11 +1173,11 @@ angular.module('starter.controllers', [])
   }
 
   //possible answers to the questions
-  $scope.question_1_answers = [{value:'Hooking up'},{value:'Dating'},{value:'Serious Tings'}];
-  $scope.question_2_answers = [{value:'Skinny'},{value:'Athletic'},{value:"There's more important things than body type"}];
+  $scope.question_1_answers = [{value:'Hooking up'},{value:'Dating'},{value:'Serious Things'}];
+  $scope.question_2_answers = [{value:'Skinny'},{value:'Athletic'},{value:"Chubby"},{value:"Overweight"}];
   
   //ng hide information (setting to true causes the information to hide with an animation that slides it up)
-  $scope.hide1 = false;
+  $scope.hide1 = false; 
   $scope.hide2 = false;
   
   // on clicking an answer we want to hide the answer so we set the below attributes to true. (They are watched by ng-hide)
@@ -1233,12 +1193,20 @@ angular.module('starter.controllers', [])
   $scope.show_q2 = function(){
     $scope.hide2 = false;
   }
+
+  $scope.showAlert = function(){
+    var alertPopup = $ionicPopup.alert({
+      title: 'Oops, there was a problem!'
+    });
+      alertPopup.then(function(res) {
+    });
+  }
   
   //on clicking answer questions...
   $scope.answerQuestions = function(){
 
     //make sure all fields were answered before proceeding 
-    if ((principal.answer1||$scope.answers.answer1) && (principal.answer2||$scope.answers.answer2) && $scope.answers.blurb && $scope.answers.feet && $scope.answers.inches){
+    if ((principal.answer1||$scope.answers.answer1 + 1) && (principal.answer2||$scope.answers.answer2 + 1) && $scope.answers.blurb && $scope.answers.feet && $scope.answers.inches){
 
       $ionicLoading.show({
         templateUrl: "templates/loading.html"
@@ -1261,6 +1229,47 @@ angular.module('starter.controllers', [])
         $scope.answers.preferred_distance = 25000;
         $scope.answers.gender = principal.gender; 
         $scope.answers.order = [0,1,2,3,4];
+        $scope.answers.height = $scope.answers.feet + $scope.answers.inches/12;
+
+        //Set a default min and max preferred heights, based on +/- 4 inches from your height
+        if ($scope.answers.inches <= 3) {
+          $scope.answers.preferred_min_feet = $scope.answers.feet - 1;  
+          $scope.answers.preferred_min_inches = 12 + $scope.answers.inches - 4;
+        } else {
+          $scope.answers.preferred_min_feet = $scope.answers.feet;  
+          $scope.answers.preferred_min_inches = $scope.answers.inches - 4;
+        }
+        if ($scope.answers.inches >= 8) {
+          $scope.answers.preferred_max_feet = $scope.answers.feet+1;  
+          $scope.answers.preferred_max_inches = 4 - (12 - $scope.answers.inches);
+        } else {
+          $scope.answers.preferred_max_feet = $scope.answers.feet;  
+          $scope.answers.preferred_max_inches = $scope.answers.inches + 4;
+        }
+        $scope.answers.preferred_min_height = $scope.answers.preferred_min_feet + $scope.answers.preferred_min_inches/12;
+        $scope.answers.preferred_max_height = $scope.answers.preferred_max_feet + $scope.answers.preferred_max_inches/12;
+
+        // set a default preferred intentions and default preferred body type
+        if ($scope.answers.answer1==0){
+          $scope.answers.preferred_intentions = [0];
+          principal.preferred_intentions = [0];
+        } else if ($scope.answers.answer1==1) {
+          $scope.answers.preferred_intentions = [1];
+          principal.preferred_intentions = [1];
+        } else {
+          $scope.answers.preferred_intentions = [2];
+          principal.preferred_intentions = [2];
+        }
+
+        if ($scope.answers.answer2 == 0 || $scope.answers.answer2 == 1){
+          $scope.answers.preferred_body_type = [0,1];
+          principal.preferred_body_type = [0,1];
+        } else {
+          $scope.answers.preferred_body_type = [2,3];
+          principal.preferred_body_type = [2,3];
+        }
+        
+        // save details of current user to principal variable for use elsewhere in app
         principal.answer1 = $scope.answers.answer1;
         principal.answer2 = $scope.answers.answer2;
         principal.blurb = $scope.answers.blurb;
@@ -1269,8 +1278,13 @@ angular.module('starter.controllers', [])
         principal.preferred_min_age = $scope.answers.preferred_min_age;
         principal.preferred_max_age = $scope.answers.preferred_max_age;
         principal.preferred_distance = $scope.answers.preferred_distance;
+        principal.preferred_min_feet = $scope.answers.preferred_min_feet;
+        principal.preferred_min_inches = $scope.answers.preferred_min_inches;
+        principal.preferred_max_feet = $scope.answers.preferred_max_feet;
+        principal.preferred_max_inches = $scope.answers.preferred_max_inches;
         principal.order = [0,1,2,3,4];
 
+        console.log(principal);
         // send the details to server. 
         $http.post(AppSettings.baseApiUrl + 'profiles',{profile:$scope.answers})
         .success(function(data,status,headers,config){
@@ -1293,8 +1307,9 @@ angular.module('starter.controllers', [])
         principal.blurb = $scope.answers.blurb;
         principal.feet = $scope.answers.feet;
         principal.inches = $scope.answers.inches;
+        $scope.answers.height = $scope.answers.feet + $scope.answers.inches/12;
+        
         // send 5 answers to servers
-
         $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:$scope.answers})
         .success(function(data,status,headers,config){
           console.log(data);
@@ -1311,102 +1326,14 @@ angular.module('starter.controllers', [])
     } else {
       console.log("problem: ")
       console.log(principal.answer1 + " " + $scope.answers.answer1 + " " + principal.answer2 + " " + $scope.answers.answer2+ " " + $scope.answers.blurb+ " " +  $scope.answers.feet+ " " +  $scope.answers.inches)
-      //TODO: toast to ask to fill out all the input boxes before proceeding
+      //show an alert to fill everything out 
+      $scope.showAlert();
     } 
   }
+
+
 })
 
-// .controller('AvailabilityCtrl', function($scope,$state,principal,$http,$ionicNavBarDelegate,$timeout) {
-
-//   if (($state.fromState.name == 'app.choose_photos' && $state.toStateParams.firstTime == 'isFirstTime') || $state.fromState.name == 'app.login'){
-//     $timeout(function(){
-//       $ionicNavBarDelegate.showBackButton(false);
-//     });
-//   }
-  
-//   $scope.today_before_five = false;
-//   $scope.today_after_five = false;
-//   $scope.tomorrow_before_five = false;
-//   $scope.tomorrow_after_five = false;
-//   $scope.remember_availability = [false];
-
-//   $http.get(AppSettings.baseApiUrl + 'profiles/' +principal.facebook_id)
-//   .success(function(data,status,headers,config){
-
-//     var updated_at = new Date(data.updated_availability);
-//     var currentDate = new Date();
-//     if (data.remember_availability){
-//       $scope.today_before_five = data.today_before_five || false;
-//       $scope.today_after_five = data.today_after_five || false;
-//       $scope.tomorrow_before_five = data.tomorrow_before_five || false;
-//       $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
-//       $scope.remember_availability[0] = true;
-
-//     } else if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
-//       $scope.today_before_five = data.today_before_five || false;
-//       $scope.today_after_five = data.today_after_five || false;
-//       $scope.tomorrow_before_five = data.tomorrow_before_five || false;
-//       $scope.tomorrow_after_five = data.tomorrow_after_five || false; 
-//     } else { 
-//       //need to check when it was last updated
-//       var yesterday = new Date(currentDate.getTime() - 60*60*24*1000);
-
-//       //updated yesterday, that means 'tomorrow dates are already determined'...
-//       if (updated_at.toDateString() == yesterday.toDateString()){
-//         $scope.today_before_five =  data.tomorrow_before_five;
-//         $scope.today_after_five =   data.tomorrow_after_five;
-//         //TODO: set a 'not yet updated' for the days not yet entered
-//       }
-//       //last updated before yesterday, keep availability as false;
-//       //TODO: set a 'not yet updated' for all days
-//     }
-//   })
-//   .error(function(data,status,headers,config){
-//   }) 
-
-//   $scope.save = function(){
-//     var currentDate = new Date();
-//     var timezone = currentDate.getTimezoneOffset();
-//     principal.today_before_five = $scope.today_before_five,
-//     principal.today_after_five = $scope.today_after_five,
-//     principal.tomorrow_before_five = $scope.tomorrow_before_five,
-//     principal.tomorrow_after_five = $scope.tomorrow_after_five,
-
-//     $http.put(AppSettings.baseApiUrl + 'profiles/' + principal.facebook_id,
-//     {
-//       profile:{
-//         today_before_five: $scope.today_before_five,
-//         today_after_five: $scope.today_after_five,
-//         tomorrow_before_five: $scope.tomorrow_before_five,
-//         tomorrow_after_five: $scope.tomorrow_after_five,
-//         updated_availability: currentDate,
-//         remember_availability: $scope.remember_availability[0],
-//         timezone: timezone
-//       }
-//     })
-//     .success(function(data,status,headers,config){
-//       console.log(data)
-//       //Go to somewhere else
-//       $state.go('app.cards');
-//     })
-//     .error(function(data,status,headers,config){
-      
-//     }) 
-//   }
-
-//   $scope.select_today_before_five = function(){
-//     $scope.today_before_five = !$scope.today_before_five; 
-//   }
-//   $scope.select_today_after_five = function(){
-//     $scope.today_after_five = !$scope.today_after_five;
-//   }
-//   $scope.select_tomorrow_before_five = function(){
-//     $scope.tomorrow_before_five = !$scope.tomorrow_before_five;
-//   }
-//   $scope.select_tomorrow_after_five = function(){
-//     $scope.tomorrow_after_five = !$scope.tomorrow_after_five;
-//   }
-// })
 
 
 // determine what cards are displayed by replacing the element that was swiped in scope.cards with an element from scope.remainingCards
@@ -1453,6 +1380,10 @@ function manageRemainingCards(element,scope,http,liked,principal){
       scope.cards[scope.cardPosition[0]%5].feet = scope.remainingCards[0][scope.cardPosition[0]].feet;  
       scope.cards[scope.cardPosition[0]%5].inches = scope.remainingCards[0][scope.cardPosition[0]].inches;  
       scope.cards[scope.cardPosition[0]%5].blurb = scope.remainingCards[0][scope.cardPosition[0]].blurb;  
+      scope.cards[scope.cardPosition[0]%5].looks_last_5_average_rating = scope.remainingCards[0][scope.cardPosition[0]].looks_last_5_average_rating;  
+      scope.cards[scope.cardPosition[0]%5].answer1_last_5_average_rating = scope.remainingCards[0][scope.cardPosition[0]].answer1_last_5_average_rating;  
+      scope.cards[scope.cardPosition[0]%5].answer2_last_5_average_rating = scope.remainingCards[0][scope.cardPosition[0]].answer2_last_5_average_rating;  
+      scope.cards[scope.cardPosition[0]%5].answer3_last_5_average_rating = scope.remainingCards[0][scope.cardPosition[0]].answer3_last_5_average_rating;  
       element[0].style.left = "0" 
       element[0].style.top = "0";
       // set z index back 5
@@ -1519,6 +1450,10 @@ function getMoreProfiles(http,scope,principal){
           scope.cards[n].feet = data[i].feet;
           scope.cards[n].inches = data[i].inches;
           scope.cards[n].blurb = data[i].blurb;
+          scope.cards[n].looks_last_5_average_rating = data[i].looks_last_5_average_rating;
+          scope.cards[n].answer1_last_5_average_rating = data[i].answer1_last_5_average_rating;
+          scope.cards[n].answer2_last_5_average_rating = data[i].answer2_last_5_average_rating;
+          scope.cards[n].answer3_last_5_average_rating = data[i].answer3_last_5_average_rating;
 
           // determine if photos have been uploaded...
           if (data[i].photos_uploaded){
@@ -1535,6 +1470,13 @@ function getMoreProfiles(http,scope,principal){
             scope.cards[n].picture3 = "./img/icondark.jpg";
             scope.cards[n].picture4 = "./img/icondark.jpg";
             scope.cards[n].picture5 = "./img/icondark.jpg";
+          }
+          if (data[i].gender =='female'){
+            $scope.cards[n].pronoun = 'She';
+            $scope.cards[n].pronoun_two = 'Her';
+          } else {
+            $scope.cards[n].pronoun = 'He';
+            $scope.cards[n].pronoun_two = 'His';
           }
           n +=1;
         } else {
@@ -1555,6 +1497,16 @@ function getMoreProfiles(http,scope,principal){
             picture4_url = "./img/icondark.jpg";
             picture5_url = "./img/icondark.jpg";
           }
+          
+          //set pronoun based on gender
+          if (data[i].gender =='female'){
+            pronoun = 'She';
+            pronoun_two = 'Her';
+          } else {
+            pronoun = 'He';
+            pronoun_two = 'His';
+          }
+
           //Push details to remaining cards array
           scope.remainingCards[0].push({
             id:data[i].id, 
@@ -1568,7 +1520,13 @@ function getMoreProfiles(http,scope,principal){
             answer2: data[i].answer2,
             feet: data[i].feet,
             inches: data[i].inches,
-            blurb: data[i].blurb
+            blurb: data[i].blurb,
+            looks_last_5_average_rating: data[i].looks_last_5_average_rating,
+            answer1_last_5_average_rating: data[i].answer1_last_5_average_rating,
+            answer2_last_5_average_rating: data[i].answer2_last_5_average_rating,
+            answer3_last_5_average_rating: data[i].answer3_last_5_average_rating,
+            pronoun: pronoun,
+            pronoun_two: pronoun_two
           });  
         }
       }

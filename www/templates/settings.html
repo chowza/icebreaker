@@ -8,15 +8,46 @@
   <ion-content class="has-header">
       <div class="list list-inset">
       	<div class="item">
-      	Youngest you will date:
-      	<input type="number" ng-model="preferred_min_age[0]" min="18" value={{preferred_min_age[0]}}>
+        	<div class="vertical-center question">Youngest you will date:</div>
+        	<input type="number" ng-model="preferences.preferred_min_age" min="18" value={{preferences.preferred_min_age}}>
       	</div>
       	<div class="item">
-      		Oldest you will date: <input type="number" ng-model="preferred_max_age[0]" min="{{preferred_min_age[0]}}" value={{preferred_max_age[0]}}>
+      		<div class="vertical-center question">Oldest you will date:</div>
+          <input type="number" ng-model="preferences.preferred_max_age" min="{{preferences.preferred_min_age}}" value={{preferences.preferred_max_age}}>
       	</div>
-      	<div class="item">
-      		Distance to search (km): <input type="number" ng-model="preferred_distance[0]" value={{preferred_distance[0]}}>
-      	</div>
+
+        <div class="item"> 
+          <div class="vertical-center question"> Min Height:</div>
+          <input class="height-question-inputs" type="number" placeholder="In" ng-model="preferences.preferred_min_inches" max="11" min="0"> 
+          <input class="height-question-inputs" type="number" placeholder="Ft" ng-model="preferences.preferred_min_feet" max="8" min="1"> 
+        </div>
+
+        <div class="item"> 
+          <div class="vertical-center question"> Max Height:</div>
+          <input class="height-question-inputs" type="number" placeholder="In" ng-model="preferences.preferred_max_inches" max="11" min="0"> 
+          <input class="height-question-inputs" type="number" placeholder="Ft" ng-model="preferences.preferred_max_feet" max="8" min="1"> 
+        </div>
+
+
+        <div class="item">
+          Distance to search (km): <input type="number" ng-model="preferences.preferred_distance" value={{preferences.preferred_distance}}>
+        </div>
+
+
+      </div>
+
+      <div class="list list-inset">
+        <div class="item item-divider question"> Intentions you will accept: </div>
+          <ion-checkbox ng-repeat="answer in question_1_answers" ng-model="preferences.preferred_intentions[$index]" ng-checked="preferences.preferred_intentions[$index]"> 
+            {{answer.value}}
+          </ion-checkbox>
+      </div>
+      <div class="list list-inset">
+          <div class="item item-divider question"> Body type you will accept: </div>
+          <ion-checkbox ng-repeat="answer in question_2_answers" ng-model="preferences.preferred_body_type[$index]" ng-checked="preferences.preferred_body_type[$index]"> 
+            {{answer.value}}
+          </ion-checkbox>
+      </div>
 
         <!-- <div class="item">
           <div class="row">

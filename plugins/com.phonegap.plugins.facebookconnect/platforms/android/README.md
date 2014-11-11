@@ -19,15 +19,16 @@ For Android sample app remember to configure the project with your FB app id in 
 
 This plugin requires [Cordova CLI](http://cordova.apache.org/docs/en/3.5.0/guide_cli_index.md.html).
 
-To install the plugin in your app, execute the following (replace variables where necessary)...
+To install the plugin in your app, execute the following (replace variables where necessary):
+```sh
+# Create initial Cordova app
+$ cordova create myApp
+$ cd myApp/
+$ cordova platform add android
 
-	cordova create myApp
-
-	cd myApp/
-
-	cordova platform add android
-
-	cordova -d plugin add /Users/your/path/here/phonegap-facebook-plugin --variable APP_ID="123456789" --variable APP_NAME="myApplication"
+# Remember to replace APP_ID and APP_NAME variables
+$ cordova -d plugin add /path/to/cloned/phonegap-facebook-plugin --variable APP_ID="123456789" --variable APP_NAME="myApplication"
+```
 
 ## Setup with Eclipse
 
@@ -54,18 +55,15 @@ Follow the steps below:
 
 	cordova -d plugin add https://github.com/phonegap/phonegap-facebook-plugin.git --variable APP_ID="123456789" --variable APP_NAME="myApplication"
 	
-	// add FacebookLib
-	echo "android.library.reference.2=FacebookLib" >> platforms/android/project.properties
+	android update project --subprojects --path "platforms/android" --target android-19 --library "CordovaLib"
 	
-	cp platforms/android/local.properties platforms/android/FacebookLib
-	
-	android update project -p platforms/android/
+	android update project --subprojects --path "platforms/android" --target android-19 --library "com.phonegap.plugins.facebookconnect/FacebookLib"
 	
 	cd platforms/android/
 	
 	ant clean
 	
-	cd FacebookLib
+	cd com.phonegap.plugins.facebookconnect/FacebookLib
 	
 	ant clean
 	

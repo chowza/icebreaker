@@ -5,9 +5,18 @@
     <h1 class="title">IceBreaker</h1>
   </ion-nav-buttons>
   <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
+    <ion-pane style="background-color:rgba(0,0,0,0)">
+    <div class="list card item" style="height:50%;position:relative;z-index:-99999;">
+      <div class="no-more-cards">
+        No more people!
+      </div>
+      
+    </div>
   	<ion-pane ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0)" ng-show="card.id">
-  	<div class="list card item" >
+  	<div class="list card item" style="position:relative;">
     		<!-- <a href="#/app/individual_page/{{card.facebook_id}}" class="item item-image"> -->
+        <!-- <div style="position:absolute;top:285px;left:5px;z-index:9999;font-weight:bold;color:green;">#LooksLike{{card.pronoun_two}}Pics</div> --> <!-- #Doesn'tLookLikePics --> 
+
         <ion-slide-box>
           <ion-slide>
           <img ng-src={{card.picture1}}>
@@ -28,34 +37,23 @@
           
   			<!-- </a> -->
         <div swipeable class="item profile">
-  			<div class="row">
-	  			<div class="col col-50">
-	  				<h2> {{card.first_name}} </h2>
-	  			</div>
-					<div class= "col col-50 rating">
-  	  				Wallyness: 
-  	  				<i class="ion-star"></i>
-  		  			<i class="ion-star"></i>
-  		  			<i class="ion-star"></i>
-  		  			<i class="ion-star"></i>
-  		  			<i class="ion-star"></i>
-  		  	</div>
-	  		</div>
-        <div class="row second">
-          <div class="col">
-            {{card.answer1}},&#160;{{card.answer2}}
+    			<div class="row">
+  	  			<div class="col">
+  	  				<h2> {{card.first_name}} </h2>
+  	  			</div>
+  	  		</div>
+          <div class="row second">
+            <p class="col">
+              <span>{{card.feet}}' {{card.inches}}</span>,<span> {{card.answer2}}</span>. <span>Looking for a {{card.answer1}}</span>
+            <!-- <br> 
+              <span>#LooksLike{{card.pronoun_two}}Pics</span> -->
+            </p>
           </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            {{card.answer4}} &#38; {{card.answer3}}
+          <div class="row">
+            <p class="col">
+              {{card.blurb}}
+            </p>
           </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            {{card.answer5}}
-          </div>
-        </div>
         </div>
 	  </div>
 	</ion-pane>

@@ -1,2 +1,2 @@
-C:\Users\Terence\Documents\Code\IceBreaker\platforms\android\bin\AndroidManifest.xml : \
-C:\Users\Terence\Documents\Code\IceBreaker\platforms\android\AndroidManifest.xml \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\bin\AndroidManifest.xml : \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\AndroidManifest.xml \

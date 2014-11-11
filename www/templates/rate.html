@@ -25,62 +25,36 @@
           <img ng-src={{picture5}}>
           </ion-slide>
         </ion-slide-box>
-        <div class="item profile">
+        <div class="item profile rating-height">
           <div class="row">
-            <div class="col col-67">
+            <div class="col characteristic">
               #{{pronoun}}LooksLike{{pronoun_two}}Pics?
             </div>
-            <div class="col col-33 rating"><!-- 
-              <div class="row" style="padding:0;">
-                <ion-radio ng-model="looks_rating" ng-value=1> Yes</ion-radio>
-                <ion-radio class="item item-checkbox" ng-model="looks_rating" ng-value=0> No</ion-radio>
-              </div> -->
-                
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,0,1)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,0,2)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,0,3)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,0,4)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,0,5)"></i>
-            </div>
+            
+              <input type="range" ng-model="ratings.looks_rating" min="1" max="5" step="1">
+            
           </div>
           <div class="row second">
-            <div class="col col-50">
-              {{answer1}}
+            <div class="col characteristic">
+              #{{pronoun}}WantsA{{answer1}}?
             </div>
-            <div class= "col col-50 rating">
-                 
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,1,1)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,1,2)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,1,3)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,1,4)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,1,5)"></i>
-            </div>
+
+              <input type="range" ng-model="ratings.answer1_rating" min="1" max="5" step="1">
+            
           </div>
           <div class="row">
-            <div class="col col-50">
-              {{answer2}}
+            <div class="col characteristic">
+              #{{pronoun}}'s {{answer2}}?
             </div>
-            <div class= "col col-50 rating">
-                 
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,2,1)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,2,2)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,2,3)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,2,4)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,2,5)"></i>
-            </div>
+            
+              <input type="range" ng-model="ratings.answer2_rating" min="1" max="5" step="1">
+            
           </div>
           <div class="row">
-            <div class="col col-50">
-              Is {{feet}} Ft {{inches}} Inches?
+            <div class="col characteristic">
+              #{{pronoun}}'s {{feet}}Ft{{inches}}Inches?
             </div>
-            <div class= "col col-50 rating">
-                 
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,3,1)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,3,2)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,3,3)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,3,4)"></i>
-                <i class="ion-ios7-star-outline" ng-click="answer_stars($event,3,5)"></i>
-            </div>
+              <input type="range" ng-model="ratings.answer3_rating" min="1" max="5" step="1">
           </div>
       </div>
     </div>

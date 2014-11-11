@@ -32,30 +32,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.availability', {
-      url: "/availability",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/availability.html",
-          controller: 'AvailabilityCtrl'
-        }
-      }
-    })
     .state('app.matches',{
       url:"/matches",
       views: {
         'menuContent':{
           templateUrl: "templates/matchlist.html",
           controller: 'MatchCtrl'
-        }
-      }
-    })
-    .state('app.type_of_date',{
-      url:"/type",
-      views: {
-        'menuContent':{
-          templateUrl: "templates/type_of_date.html",
-          controller: 'TypeCtrl'
         }
       }
     })
@@ -92,6 +74,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         'menuContent':{
           templateUrl:'templates/choose_answers.html',
           controller: 'ChooseAnswersCtrl'
+        }
+      }
+    })
+    .state('app.rate',{
+      url:'/rate/{user_id}',
+      views:{
+        'menuContent':{
+          templateUrl:'templates/rate.html',
+          controller: 'RateCtrl'
         }
       }
     })
@@ -144,7 +135,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         } else if (principal.isFBLoggedIn && toState.name === 'app.login'){
           //if logged in and going to login page, you need to be in the cards page since logged in users shouldn't be shown a login page
           event.preventDefault();
-          $state.go('app.availability');
+          $state.go('app.cards');
 
         } else if (!principal.isFBLoggedIn && toState.name != 'app.login') {
           // not logged in you belong in the login page
@@ -178,11 +169,19 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     preferred_max_age: undefined,
     preferred_distance: undefined,
     preferred_gender: undefined,
+    preferred_min_feet: undefined,
+    preferred_max_feet: undefined,
+    preferred_min_inches: undefined,
+    preferred_max_inches: undefined,
+    preferred_intentions: undefined,
+    preferred_body_type: undefined,
     answer1:undefined,
     answer2:undefined,
-    answer3:undefined,
-    answer4:undefined,
-    answer5:undefined,
+    blurb:undefined,
+    feet:undefined,
+    inches:undefined,
+    order:undefined,
+    photos_uploaded:undefined,
     initialization: function(){
 
       var principal = this;
@@ -230,7 +229,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   // Other functions in this factory come from the push plugin
 
   return {
-    appVersion:0.2,
+    appVersion:0.35,
     deferred:undefined,
     push_type:undefined,
     client_identification_sequence:undefined,
@@ -241,13 +240,14 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     // register for push notifications
     registerForPush: function(){
       deferred = $q.defer();
-      // Whenever the appversion changes you must reregister a push notification. Therefore we check if the appVersion stored is different
+      // Whenever the appVersion changes you must reregister a push notification. Therefore we check if the appVersion stored is different
       if (window.localStorage.getItem("hasRegisteredForPush") =="true" && window.localStorage.getItem("appVersion") == this.appVersion){
         console.log('previously registered for push');
         deferred.resolve('previously registered for push');
       } else {
         // have not yet registered for push notifications. save the type of push ('gcm','apns',etc) so we can use it later.
         // then run the device dependent register function for the push notification
+        //TODO: possibly need to unregister if they had a previous app version
         try{
           pushNotification = window.plugins.pushNotification;
           if (device.platform == 'android' || device.platform == 'Android' || device.platform == 'amazon-fireos') {
@@ -311,7 +311,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             if (e.payload.title == "You have a new match"){
               if ($state.toState.name == 'app.matches'){
                 // we are already in the matches page, update the matches array which will update the view for the user
-                this.addMatch(e.payload.swipee_id,e.payload.swipee_name,e.payload.recipient_facebook_id);
+                var order = parseInt(e.payload.order);
+                this.addMatch(e.payload.swipee_id,e.payload.swipee_name,e.payload.recipient_facebook_id,order);
                 
               } else if ($state.toState.name == 'app.cards') {
                 // the user is on the cards page, show a dialog that a new match was made and offer the option to keep swyping or go to matches
@@ -334,7 +335,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             } else if ($state.toState.name == 'app.chats' && $state.toStateParams.user_id == e.payload.notId){
                 // since it is not a Match notification, it is a Message notification
                 // since  we area already in chat page, add this new message to the array which will update the view
-                this.addMessagesToChat(e.payload.sender_name,e.payload.message_content,e.payload.sender_facebook_id);
+                var picture = parseInt(e.payload.sender_picture1);
+                this.addMessagesToChat(e.payload.sender_name,e.payload.message_content,e.payload.sender_facebook_id,picture);
             } else {
               // chat notification but not in chat
               // We've already played a sound notification so nothing else to do (Optional: play a different sound for messages vs matches)
@@ -431,6 +433,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     //uploading identification to server
     sendClientIdentificationToServer : function (){
       window.localStorage.setItem("appVersion",this.appVersion);
+      console.log("saved appVersion to local " + window.localStorage.getItem("appVersion"));
+      console.log("current appVersion is " + this.appVersion);
       $http.put(AppSettings.baseApiUrl + 'profiles/'+this.facebook_id,{profile:{client_identification_sequence:this.client_identification_sequence, push_type:this.push_type}})
       .success(function(data,status,headers,config){
         //on successful registration and successfully sending details to server save on the phone the local app version
@@ -462,6 +466,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       messages = this.messages;
       timerData = this.timerData;
       timer = this.timer;
+      facebook_id = this.facebook_id;
       $http.get(AppSettings.baseApiUrl + 'messages/'+this.facebook_id,{params:{recipient_id:user_id}})
       .success(function(data, status, headers, config){
           
@@ -471,7 +476,11 @@ angular.module('starter', ['ionic', 'starter.controllers'])
               timerData.endTime = new Date(start.getTime() + 60*60*24*1000);
               $timeout(timer,1000);
               for(i=0;i<data['messages'].length;i++){
-                messages.push({first_name:data['messages'][i].sender_name,content:data['messages'][i].content,picture1: AppSettings.amazonBaseUrl + "app/public/pictures/"+data['messages'][i].sender_facebook_id+"/thumb/1.jpg"})
+                if (facebook_id == data['messages'][i].sender_facebook_id){
+                  messages.push({first_name:data['messages'][i].sender_name,content:data['messages'][i].content,picture1: AppSettings.amazonBaseUrl + "app/public/pictures/"+data['messages'][i].sender_facebook_id+"/thumb/" + (data['current_user']+1) + ".jpg"})  
+                } else {
+                  messages.push({first_name:data['messages'][i].sender_name,content:data['messages'][i].content,picture1: AppSettings.amazonBaseUrl + "app/public/pictures/"+data['messages'][i].sender_facebook_id+"/thumb/" + (data['other_user']+1) + ".jpg"})
+                }
               }
               $ionicScrollDelegate.scrollBottom(true);
           } else {
@@ -487,26 +496,28 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     },
 
     // adding messages to an array called on push notifications
-    addMessagesToChat: function(sender_name,content,sender_facebook_id){
+    addMessagesToChat: function(sender_name,content,sender_facebook_id,sender_picture1){
       var messages = this.messages;
-      messages.push({first_name:sender_name,content:content,picture1: AppSettings.amazonBaseUrl + "app/public/pictures/"+sender_facebook_id+"/thumb/1.jpg"});  
-      $ionicScrollDelegate.scrollBottom(true);
+      messages.push({first_name:sender_name,content:content,picture1: AppSettings.amazonBaseUrl + "app/public/pictures/"+sender_facebook_id+"/thumb/" + (sender_picture1+1) +".jpg"}); 
+      $timeout(function(){
+        $ionicScrollDelegate.scrollBottom(true);  
+      });
     },
 
     // this function called from the matches controller ('MatchCtrl'). It populates the array of matches which propagate to the view
     // also sets which matches are 'out of time'
-    getMatches: function(facebook_id){
+    getMatches: function(id){
       var matches = this.matches;
-      $http.get(AppSettings.baseApiUrl + 'matches/' + facebook_id)
+      $http.get(AppSettings.baseApiUrl + 'matches/' + id)
       .success(function(data,status,headers,config){
         if (data.length){
           for(i=0;i<data.length;i++){
             start = new Date(data[i].match_time);
             end = new Date(start.getTime() + 60*60*24*1000);
             if (end > new Date()){
-              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/1.jpg",too_late:false})
+              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/" +(data[i].order[0]+1)+".jpg",too_late:false})
             } else {
-              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/1.jpg",too_late:true})
+              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/" + (data[i].order[0]+1) +".jpg",too_late:true})
             }
           }          
         } else {
@@ -518,10 +529,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       });
     },
     // adding matches to an array called on push notifications
-    addMatch: function(swipee_id,swipee_name,recipient_facebook_id){
+    addMatch: function(swipee_id,swipee_name,recipient_facebook_id,order){
       var matches = this.matches;
       $timeout(function(){
-        matches.unshift({swipee_id:swipee_id,first_name:swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+recipient_facebook_id+"/thumb/1.jpg",too_late:false})
+        matches.unshift({swipee_id:swipee_id,first_name:swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+recipient_facebook_id+"/thumb/" + (order+1)+ ".jpg",too_late:false})
       });
     }
     
@@ -654,26 +665,16 @@ function getFacebookData(q,principal){
   return deferred.promise;
 }
 
-// send geo location data to our servers and update availability if needed
+// send geo location data to our servers 
 function updateGeoCoordinates(q,principal,http){
   var deferred = q.defer();
-  if(principal.remember_availability){
-    var now = new Date();
-    http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age,updated_availability:now}})
-    .success(function(data, status, headers, config){
-      console.log(data);
-      deferred.resolve(data);
-    }).error(function(data, status, headers, config){
-      deferred.reject(data);
-    });
-  } else {
     http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,{profile:{latitude:principal.latitude, longitude:principal.longitude, age:principal.age}})
     .success(function(data, status, headers, config){
       deferred.resolve(data);
     }).error(function(data, status, headers, config){
       deferred.reject(data);
     });
-  }
+  // }
   return deferred.promise;
 }
 
@@ -700,51 +701,43 @@ function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopu
         // save details locally
         principal.answer1 = data.answer1;
         principal.answer2 = data.answer2;
-        principal.answer3 = data.answer3;
-        principal.answer4 = data.answer4;
-        principal.answer5 = data.answer5;
-        principal.preferred_min_age = data.preferred_min_age,
-        principal.preferred_max_age = data.preferred_max_age,
-        principal.preferred_distance = data.preferred_distance
-        principal.id = data.id;
-        console.log("data availability is" + data.remember_availability);
-        principal.remember_availability = data.remember_availability;
-        if (principal.remember_availability){
-          principal.today_before_five = data.today_before_five;
-          principal.today_after_five = data.today_after_five;
-          principal.tomorrow_before_five = data.tomorrow_before_five;
-          principal.tomorrow_after_five = data.tomorrow_after_five;
-        }
+        principal.blurb = data.blurb;
+        principal.feet = data.feet;
+        principal.inches = data.inches;
+        principal.order = data.order;
+        principal.photos_uploaded = data.photos_uploaded;
+        principal.preferred_min_age = data.preferred_min_age;
+        principal.preferred_max_age = data.preferred_max_age;
+        principal.preferred_distance = data.preferred_distance;
+        principal.preferred_min_feet = data.preferred_min_feet;
+        principal.preferred_min_inches = data.preferred_min_inches;
+        principal.preferred_max_feet = data.preferred_max_feet;
+        principal.preferred_max_inches = data.preferred_max_inches;
+        principal.preferred_intentions = data.preferred_intentions;
+        principal.preferred_body_type = data.preferred_body_type;
 
+        principal.id = data.id;
+        
         //not a first time user, then update the geo coordinates since we need update location details.
 
         updateGeoCoordinates(q,principal,http).then(function(){
-          console.log("done updating geo coordinates and done updating availability times if user has remember_availability = true")
+          console.log("done updating geo coordinates ")
           // once done updating location, send to cards page or whichever page you came from
           // also hide loading page
 
-          var updated_at = new Date(data.updated_availability);
-          var currentDate = new Date();
-          if (updated_at.toDateString() == currentDate.toDateString()){ // updated availability is the same date as today
-            //availbility was updated today, therefore go to cards or where you were planning on going
             if (state.toState.name ==='app.login'){
               ionicLoading.hide();
-              state.go('app.cards'); // <-- we assume that date type has already been selected if updated availability is today
+              state.go('app.cards'); 
             } else {
               ionicLoading.hide();
               state.go(state.toState.name);
             }
-          } else {
-            //availbility was not updated today
-            ionicLoading.hide();
-            state.go('app.availability');
-          }
         });
 
         //not a first time user, check if the app version has changed. changed app versions need to reregister for push.
         if (window.localStorage.getItem("hasRegisteredForPush") == "true" && window.localStorage.getItem("appVersion") == PushService.appVersion){
           //all good, already registered and app versions are same, nothing to do
-          console.log("same app version nothing to do...")
+          console.log("same app version nothing to do... local version:" + window.localStorage.getItem("appVersion") + " current version: " + PushService.appVersion)
         } else {
           console.log("new app version registering for push...")
           PushService.registerForPush();

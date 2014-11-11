@@ -1,3 +1,6 @@
+/* global FB */
+"use strict";
+
 /*
  * @author Ally Ogilvie
  * @copyright Wizcorp Inc. [ Incorporated Wizards ] 2014
@@ -40,8 +43,8 @@ if (!window.cordova) {
             if (!options.description) {
                 options.description = "";
             }
-            if (!options.link) {
-                options.link = "";
+            if (!options.href) {
+                options.href = "";
             }
             if (!options.picture) {
                 options.picture = "";
@@ -57,11 +60,11 @@ if (!window.cordova) {
                     description: (
                         options.description
                     ),
-                    link: options.link,
+                    href: options.href,
                     picture: options.picture
                 },
                 function (response) {
-                    if (response && response.request) {
+                    if (response && (response.request || !response.error_code)) {
                         s(response);
                     } else {
                         f(response);
@@ -120,7 +123,7 @@ if (!window.cordova) {
             try {
                 FB.logout( function (response) {
                     s(response);
-                })
+                });
             } catch (error) {
                 if (!f) {
                     console.error(error.message);
@@ -167,11 +170,13 @@ if (!window.cordova) {
     
     // Bake in the JS SDK
     (function () {
-        console.log("launching FB SDK")
-        var e = document.createElement('script');
-        e.src = document.location.protocol + '//connect.facebook.net/en_US/sdk.js';
-        e.async = true;
-        document.getElementById('fb-root').appendChild(e);
+        if (!window.FB) {
+            console.log("launching FB SDK");
+            var e = document.createElement('script');
+            e.src = document.location.protocol + '//connect.facebook.net/en_US/sdk.js';
+            e.async = true;
+            document.getElementById('fb-root').appendChild(e);
+        }
     }());
 
 }
