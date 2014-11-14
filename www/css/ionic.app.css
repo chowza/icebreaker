@@ -7400,8 +7400,29 @@ a.button {
   margin-bottom: auto;
   padding: 0; }
 
+.item.profile .row:first-child {
+  padding-top: 0; }
+
 input[type=range] {
-  margin: 0; }
+  margin: 0;
+  height: 30px; }
+
+.main-images.rating-image {
+  height: 60%; }
+
+.main-card-size.rating-slider .slider-pager {
+  top: 55%; }
+
+.item.profile.rating-height {
+  height: auto;
+  top: 60%;
+  padding-bottom: 2%; }
+
+.item.profile.rating-height .row:first-child {
+  padding-top: 5px; }
+
+.item.profile.rating-height .row:last-child {
+  padding-top: 5px; }
 
 /* footer and send chat messages */
 .bar.bar-footer {
@@ -7477,7 +7498,8 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 
 .secondary-images-row {
   border: 0;
-  padding: 0; }
+  padding: 0;
+  margin: 0; }
 
 .secondary-images {
   border-color: #ddd;
@@ -7544,7 +7566,12 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   white-space: normal; }
 
 .item.item-thumbnail-left.row {
-  padding-left: 105px; }
+  padding-left: 105px;
+  box-shadow: 2px 2px 5px #888888;
+  margin-bottom: 8px; }
+
+.list .item.item-thumbnail-left.row:first-child {
+  margin-top: 3px; }
 
 .encapsulate-thumbnail {
   position: absolute;
@@ -7585,7 +7612,8 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 .vertical-center {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%); }
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%); }
 
 /*** cards ***/
 .profile {
@@ -7594,16 +7622,17 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   border-left-width: 0; }
 
 .item.profile {
-  height: 20%;
-  top: 78%;
+  height: 30%;
+  top: 70%;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
   border-width: 0;
   position: absolute; }
 
-.item.profile.rating-height {
-  height: auto; }
+.item.profile h2 {
+  font-weight: bolder;
+  color: #666; }
 
 .profile .row {
   position: relative;
@@ -7614,7 +7643,8 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 
 .row.second p {
   white-space: normal;
-  padding-top: 0; }
+  padding-top: 5px;
+  padding-bottom: 5px; }
 
 .list.card .row.second {
   border-top-width: 0; }
@@ -7638,6 +7668,7 @@ ion-slide img {
 .login-card-size-and-position {
   top: 50%;
   transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
   margin-top: 0;
   margin-bottom: 0; }
 
@@ -7649,6 +7680,7 @@ ion-slide img {
   position: relative;
   top: 50%;
   transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
   margin-left: 10px;
   margin-right: 10px;
   margin-top: 0;
@@ -7659,16 +7691,17 @@ ion-slide img {
   overflow: initial; }
 
 .main-card-size .slider-pager {
-  top: 73%; }
-
-.main-card-size .slider .slider-slides ion-slide img {
-  height: 78%; }
+  top: 60%; }
 
 .main-images {
-  height: 78%;
+  height: 69.5%;
   background-repeat: no-repeat;
   background-size: contain;
-  background-position: center; }
+  background-position: center;
+  background-color: #f6f7f8;
+  border-style: solid;
+  border-width: 1px;
+  border-color: lightgrey; }
 
 .no-more-cards-text {
   top: 50%;
@@ -7680,14 +7713,14 @@ ion-slide img {
 /**type of date***/
 .unselected-border {
   height: 97%;
-  margin: 5px;
+  margin: 0;
   border-color: white;
   border-width: 2px;
   border-style: solid; }
 
 .selected-border {
   height: 97%;
-  margin: 5px;
+  margin: 0;
   border-color: #52c234;
   border-width: 2px;
   border-style: solid; }
@@ -7698,10 +7731,12 @@ ion-slide img {
   background-repeat: no-repeat; }
 
 /*** choose photos ***/
-/**main image height also on crop modal***/
 .main-image-height {
-  min-width: 338px;
-  min-height: 305px; }
+  min-height: 63%;
+  margin-bottom: 0; }
+
+.main-image-height img {
+  height: 100%; }
 
 .center-image {
   position: absolute;
@@ -7730,5 +7765,126 @@ ion-slide img {
   border-color: orange;
   border-width: 4px;
   border-style: solid;
-  height: 305px;
-  width: 338px; }
+  height: 1112px;
+  width: 1080px; }
+
+.list.card.no-border {
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  height: 90%; }
+
+.cropper-buttons {
+  padding: 0; }
+
+/* menu */
+.menu {
+  background-color: lightgray; }
+
+.menu .item-complex .item-content {
+  background-color: #64b3f0;
+  color: white;
+  box-shadow: 2px 2px 5px #888888; }
+
+.menu .item {
+  background-color: #64b3f0;
+  color: white;
+  box-shadow: 2px 2px 5px #888888; }
+
+.menu h1 {
+  color: white; }
+
+/* ionpane*/
+.pane {
+  background-color: #ededed; }
+
+.list.card {
+  box-shadow: 1px 1px 2px #888888; }
+
+/*header*/
+.bar.bar-stable.bar-header {
+  background-color: #64b3f0;
+  box-shadow: 1px 1px 2px #888888; }
+
+.bar-header .button.button-clear {
+  color: white; }
+
+.bar.bar-stable.bar-header .title {
+  color: white; }
+
+.bar-header .button.button-icon.icon.ion-navicon {
+  color: white;
+  box-shadow: none; }
+
+.bar.bar-header {
+  background-color: #64b3f0;
+  box-shadow: 1px 1px 2px #888888; }
+
+.bar.bar-header h1 {
+  color: white; }
+
+/*chat */
+.chat_messages {
+  background-color: #ededed;
+  border-width: 0; }
+
+.chat_messages p {
+  white-space: normal;
+  background-color: white;
+  display: inline-flex;
+  width: auto;
+  padding: 10px;
+  border-radius: 25px;
+  box-shadow: 2px 1px 4px #888888;
+  color: #64b3f0;
+  font-weight: bold;
+  position: relative;
+  overflow: initial; }
+
+.chat_messages p:after {
+  content: "";
+  top: 10px;
+  left: -4px;
+  bottom: auto;
+  position: absolute;
+  display: block;
+  width: 20px;
+  height: 20px;
+  box-shadow: 1px 0px 4px 0px #888888;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  background-color: white;
+  z-index: -10; }
+
+.chat_messages img {
+  box-shadow: 2px 2px 5px #888888; }
+
+.button {
+  box-shadow: 0px 1px 3px; }
+
+.list-inset {
+  box-shadow: 0px 2px 5px #888888; }
+
+input[type=number] {
+  box-shadow: 0px 0px 2px #888888; }
+
+.checkbox-icon:before {
+  box-shadow: 0px 2px 4px #888888; }
+
+/*alerts*/
+.popup-buttons .button {
+  box-shadow: 2px 6px 7px #888888; }
+
+.popup {
+  box-shadow: 3px 3px 10px #888888; }
+
+.popup h3 {
+  font-weight: bold;
+  color: #666; }
+
+.bar-stable .button {
+  box-shadow: none;
+  color: white; }
+
+.buttons.right-buttons p {
+  color: white; }

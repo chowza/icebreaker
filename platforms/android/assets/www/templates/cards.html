@@ -6,32 +6,37 @@
   </ion-nav-buttons>
   <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
     <ion-pane style="background-color:rgba(0,0,0,0)">
-    <div class="list card item" style="height:50%;position:relative;z-index:-99999;">
-      <div class="no-more-cards">
+    <div class="list card item no-more-cards main-card-size">
+      <div class="no-more-cards-text">
         No more people!
       </div>
       
     </div>
   	<ion-pane ng-repeat="card in cards" style="z-index:{{-$index}};background-color:rgba(0,0,0,0)" ng-show="card.id">
-  	<div class="list card item" style="position:relative;">
+  	<div class="list card item main-card-size">
     		<!-- <a href="#/app/individual_page/{{card.facebook_id}}" class="item item-image"> -->
         <!-- <div style="position:absolute;top:285px;left:5px;z-index:9999;font-weight:bold;color:green;">#LooksLike{{card.pronoun_two}}Pics</div> --> <!-- #Doesn'tLookLikePics --> 
 
         <ion-slide-box>
           <ion-slide>
-          <img ng-src={{card.picture1}}>
+          <div class="main-images" ng-style="{'background-image':'url('+card.picture1+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{card.picture2}}>
+          <div class="main-images" ng-style="{'background-image':'url('+card.picture2+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{card.picture3}}>
+          <div class="main-images" ng-style="{'background-image':'url('+card.picture3+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{card.picture4}}>
+          <div class="main-images" ng-style="{'background-image':'url('+card.picture4+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{card.picture5}}>
+          <div class="main-images" ng-style="{'background-image':'url('+card.picture5+')'}"></div>
+          
           </ion-slide>
         </ion-slide-box>
           

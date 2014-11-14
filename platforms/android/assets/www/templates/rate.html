@@ -6,62 +6,69 @@
   </ion-nav-buttons>
   <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
   	<ion-pane style="background-color:rgba(0,0,0,0)">
-  	<div class="list card item" >
+  	<div class="list card item main-card-size rating-slider" >
     		
         <ion-slide-box>
           <ion-slide>
-          <img ng-src={{picture1}}>
+          <div class="main-images rating-image" ng-style="{'background-image':'url('+picture1+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{picture2}}>
+          <div class="main-images rating-image" ng-style="{'background-image':'url('+picture2+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{picture3}}>
+          <div class="main-images rating-image" ng-style="{'background-image':'url('+picture3+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{picture4}}>
+          <div class="main-images rating-image" ng-style="{'background-image':'url('+picture4+')'}"></div>
+          
           </ion-slide>
           <ion-slide>
-          <img ng-src={{picture5}}>
+          <div class="main-images rating-image" ng-style="{'background-image':'url('+picture5+')'}"></div>
+          
           </ion-slide>
         </ion-slide-box>
         <div class="item profile rating-height">
           <div class="row">
-            <div class="col">
+            <div class="col characteristic">
               #{{pronoun}}LooksLike{{pronoun_two}}Pics?
             </div>
             
-              <input type="range" ng-model="ratings.looks_rating" min="1" max="5" step="1" style="margin:0;">
+              <input type="range" ng-model="ratings.looks_rating" min="1" max="5" step="1">
             
           </div>
           <div class="row second">
-            <div class="col">
+            <div class="col characteristic">
               #{{pronoun}}WantsA{{answer1}}?
             </div>
 
-              <input type="range" ng-model="ratings.answer1_rating" min="1" max="5" step="1" style="margin:0;">
+              <input type="range" ng-model="ratings.answer1_rating" min="1" max="5" step="1">
             
           </div>
           <div class="row">
-            <div class="col">
+            <div class="col characteristic">
               #{{pronoun}}'s {{answer2}}?
             </div>
             
-              <input type="range" ng-model="ratings.answer2_rating" min="1" max="5" step="1" style="margin:0;">
+              <input type="range" ng-model="ratings.answer2_rating" min="1" max="5" step="1">
             
           </div>
           <div class="row">
-            <div class="col">
-              #{{pronoun}}'s {{feet}}Ft{{inches}}Inches?
+            <div class="col characteristic">
+              #{{pronoun}}'s {{feet}}' {{inches}}''?
             </div>
-              <input type="range" ng-model="ratings.answer3_rating" min="1" max="5" step="1" style="margin:0;">
+              <input type="range" ng-model="ratings.answer3_rating" min="1" max="5" step="1">
+          </div>
+
+          <div class="row">
+            <div class="col text-center no-padding">
+              <button class="button" ng-click="rate()">Rate! </button>
+            </div>
           </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col text-center">
-        <button class="button button-large" ng-click="rate()">Rate! </button>
-      </div>
+
     </div>
   </ion-pane>
 

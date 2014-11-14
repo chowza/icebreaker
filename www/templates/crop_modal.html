@@ -5,14 +5,14 @@
     </ion-header-bar>
       <ion-content class="has-header" has-bouncing="false" scroll="false" scrollbar-y="false">
       <ion-pane style="background-color:rgba(0,0,0,0);">
-      <div cropper class="list card item main-image-height" style="margin:0;height:90%;">
+      <div cropper class="list card item no-border">
         <img image-resizer class="center-image" ng-if="cropShown" ng-src={{selected_photo}}>
 
         <div class="cropper"></div>  
       </div>
       
 
-  <div class="row">
+  <div class="row cropper-buttons">
   <button class="col button" ng-click="goBackCropPage()">Cancel</button>
   <!-- <button class="col button">Reset</button> -->
   <button class="col button" ng-click="saveCroppedImage()">Save</button>

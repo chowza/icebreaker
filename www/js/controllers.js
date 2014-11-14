@@ -199,9 +199,8 @@ angular.module('starter.controllers', [])
 }])
 
 
-.controller('SettingsCtrl', function($scope,$state,principal,$ionicLoading,$http){
-  console.log(principal);
-
+.controller('SettingsCtrl', function($scope,$state,principal,$ionicLoading,$http,$ionicPopup){
+  
   //prepopulate the params with what user's current preferences are
   $scope.preferences = {
     preferred_min_age: principal.preferred_min_age, 
@@ -238,6 +237,7 @@ angular.module('starter.controllers', [])
   $scope.question_2_answers = [{value:'Skinny'},{value:'Athletic'},{value:"Chubby"},{value:"Overweight"}];
     
   $scope.saveSettings = function(){
+
     var preferred_intentions = [];
     var preferred_body_type = [];
    
@@ -246,7 +246,6 @@ angular.module('starter.controllers', [])
     });
 
     var pd = $scope.preferences.preferred_distance*1000;
-    $scope.preferences.preferred_distance = pd;
     $scope.preferences.preferred_min_height = $scope.preferences.preferred_min_feet + $scope.preferences.preferred_min_inches/12;
     $scope.preferences.preferred_max_height = $scope.preferences.preferred_max_feet + $scope.preferences.preferred_max_inches/12;
 
@@ -263,37 +262,56 @@ angular.module('starter.controllers', [])
         preferred_body_type.push(i); 
       }
     }
-    //deep copy preferences so that for user he doesn't see checkboxes moving
-    var preferences = JSON.parse(JSON.stringify($scope.preferences));
-    preferences.preferred_intentions = preferred_intentions;
-    preferences.preferred_body_type = preferred_body_type;
-    console.log(preferences);
-  
-    $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
-      {
-        profile:preferences
-      })
-    .success(function(data,status,headers,config){
-      
-      principal.preferred_min_age = $scope.preferences.preferred_min_age;
-      principal.preferred_max_age = $scope.preferences.preferred_max_age;
-      principal.preferred_distance = pd; 
-      principal.preferred_min_feet = $scope.preferences.preferred_min_feet;
-      principal.preferred_max_feet = $scope.preferences.preferred_max_feet;
-      principal.preferred_min_inches = $scope.preferences.preferred_min_inches;
-      principal.preferred_max_inches = $scope.preferences.preferred_max_inches;
-      principal.preferred_intentions = preferences.preferred_intentions;
-      principal.preferred_body_type = preferences.preferred_body_type;
 
-      $state.go('app.cards');
+    //make sure they selected something from each section
+    if (preferred_intentions.length && preferred_body_type.length && $scope.preferences.preferred_min_age 
+      && $scope.preferences.preferred_max_age && $scope.preferences.preferred_min_feet && $scope.preferences.preferred_min_inches
+      && $scope.preferences.preferred_max_feet && $scope.preferences.preferred_max_inches && $scope.preferences.preferred_distance){
+      //deep copy preferences so that for user he doesn't see checkboxes moving
+      var preferences = JSON.parse(JSON.stringify($scope.preferences));
+      preferences.preferred_intentions = preferred_intentions;
+      preferences.preferred_body_type = preferred_body_type;
+      preferences.preferred_distance = pd;
+      console.log(preferences);
+    
+      $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
+        {
+          profile:preferences
+        })
+      .success(function(data,status,headers,config){
+        
+        principal.preferred_min_age = $scope.preferences.preferred_min_age;
+        principal.preferred_max_age = $scope.preferences.preferred_max_age;
+        principal.preferred_distance = pd; 
+        principal.preferred_min_feet = $scope.preferences.preferred_min_feet;
+        principal.preferred_max_feet = $scope.preferences.preferred_max_feet;
+        principal.preferred_min_inches = $scope.preferences.preferred_min_inches;
+        principal.preferred_max_inches = $scope.preferences.preferred_max_inches;
+        principal.preferred_intentions = preferences.preferred_intentions;
+        principal.preferred_body_type = preferences.preferred_body_type;
+
+        $state.go('app.cards');
+        $ionicLoading.hide();
+      })
+      .error(function(data,status,headers,config){
+        
+        $ionicLoading.hide();
+      })
+    } else {
       $ionicLoading.hide();
-    })
-    .error(function(data,status,headers,config){
-      
-      $ionicLoading.hide();
-    })
+      $scope.showAlert();
+    }
+
   }
 
+  $scope.showAlert = function(){
+    var alertPopup = $ionicPopup.alert({
+      title: 'You missed something!'
+      // template: 'It might taste good'
+    });
+      alertPopup.then(function(res) {
+    });
+  }
 })
 
 // show matches
@@ -301,7 +319,6 @@ angular.module('starter.controllers', [])
   
   $scope.matches = PushService.matches = [];
   PushService.getMatches(principal.id);
-
 })
 
 // rate a user
@@ -464,7 +481,7 @@ angular.module('starter.controllers', [])
 // different image sizes (portrait vs landscape)
 // On image load, this directive determining whether to show 100% of height and partly crop width or 100% of width and crop height
 // Also sets the crop square size
-.directive("imageResizer",function(){
+.directive("imageResizer",['principal',function(principal){
   return {
     restrict: "A",
     scope:false,
@@ -473,7 +490,7 @@ angular.module('starter.controllers', [])
       var phoneWidth = window.innerWidth;
       containerWidth = element[0].parentElement.clientWidth;
       containerHeight = element[0].parentElement.clientHeight;
-
+      
       //need to bind on image load because otherwise the element has no height or width
       element.bind('load',function(){
         //get height and width
@@ -487,19 +504,18 @@ angular.module('starter.controllers', [])
           element[0].style.width = "auto";
 
           //ratio needed for cropping
-          scope.croppedImageDetails[scope.currently_selected].ratio = imageHeight/element[0].offsetHeight;
-
+          scope.croppedImageDetails[principal.order[scope.currently_selected]].ratio = imageHeight/element[0].offsetHeight;
           //recalculate new image dimensions to set cropping square dimensions
           imageHeight = element[0].offsetHeight; 
           imageWidth = element[0].offsetWidth;
 
-          //since width is 338px vs height of 305px, the below is necessary to ensure we don't have too big a crop square
+          //since width is 1080px vs height of 1112px, the below is necessary to ensure we don't have too big a crop square
           if (imageWidth >= phoneWidth){
             originalCropHeight = imageHeight*0.9;
-            originalCropWidth = originalCropHeight*338/305;
+            originalCropWidth = originalCropHeight*1080/1112;
           } else {
             originalCropWidth = imageWidth*0.9;
-            originalCropHeight = originalCropWidth*305/338;
+            originalCropHeight = originalCropWidth*1112/1080;
           }
           
         } else {
@@ -508,19 +524,19 @@ angular.module('starter.controllers', [])
           element[0].style.height = "auto";
 
           //ratio needed for cropping
-          scope.croppedImageDetails[scope.currently_selected].ratio = imageHeight/element[0].offsetHeight;
+          scope.croppedImageDetails[principal.order[scope.currently_selected]].ratio = imageHeight/element[0].offsetHeight;
 
           //recalculate new image dimensions to set cropping square dimensions
           imageHeight = element[0].offsetHeight; 
           imageWidth = element[0].offsetWidth;
           
-          //since width is 338px vs height of 305px, the below is necessary to ensure we don't have too big a crop square
+          //since width is 1080px vs height of 1112px, the below is necessary to ensure we don't have too big a crop square
           if (imageWidth <= imageHeight){
             originalCropWidth = imageWidth*0.9;
-            originalCropHeight = originalCropWidth*305/338;
+            originalCropHeight = originalCropWidth*1112/1080;
           } else {
             originalCropHeight = imageHeight*0.9;
-            originalCropWidth = originalCropHeight*338/305;
+            originalCropWidth = originalCropHeight*1080/1112;
           }
         }
 
@@ -533,7 +549,7 @@ angular.module('starter.controllers', [])
 
     }
   }
-})
+}])
 
 //cropper container for the image as well as the crop square
 .directive("cropper",['$ionicGesture',function($ionicGesture){
@@ -584,18 +600,18 @@ angular.module('starter.controllers', [])
         if (element[0].children[0].style.height =="100%"){
           if (imageWidth >= phoneWidth){
             originalCropHeight = imageHeight*0.9;
-            originalCropWidth = originalCropHeight*338/305;
+            originalCropWidth = originalCropHeight*1080/1112;
           } else {
             originalCropWidth = imageWidth*0.9;
-            originalCropHeight = originalCropWidth*305/338;
+            originalCropHeight = originalCropWidth*1112/1080;
           }
         } else {
           if (imageWidth <= imageHeight){
             originalCropWidth = imageWidth*0.9;
-            originalCropHeight = originalCropWidth*305/338;
+            originalCropHeight = originalCropWidth*1112/1080;
           } else {
             originalCropHeight = imageHeight*0.9;
-            originalCropWidth = originalCropHeight*338/305;
+            originalCropWidth = originalCropHeight*1080/1112;
           }
         }
 
@@ -630,27 +646,6 @@ angular.module('starter.controllers', [])
 
       },element)
 
-      $ionicGesture.on('transformend',function(e){
-
-          // scalePercent = scale*lastScale;
-
-          // shiftX = centerX*(imageWidth*scalePercent - imageWidth)/(imageWidth*scalePercent);
-          // shiftY = centerY*(imageHeight*scalePercent - imageHeight)/(imageHeight*scalePercent);
-
-          // element[0].children[0].style.transform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
-          // element[0].children[0].style.webkitTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
-          // element[0].children[0].style.MozTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
-          // element[0].children[0].style.msTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'
-          // element[0].children[0].style.OTransform = 'scale3d('+scalePercent+','+scalePercent+',1) translate3d(-' + shiftX + 'px,-' + shiftY + 'px,0)'  
-          // element[0].children[1].style.width = (element[0].children[1].offsetWidth * scalePercent) + "px";
-          // element[0].children[1].style.height = (element[0].children[1].offsetHeight * scalePercent) + "px";
-          // element[0].children[1].style.left = (element[0].children[1].offsetLeft - (centerX-imageCenterX)/2) + "px";
-          // element[0].children[1].style.top = (element[0].children[1].offsetTop - (centerX-imageCenterY)/2) + "px";
-
-          // lastScale = scale*lastScale;
-
-      },element)
-      
       $ionicGesture.on('dragstart',function(e){
         startx = parseInt(e.gesture.touches[0].clientX);
         starty = parseInt(e.gesture.touches[0].clientY);
@@ -766,7 +761,7 @@ angular.module('starter.controllers', [])
   $scope.cropShown = false;
   $scope.newImage = { newImage: true};
   $scope.selected_photo = null;
-  $scope.croppedImageDetails = [{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1},{crop_x:0,crop_y:0,crop_w:338,crop_h:305,ratio:1}]
+  $scope.croppedImageDetails = [{crop_x:0,crop_y:0,crop_w:1080,crop_h:1112,ratio:1},{crop_x:0,crop_y:0,crop_w:1080,crop_h:1112,ratio:1},{crop_x:0,crop_y:0,crop_w:1080,crop_h:1112,ratio:1},{crop_x:0,crop_y:0,crop_w:1080,crop_h:1112,ratio:1},{crop_x:0,crop_y:0,crop_w:1080,crop_h:1112,ratio:1}]
 
   // we add currentTime to the image so that if the image is cached on the users phone, 
   // then looking for image.jpg?someothertimehere will trigger the phone to look for another image
@@ -975,12 +970,13 @@ angular.module('starter.controllers', [])
 
   //user has saved cropped image
   $scope.saveCroppedImage = function(){
+    console.log($scope.croppedImageDetails);
     console.log(principal.order);
     //save location and size details of cropped immage
-    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_h = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight * $scope.croppedImageDetails[$scope.currently_selected].ratio;
-    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_w = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth * $scope.croppedImageDetails[$scope.currently_selected].ratio;
-    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_y = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetTop-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetTop)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
-    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_x = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetLeft-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetLeft)* $scope.croppedImageDetails[$scope.currently_selected].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_h = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetHeight * $scope.croppedImageDetails[principal.order[$scope.currently_selected]].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_w = $scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetWidth * $scope.croppedImageDetails[principal.order[$scope.currently_selected]].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_y = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetTop-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetTop)* $scope.croppedImageDetails[principal.order[$scope.currently_selected]].ratio;
+    $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_x = ($scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[1].offsetLeft-$scope.crop.el.children[0].children[0].children[1].children[0].children[0].children[0].offsetLeft)* $scope.croppedImageDetails[principal.order[$scope.currently_selected]].ratio;
     params = {profile:{
                 crop_x: $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_x,
                 crop_y: $scope.croppedImageDetails[principal.order[$scope.currently_selected]].crop_y,
@@ -1091,7 +1087,7 @@ angular.module('starter.controllers', [])
     if ($scope.next_page){
       $http.get($scope.next_page).success(function(res){
         for (i = 0; i < res.data.length; i++){
-          $scope.photoUrls.push([res.data[i].images[res.data[i].images.length-1].source,res.data[i].images[2].source]);//res.data[i].images.length-2
+          $scope.photoUrls.push([res.data[i].images[res.data[i].images.length-1].source,res.data[i].images[0].source]);//res.data[i].images.length-2
          }
          if (typeof(res.paging)!='undefined'){
           $scope.next_page = res.paging.next; 
@@ -1105,7 +1101,7 @@ angular.module('starter.controllers', [])
       facebookConnectPlugin.api('/me/photos?limit=9',['public_profile','user_photos','user_birthday'],
         function(res){
           for (i = 0; i < res.data.length; i++){
-            $scope.photoUrls.push([res.data[i].images[res.data[i].images.length-1].source,res.data[i].images[2].source]); //res.data[i].images.length-2
+            $scope.photoUrls.push([res.data[i].images[res.data[i].images.length-1].source,res.data[i].images[0].source]); //res.data[i].images.length-2
            }
            if (typeof(res.paging)!='undefined'){
             $scope.next_page = res.paging.next; 
@@ -1124,29 +1120,19 @@ angular.module('starter.controllers', [])
 
 })
 
-//these directives used to control the size of photos in choose_photos page
+//this directives used to control the size of photos in choose_photos page
 
 .directive("vwTwenty",function(){
   return {
     restrict:"A",
     link: function(scope,element,attrs){
       var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-      element[0].style.fontSize = w/5+10+"px";
-      element[0].style.height = w/5+10+"px";
-    }
-  }
-})
-.directive("vhFifty",function(){
-  return {
-    restrict:"A",
-    link: function(scope,element,attrs){
       var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-      element[0].style.fontSize = h/2+"px";
-      element[0].style.height = h/2+"px";
+      element[0].style.fontSize = (w-20)/4*(67/76)+"px"; // width of phone minus left and right margins divide by number of images in second row multiple by scale of images
+      element[0].style.height = (w-20)/4*(67/76)+"px";
     }
   }
 })
-
 
 
 .controller('ChooseAnswersCtrl',function($scope,$state,principal,$http,$ionicLoading,PushService,$q,$ionicNavBarDelegate,$timeout,$ionicPopup){
@@ -1196,7 +1182,7 @@ angular.module('starter.controllers', [])
 
   $scope.showAlert = function(){
     var alertPopup = $ionicPopup.alert({
-      title: 'Oops, there was a problem!'
+      title: 'Something went wrong!'
     });
       alertPopup.then(function(res) {
     });
