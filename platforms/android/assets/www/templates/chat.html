@@ -13,10 +13,10 @@
   
 	<div class="list">
 
-	    <div id="chat_messages" ng-repeat="message in messages" class="item item-avatar">
+	    <div ng-repeat="message in messages" class="item item-avatar chat_messages">
 	      <img ng-src={{message.picture1}}>
 	      
-        <p style="white-space:normal">{{message.content}}</p>
+        <p>{{message.content}}</p>
 	    </div>
     </div>
 

@@ -165,7 +165,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 }
 
 .item.item-image {
-	height:60%;
 	img {
 	width:inherit;
 	height:60%;}
@@ -459,7 +458,7 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 	position:absolute;
 
 }
-.item.profile h2{
+.item.profile .default-h2 {
 	font-weight:bolder;
 	color:#666;
 }
@@ -496,7 +495,7 @@ ion-slide img {
 }
 
 .login.row{
-	bottom:5%;
+	top:100%;
 	position:absolute;
 }
 
@@ -697,7 +696,7 @@ ion-slide img {
 .chat_messages p {
 	white-space:normal;
 	background-color:white;
-	display:inline-flex;
+	display:inline-block;
 	width:auto;
 	padding:10px;
 	border-radius:25px;
@@ -764,5 +763,18 @@ input[type=number]{
 }
 
 .buttons.right-buttons p {
+	color:white;
+}
+
+.item.profile .accurate-answer {
+	color:rgb(152, 190, 30);
+}
+
+.item.profile .inaccurate-answer {
+	color:rgb(190, 84, 30);
+}
+
+.item.item-divider {
+	background-color:#64b3f0;
 	color:white;
 }

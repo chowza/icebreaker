@@ -49,12 +49,14 @@
         <div swipeable class="item profile">
     			<div class="row">
   	  			<div class="col">
-  	  				<h2> {{card.first_name}} </h2>
+  	  				<h2 ng-class="card.looks_last_5_average_rating == 3 || card.looks_last_5_average_rating == null ? 'default-h2': (card.looks_last_5_average_rating > 3 ? 'accurate-answer' : 'inaccurate-answer') "> {{card.first_name}} </h2>
   	  			</div>
   	  		</div>
           <div class="row second">
             <p class="col">
-              <span>{{card.feet}}' {{card.inches}}</span>,<span> {{card.answer2}}</span>. <span>Looking for a {{card.answer1}}</span>
+              <span ng-class="card.answer1_last_5_average_rating == 3 || card.answer1_last_5_average_rating == null ? '': (card.answer1_last_5_average_rating >3 ? 'accurate-answer' : 'inaccurate-answer') ">{{card.feet}}' {{card.inches}}</span>,
+              <span ng-class="card.answer2_last_5_average_rating == 3 || card.answer2_last_5_average_rating == null ? '': (card.answer2_last_5_average_rating >3 ? 'accurate-answer' : 'inaccurate-answer') "> {{card.answer2}}</span>. 
+              <span ng-class="card.answer3_last_5_average_rating == 3 || card.answer3_last_5_average_rating == null ? '': (card.answer3_last_5_average_rating >3 ? 'accurate-answer' : 'inaccurate-answer') ">Looking for a {{card.answer1}}</span>
             <!-- <br> 
               <span>#LooksLike{{card.pronoun_two}}Pics</span> -->
             </p>

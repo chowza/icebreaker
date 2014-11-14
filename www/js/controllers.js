@@ -449,13 +449,13 @@ angular.module('starter.controllers', [])
       });
     }
 
-    $scope.showLogin = false;
+    $scope.showLogin = true;
 
     $scope.slideHasChanged = function(i){
       if (i ==2){
         $scope.showLogin = true;
       } else {
-        $scope.showLogin = false;
+        $scope.showLogin = true;
       }
     }
 })

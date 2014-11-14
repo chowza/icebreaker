@@ -673,9 +673,10 @@ function updateGeoCoordinates(q,principal,http){
     .success(function(data, status, headers, config){
       deferred.resolve(data);
     }).error(function(data, status, headers, config){
+      console.log("error updating geo coordinates");
       deferred.reject(data);
     });
-  // }
+
   return deferred.promise;
 }
 

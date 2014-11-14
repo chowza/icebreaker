@@ -16,8 +16,9 @@
         </div>
           <div class="row row-center">
   	      <div class="col">{{match.first_name}}</div>
-          <a href="#/app/chats/{{match.swipee_id}}" class="col button" ng-hide="match.too_late">Chat!</a>
+          <a href="#/app/chats/{{match.swipee_id}}" class="col button" ng-hide="match.too_late">Chat</a>
            <!-- <div class="col button"> in-App-Call </div> -->
+          <div ng-show="match.too_late && match.already_rated != null" class="col button">Rated</div>
         </div>
           
           
@@ -25,7 +26,7 @@
           
             <div ng-show="match.too_late" class="row row-center">
             <div ng-show="match.too_late" class="col"></div>
-              <a ng-show="match.too_late" href="#/app/rate/{{match.swipee_id}}" class="col button">Rate!</a>
+              <a ng-show="match.too_late && match.already_rated == null" href="#/app/rate/{{match.swipee_id}}" class="col button">Rate</a>
             </div>
         </div>
 	    </div>

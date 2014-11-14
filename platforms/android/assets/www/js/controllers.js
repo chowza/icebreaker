@@ -199,9 +199,8 @@ angular.module('starter.controllers', [])
 }])
 
 
-.controller('SettingsCtrl', function($scope,$state,principal,$ionicLoading,$http){
-  console.log(principal);
-
+.controller('SettingsCtrl', function($scope,$state,principal,$ionicLoading,$http,$ionicPopup){
+  
   //prepopulate the params with what user's current preferences are
   $scope.preferences = {
     preferred_min_age: principal.preferred_min_age, 
@@ -238,6 +237,7 @@ angular.module('starter.controllers', [])
   $scope.question_2_answers = [{value:'Skinny'},{value:'Athletic'},{value:"Chubby"},{value:"Overweight"}];
     
   $scope.saveSettings = function(){
+
     var preferred_intentions = [];
     var preferred_body_type = [];
    
@@ -246,7 +246,6 @@ angular.module('starter.controllers', [])
     });
 
     var pd = $scope.preferences.preferred_distance*1000;
-    $scope.preferences.preferred_distance = pd;
     $scope.preferences.preferred_min_height = $scope.preferences.preferred_min_feet + $scope.preferences.preferred_min_inches/12;
     $scope.preferences.preferred_max_height = $scope.preferences.preferred_max_feet + $scope.preferences.preferred_max_inches/12;
 
@@ -263,37 +262,56 @@ angular.module('starter.controllers', [])
         preferred_body_type.push(i); 
       }
     }
-    //deep copy preferences so that for user he doesn't see checkboxes moving
-    var preferences = JSON.parse(JSON.stringify($scope.preferences));
-    preferences.preferred_intentions = preferred_intentions;
-    preferences.preferred_body_type = preferred_body_type;
-    console.log(preferences);
-  
-    $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
-      {
-        profile:preferences
-      })
-    .success(function(data,status,headers,config){
-      
-      principal.preferred_min_age = $scope.preferences.preferred_min_age;
-      principal.preferred_max_age = $scope.preferences.preferred_max_age;
-      principal.preferred_distance = pd; 
-      principal.preferred_min_feet = $scope.preferences.preferred_min_feet;
-      principal.preferred_max_feet = $scope.preferences.preferred_max_feet;
-      principal.preferred_min_inches = $scope.preferences.preferred_min_inches;
-      principal.preferred_max_inches = $scope.preferences.preferred_max_inches;
-      principal.preferred_intentions = preferences.preferred_intentions;
-      principal.preferred_body_type = preferences.preferred_body_type;
 
-      $state.go('app.cards');
+    //make sure they selected something from each section
+    if (preferred_intentions.length && preferred_body_type.length && $scope.preferences.preferred_min_age 
+      && $scope.preferences.preferred_max_age && $scope.preferences.preferred_min_feet && $scope.preferences.preferred_min_inches
+      && $scope.preferences.preferred_max_feet && $scope.preferences.preferred_max_inches && $scope.preferences.preferred_distance){
+      //deep copy preferences so that for user he doesn't see checkboxes moving
+      var preferences = JSON.parse(JSON.stringify($scope.preferences));
+      preferences.preferred_intentions = preferred_intentions;
+      preferences.preferred_body_type = preferred_body_type;
+      preferences.preferred_distance = pd;
+      console.log(preferences);
+    
+      $http.put(AppSettings.baseApiUrl + 'profiles/'+principal.facebook_id,
+        {
+          profile:preferences
+        })
+      .success(function(data,status,headers,config){
+        
+        principal.preferred_min_age = $scope.preferences.preferred_min_age;
+        principal.preferred_max_age = $scope.preferences.preferred_max_age;
+        principal.preferred_distance = pd; 
+        principal.preferred_min_feet = $scope.preferences.preferred_min_feet;
+        principal.preferred_max_feet = $scope.preferences.preferred_max_feet;
+        principal.preferred_min_inches = $scope.preferences.preferred_min_inches;
+        principal.preferred_max_inches = $scope.preferences.preferred_max_inches;
+        principal.preferred_intentions = preferences.preferred_intentions;
+        principal.preferred_body_type = preferences.preferred_body_type;
+
+        $state.go('app.cards');
+        $ionicLoading.hide();
+      })
+      .error(function(data,status,headers,config){
+        
+        $ionicLoading.hide();
+      })
+    } else {
       $ionicLoading.hide();
-    })
-    .error(function(data,status,headers,config){
-      
-      $ionicLoading.hide();
-    })
+      $scope.showAlert();
+    }
+
   }
 
+  $scope.showAlert = function(){
+    var alertPopup = $ionicPopup.alert({
+      title: 'You missed something!'
+      // template: 'It might taste good'
+    });
+      alertPopup.then(function(res) {
+    });
+  }
 })
 
 // show matches
@@ -301,7 +319,6 @@ angular.module('starter.controllers', [])
   
   $scope.matches = PushService.matches = [];
   PushService.getMatches(principal.id);
-
 })
 
 // rate a user
@@ -432,13 +449,13 @@ angular.module('starter.controllers', [])
       });
     }
 
-    $scope.showLogin = false;
+    $scope.showLogin = true;
 
     $scope.slideHasChanged = function(i){
       if (i ==2){
         $scope.showLogin = true;
       } else {
-        $scope.showLogin = false;
+        $scope.showLogin = true;
       }
     }
 })
@@ -1165,7 +1182,7 @@ angular.module('starter.controllers', [])
 
   $scope.showAlert = function(){
     var alertPopup = $ionicPopup.alert({
-      title: 'Oops, there was a problem!'
+      title: 'Something went wrong!'
     });
       alertPopup.then(function(res) {
     });

@@ -1,7 +1,7 @@
 <ion-view hide-nav-bar="true">
 	
   	
-  <ion-content scroll="false">
+  <ion-content scroll="false" style="height:80%;overflow:initial;">
   	    <ion-slide-box on-slide-changed="slideHasChanged($index)">
 		  <ion-slide>
 		    <div class="list card item login-card-size-and-position">
@@ -45,8 +45,9 @@
 		  </ion-slide>
 		</ion-slide-box>
 		<div class="login row">
-		<div class="col text-center">
-		<a class="btn-auth btn-facebook large" ng-show="showLogin" ng-click='login()'>Login with <b>Facebook</b>
-		</a>
+			<div class="col text-center">
+				<a class="btn-auth btn-facebook large" ng-show="showLogin" ng-click='login()'>Login with <b>Facebook</b></a>
+			</div>
+		</div>
   </ion-content>
 </ion-view>

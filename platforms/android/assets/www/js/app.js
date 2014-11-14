@@ -510,20 +510,21 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       var matches = this.matches;
       $http.get(AppSettings.baseApiUrl + 'matches/' + id)
       .success(function(data,status,headers,config){
+        console.log(data)
         if (data.length){
           for(i=0;i<data.length;i++){
             start = new Date(data[i].match_time);
             end = new Date(start.getTime() + 60*60*24*1000);
             if (end > new Date()){
-              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/" +(data[i].order[0]+1)+".jpg",too_late:false})
+              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/" +(data[i].order[0]+1)+".jpg",too_late:false,already_rated:data[i].answer1_rating})
             } else {
-              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/" + (data[i].order[0]+1) +".jpg",too_late:true})
+              matches.push({swipee_id:data[i].swipee_id,first_name:data[i].swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+data[i].recipient_facebook_id+"/thumb/" + (data[i].order[0]+1) +".jpg",too_late:true,already_rated:data[i].answer1_rating})
             }
           }          
         } else {
           //TODO show something for no matches
         }
-        
+        console.log(matches);
       })
       .error(function(data,status,headers,config){
       });
@@ -532,7 +533,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     addMatch: function(swipee_id,swipee_name,recipient_facebook_id,order){
       var matches = this.matches;
       $timeout(function(){
-        matches.unshift({swipee_id:swipee_id,first_name:swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+recipient_facebook_id+"/thumb/" + (order+1)+ ".jpg",too_late:false})
+        matches.unshift({swipee_id:swipee_id,first_name:swipee_name,picture1:AppSettings.amazonBaseUrl + "app/public/pictures/"+recipient_facebook_id+"/thumb/" + (order+1)+ ".jpg",too_late:false,already_rated:null})
       });
     }
     
@@ -672,9 +673,10 @@ function updateGeoCoordinates(q,principal,http){
     .success(function(data, status, headers, config){
       deferred.resolve(data);
     }).error(function(data, status, headers, config){
+      console.log("error updating geo coordinates");
       deferred.reject(data);
     });
-  // }
+
   return deferred.promise;
 }
 

@@ -7383,11 +7383,9 @@ a.button {
   border-top-width: 1px;
   border-top-color: #ddd; }
 
-.item.item-image {
+.item.item-image img {
+  width: inherit;
   height: 60%; }
-  .item.item-image img {
-    width: inherit;
-    height: 60%; }
 
 .row .rating {
   font-size: 1em;
@@ -7630,7 +7628,7 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   border-width: 0;
   position: absolute; }
 
-.item.profile h2 {
+.item.profile .default-h2 {
   font-weight: bolder;
   color: #666; }
 
@@ -7662,7 +7660,7 @@ ion-slide img {
   top: 70%; }
 
 .login.row {
-  bottom: 5%;
+  top: 100%;
   position: absolute; }
 
 .login-card-size-and-position {
@@ -7831,7 +7829,7 @@ ion-slide img {
 .chat_messages p {
   white-space: normal;
   background-color: white;
-  display: inline-flex;
+  display: inline-block;
   width: auto;
   padding: 10px;
   border-radius: 25px;
@@ -7887,4 +7885,14 @@ input[type=number] {
   color: white; }
 
 .buttons.right-buttons p {
+  color: white; }
+
+.item.profile .accurate-answer {
+  color: #98be1e; }
+
+.item.profile .inaccurate-answer {
+  color: #be541e; }
+
+.item.item-divider {
+  background-color: #64b3f0;
   color: white; }
