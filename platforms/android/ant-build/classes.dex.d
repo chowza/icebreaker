@@ -31,6 +31,8 @@ C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\clas
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\com\plugin\gcm\GCMIntentService.class \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\com\plugin\gcm\PushHandlerActivity.class \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\com\plugin\gcm\PushPlugin.class \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\nl\xservices\plugins\Toast$1.class \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\nl\xservices\plugins\Toast.class \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\org\apache\cordova\device\Device.class \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\org\apache\cordova\dialogs\Notification$1$1.class \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\ant-build\classes\org\apache\cordova\dialogs\Notification$1$2.class \

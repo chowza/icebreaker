@@ -215,6 +215,17 @@ module.exports = [
         "clobbers": [
             "facebookConnectPlugin"
         ]
+    },
+    {
+        "file": "plugins/nl.x-services.plugins.toast/www/Toast.js",
+        "id": "nl.x-services.plugins.toast.Toast",
+        "clobbers": [
+            "window.plugins.toast"
+        ]
+    },
+    {
+        "file": "plugins/nl.x-services.plugins.toast/test/tests.js",
+        "id": "nl.x-services.plugins.toast.tests"
     }
 ];
 module.exports.metadata = 
@@ -229,7 +240,8 @@ module.exports.metadata =
     "org.apache.cordova.file-transfer": "0.4.5",
     "org.apache.cordova.geolocation": "0.3.9",
     "org.apache.cordova.media": "0.2.12",
-    "com.phonegap.plugins.facebookconnect": "0.9.0"
+    "com.phonegap.plugins.facebookconnect": "0.9.0",
+    "nl.x-services.plugins.toast": "2.0.2"
 }
 // BOTTOM OF METADATA
 });

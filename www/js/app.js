@@ -229,7 +229,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   // Other functions in this factory come from the push plugin
 
   return {
-    appVersion:0.35,
+    appVersion:0.42,
     deferred:undefined,
     push_type:undefined,
     client_identification_sequence:undefined,
@@ -503,7 +503,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         $ionicScrollDelegate.scrollBottom(true);  
       });
     },
-
+    removeMessageFromChat: function(content){
+      var messages = this.messages;
+      for (i = messages.length-1; i>=0; i--){
+        if(messages[i].content === content){
+          messages.splice(i,1);
+          break;
+        } 
+      }
+    },
     // this function called from the matches controller ('MatchCtrl'). It populates the array of matches which propagate to the view
     // also sets which matches are 'out of time'
     getMatches: function(id){
@@ -661,6 +669,8 @@ function getFacebookData(q,principal){
       deferred.resolve(response);
     },function(errors){
       console.log(errors);
+      window.plugins.toast.showShortBottom("Oops there was an error and it's probably my fault. Please try again later!");
+      ionicLoading.hide();
       deferred.reject(errors);
     });
   return deferred.promise;
@@ -684,7 +694,7 @@ function updateGeoCoordinates(q,principal,http){
 // simultaneously get geo location and then update the geolocation, route the user based on if it's their first time or not
 function postLoginPromises(q,principal,login_status,state,ionicLoading,ionicPopup,http,PushService){
 
-  q.all([getFacebookData(q,principal),GEOLocation(q,principal)]).then(function(response){
+  q.all([getFacebookData(q,principal,ionicLoading),GEOLocation(q,principal)]).then(function(response){
       console.log("done geting facebook data and geolocation");
       currentYear = new Date().getFullYear()
       principal.facebook_id = response[0].id;

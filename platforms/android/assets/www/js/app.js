@@ -229,7 +229,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   // Other functions in this factory come from the push plugin
 
   return {
-    appVersion:0.35,
+    appVersion:0.42,
     deferred:undefined,
     push_type:undefined,
     client_identification_sequence:undefined,
@@ -503,7 +503,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         $ionicScrollDelegate.scrollBottom(true);  
       });
     },
-
+    removeMessageFromChat: function(content){
+      var messages = this.messages;
+      for (i = messages.length-1; i>=0; i--){
+        if(messages[i].content === content){
+          messages.splice(i,1);
+          break;
+        } 
+      }
+    },
     // this function called from the matches controller ('MatchCtrl'). It populates the array of matches which propagate to the view
     // also sets which matches are 'out of time'
     getMatches: function(id){
@@ -661,6 +669,7 @@ function getFacebookData(q,principal){
       deferred.resolve(response);
     },function(errors){
       console.log(errors);
+      window.plugins.toast.showShortBottom(JSON.stringify(errors));
       deferred.reject(errors);
     });
   return deferred.promise;

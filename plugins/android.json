@@ -59,6 +59,10 @@
                         {
                             "xml": "<access origin=\"https://*.akamaihd.net\" />",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Toast\"><param name=\"android-package\" value=\"nl.xservices.plugins.Toast\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -194,6 +198,9 @@
         "com.phonegap.plugins.facebookconnect": {
             "APP_ID": "543388419124166",
             "APP_NAME": "IceBreaker",
+            "PACKAGE_NAME": "com.ionicframework.icebreaker107910"
+        },
+        "nl.x-services.plugins.toast": {
             "PACKAGE_NAME": "com.ionicframework.icebreaker107910"
         }
     },

@@ -306,6 +306,7 @@ C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\lib
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\com.ionic.keyboard \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\com.phonegap.plugins.facebookconnect \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\com.phonegap.plugins.PushPlugin \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\nl.x-services.plugins.toast \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\org.apache.cordova.device \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\org.apache.cordova.dialogs \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\org.apache.cordova.file \
@@ -320,6 +321,10 @@ C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plu
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\com.phonegap.plugins.facebookconnect\www\phonegap\plugin\facebookConnectPlugin\facebookConnectPlugin.js \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\com.phonegap.plugins.PushPlugin\www \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\com.phonegap.plugins.PushPlugin\www\PushNotification.js \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\nl.x-services.plugins.toast\test \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\nl.x-services.plugins.toast\www \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\nl.x-services.plugins.toast\test\tests.js \
+C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\nl.x-services.plugins.toast\www\Toast.js \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\org.apache.cordova.device\www \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\org.apache.cordova.device\www\device.js \
 C:\Users\Terence\GitHub Repositories\icebreaker\platforms\android\assets\www\plugins\org.apache.cordova.dialogs\www \

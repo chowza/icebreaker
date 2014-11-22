@@ -140,7 +140,7 @@ angular.module('starter.controllers', [])
         }
       })
       .error(function(data,status,headers,config){
-        //TODO errors
+        window.plugins.toast.showShortBottom("Oops, there was an error and it's probably our fault. Please try again later");
       });
 
 })
@@ -158,6 +158,7 @@ angular.module('starter.controllers', [])
         var disty = 0;
         var initialTop = (element[0].parentNode.parentNode.parentNode.parentNode.offsetHeight)/2;
 
+        //track starting coordinates
       $ionicGesture.on('dragstart',function(e){
         startx = parseInt(e.gesture.touches[0].clientX);
         starty = parseInt(e.gesture.touches[0].clientY);
@@ -166,6 +167,7 @@ angular.module('starter.controllers', [])
         console.log(element);
       },element);
 
+      //move the element based on starting coordinates and distance swiped
       $ionicGesture.on('drag',function(e){
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
         var disty = parseInt(e.gesture.touches[0].clientY) - starty
@@ -175,6 +177,7 @@ angular.module('starter.controllers', [])
 
       $ionicGesture.on('dragend',function(e){
         
+        //based on where the end of the drag is, either treat the profile as Liked, disliked or neutral
         var distx = parseInt(e.gesture.touches[0].clientX) - startx
         var disty = parseInt(e.gesture.touches[0].clientY) - starty
         if (e.gesture.touches[0].clientX > 0.8*window.innerWidth && distx >0.3*window.innerWidth) { // disty >0.4*window.innerHeight
@@ -213,10 +216,13 @@ angular.module('starter.controllers', [])
   }
 
 
-  // convert principal.preferred_intentions & principal.preferred_body_type from array of integers to array of booleans
+  // The server sends the below 2 variables as an array of integers. We need to convert this to an array of booleans for ng-model to display the user's preference. 
+  // i.e true = checked, false = not checked
+
   var preferred_intentions = [false,false,false]
   var preferred_body_type = [false,false,false,false]
 
+  // converting principal.preferred_intentions & principal.preferred_body_type from array of integers to array of booleans
   for (i =0; i<3; i++){
     if (principal.preferred_intentions.indexOf(i)>-1){
       preferred_intentions[i] = true;
@@ -229,13 +235,15 @@ angular.module('starter.controllers', [])
     } 
   }
 
+  // replace the scope variables so that ng-model recognizes which checkboxes are checked and which are not
   $scope.preferences.preferred_intentions = preferred_intentions;
   $scope.preferences.preferred_body_type = preferred_body_type;
   
-  //possible answers to the questions
+  //possible answers to questions 1 and 2
   $scope.question_1_answers = [{value:'Hooking up'},{value:'Dating'},{value:'Serious Things'}];
   $scope.question_2_answers = [{value:'Skinny'},{value:'Athletic'},{value:"Chubby"},{value:"Overweight"}];
     
+  // save the user's preferences
   $scope.saveSettings = function(){
 
     var preferred_intentions = [];
@@ -265,8 +273,8 @@ angular.module('starter.controllers', [])
 
     //make sure they selected something from each section
     if (preferred_intentions.length && preferred_body_type.length && $scope.preferences.preferred_min_age 
-      && $scope.preferences.preferred_max_age && $scope.preferences.preferred_min_feet && $scope.preferences.preferred_min_inches
-      && $scope.preferences.preferred_max_feet && $scope.preferences.preferred_max_inches && $scope.preferences.preferred_distance){
+      && $scope.preferences.preferred_max_age && $scope.preferences.preferred_min_feet && (!isNaN($scope.preferences.preferred_min_inches) && $scope.preferences.preferred_min_inches !== null)
+      && $scope.preferences.preferred_max_feet && (!isNaN($scope.preferences.preferred_max_inches) && $scope.preferences.preferred_max_inches !== null) && $scope.preferences.preferred_distance){
       //deep copy preferences so that for user he doesn't see checkboxes moving
       var preferences = JSON.parse(JSON.stringify($scope.preferences));
       preferences.preferred_intentions = preferred_intentions;
@@ -324,7 +332,7 @@ angular.module('starter.controllers', [])
 // rate a user
 .controller('RateCtrl',function($scope,principal,$http,$stateParams,$ionicLoading,$state){
 
-
+  //get user's pictures & details that you are rating 
   $http.get(AppSettings.baseApiUrl + 'profiles/individual/' + $stateParams.user_id)
   .success(function(data,status,headers,config){
     $scope.answer1 = ['Hookup','Date','Relationship'][data.answer1];
@@ -349,7 +357,7 @@ angular.module('starter.controllers', [])
 
   })
 
-
+  //initialize ratings at 3
   $scope.ratings = {
     swipee_id: $stateParams.user_id,
     looks_rating: 3,
@@ -358,6 +366,7 @@ angular.module('starter.controllers', [])
     answer3_rating: 3
   }
 
+  //send ratings data to server
   $scope.rate = function(){
   
     $ionicLoading.show({
@@ -412,10 +421,9 @@ angular.module('starter.controllers', [])
         
       })
       .error(function(data,status,headers,config){
-        
-        // TODO: set sending notification to 'failed to send and remove message from msgs'
-        // TODO: also find the message you tried to send and remove it so user doesn't think the message was sent
-        // Also replace add $scope.message = msg so that user can try resending the exact same message.
+        window.plugins.toast.showShortBottom("Oops, there was an error and we failed to send the message. Please try again!");
+        PushService.removeMessageFromChat(msg);
+        $scope.message = msg;
       })
     } 
   }
@@ -428,6 +436,7 @@ angular.module('starter.controllers', [])
         $ionicLoading.show({
             templateUrl: "templates/loading.html"
           });
+        //login to facebook, request user's profile, photos and birthday
         facebookConnectPlugin.login(['public_profile','user_photos','user_birthday'],
         function(res){
           if (res.status === 'connected'){
@@ -437,13 +446,13 @@ angular.module('starter.controllers', [])
           } else {
             console.log("problem logging into facebook but successful attempt. Response: " + res.status);
             principal.isFBLoggedIn = false;
-            //TODO: try logging out or sending a toast that there was an error
+            window.plugins.toast.showShortBottom("Failed to login to facebook." +res.status);
             $ionicLoading.hide();
           }
         }, 
         function(res){
           console.log("failed to login to facebook");
-          //TODO: try logging out or sending a toast that there was an error
+          window.plugins.toast.showShortBottom("Failed to login to facebook. Please check your connection.");
           console.error(res);
           $ionicLoading.hide();
       });
@@ -460,9 +469,10 @@ angular.module('starter.controllers', [])
     }
 })
 
+// for menu
 .controller('MenuCtrl',function($scope,$state,principal){
   
-
+  //on clicking logout
   $scope.logout= function(){
 
     facebookConnectPlugin.logout(
@@ -782,7 +792,7 @@ angular.module('starter.controllers', [])
       console.log(principal)  
       principal.id = data.id    
     }).error(function(data,status,headers,config){
-      //TODO: show no internet error
+      window.plugins.toast.showShortBottom("Oops, there was an error and it's probably our fault. Please try again later");
     });
   }
 
@@ -1112,7 +1122,7 @@ angular.module('starter.controllers', [])
            $scope.$broadcast('scroll.infiniteScrollComplete');
         },
         function(fail){
-          // TODO: show no photos if failed to get photos.
+          window.plugins.toast.showShortBottom("Hmmm, there was an error and it's probably our fault. Please try again later");
           console.log(fail);
         });
     }
@@ -1190,9 +1200,8 @@ angular.module('starter.controllers', [])
   
   //on clicking answer questions...
   $scope.answerQuestions = function(){
-
     //make sure all fields were answered before proceeding 
-    if ((principal.answer1||$scope.answers.answer1 + 1) && (principal.answer2||$scope.answers.answer2 + 1) && $scope.answers.blurb && $scope.answers.feet && $scope.answers.inches){
+    if ((principal.answer1||$scope.answers.answer1 + 1) && (principal.answer2||$scope.answers.answer2 + 1) && $scope.answers.blurb && $scope.answers.feet && (!isNaN($scope.answers.inches) && $scope.answers.inches !== null)){
 
       $ionicLoading.show({
         templateUrl: "templates/loading.html"
@@ -1284,7 +1293,7 @@ angular.module('starter.controllers', [])
         .error(function(data,status,headers,config){
           console.log(data);
           console.log(config);
-          //put toast to say error sending answers
+          window.plugins.toast.showShortBottom("Oops we couldn't save your answers. Please check your connection and try again!");
           $ionicLoading.hide();
         });
       } else {
@@ -1305,7 +1314,7 @@ angular.module('starter.controllers', [])
         .error(function(data,status,headers,config){
           console.log(data);
           console.log(config);
-          //put toast to say error sending answers
+          window.plugins.toast.showShortBottom("Oops we couldn't save your answers. Please check your connection and try again!");
           $ionicLoading.hide();
         });
       }
@@ -1517,10 +1526,10 @@ function getMoreProfiles(http,scope,principal){
         }
       }
     } else {
-      // TODO No more data! show a 'no more data toast'
+      window.plugins.toast.showShortBottom("No more people to show!");
     }
   })
   .error(function(data,status,headers,config){
-    //TODO errors
+    window.plugins.toast.showShortBottom("Oops, there was a problem and it's probably our fault. :( Please try again later.");
   });
 }
