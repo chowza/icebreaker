@@ -104,7 +104,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
-  
+    screen.lockOrientation('portrait-primary');
     if(window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
@@ -662,7 +662,7 @@ function checkIfFirstTimeUser(q,principal,http){
 }
 
 // get facebook data
-function getFacebookData(q,principal){
+function getFacebookData(q,principal,ionicLoading){
   var deferred = q.defer();
   facebookConnectPlugin.api('/me?fields=gender,first_name,birthday',['public_profile','user_photos','user_birthday'],
     function(response){

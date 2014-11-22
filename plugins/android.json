@@ -63,6 +63,10 @@
                         {
                             "xml": "<feature name=\"Toast\"><param name=\"android-package\" value=\"nl.xservices.plugins.Toast\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"YoikScreenOrientation\"><param name=\"android-package\" value=\"net.yoik.cordova.plugins.screenorientation.YoikScreenOrientation\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -201,6 +205,9 @@
             "PACKAGE_NAME": "com.ionicframework.icebreaker107910"
         },
         "nl.x-services.plugins.toast": {
+            "PACKAGE_NAME": "com.ionicframework.icebreaker107910"
+        },
+        "net.yoik.cordova.plugins.screenorientation": {
             "PACKAGE_NAME": "com.ionicframework.icebreaker107910"
         }
     },

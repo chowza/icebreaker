@@ -226,6 +226,20 @@ module.exports = [
     {
         "file": "plugins/nl.x-services.plugins.toast/test/tests.js",
         "id": "nl.x-services.plugins.toast.tests"
+    },
+    {
+        "file": "plugins/net.yoik.cordova.plugins.screenorientation/www/screenorientation.js",
+        "id": "net.yoik.cordova.plugins.screenorientation.screenorientation",
+        "clobbers": [
+            "cordova.plugins.screenorientation"
+        ]
+    },
+    {
+        "file": "plugins/net.yoik.cordova.plugins.screenorientation/www/screenorientation.android.js",
+        "id": "net.yoik.cordova.plugins.screenorientation.screenorientation.android",
+        "merges": [
+            "cordova.plugins.screenorientation"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -241,7 +255,8 @@ module.exports.metadata =
     "org.apache.cordova.geolocation": "0.3.9",
     "org.apache.cordova.media": "0.2.12",
     "com.phonegap.plugins.facebookconnect": "0.9.0",
-    "nl.x-services.plugins.toast": "2.0.2"
+    "nl.x-services.plugins.toast": "2.0.2",
+    "net.yoik.cordova.plugins.screenorientation": "1.3.1"
 }
 // BOTTOM OF METADATA
 });
